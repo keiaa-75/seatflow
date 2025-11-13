@@ -21,6 +21,9 @@ public class StudentServiceImpl implements StudentService {
     @Autowired
     private AcademicStructureRepository academicStructureRepository;
 
+    @Autowired
+    private StudentCsvParserService studentCsvParserService;
+
     @Override
     public List<Student> getStudentsBySectionId(Long sectionId) {
         if (!academicStructureRepository.existsById(sectionId)) {
@@ -51,10 +54,16 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public void importStudentsFromCsv(Long sectionId, MultipartFile file) {
-        if (!academicStructureRepository.existsById(sectionId)) {
-            throw new RuntimeException("Academic Structure with ID " + sectionId + " not found");
+        AcademicStructure section = academicStructureRepository.findById(sectionId)
+                .orElseThrow(() -> new RuntimeException("Academic Structure with ID " + sectionId + " not found"));
+
+        List<Student> studentsToImport = studentCsvParserService.parseStudents(file, section);
+        
+        if (studentsToImport != null && !studentsToImport.isEmpty()) {
+            studentRepository.saveAll(studentsToImport);
+        } else {
+            System.out.println("No valid student entries found in file or file was empty.");
         }
-        // Placeholder for CSV import logic
     }
 
     @Override
