@@ -21,20 +21,20 @@ import com.xinnsuu.seatflow.model.Student;
 import com.xinnsuu.seatflow.service.StudentService;
 
 @RestController
-@RequestMapping("/api/students")
+@RequestMapping("/api/sections/{sectionId}/students")
 public class StudentController {
 	
 	@Autowired
 	private StudentService studentService;
 
 	@GetMapping
-    public ResponseEntity<List<Student>> getAllStudents() {
-        List<Student> students = studentService.getAllStudents();
+    public ResponseEntity<List<Student>> getAllStudents(@PathVariable Long sectionId) {
+        List<Student> students = studentService.getStudentsBySectionId(sectionId);
         return new ResponseEntity<>(students, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Student> getStudentById(@PathVariable String id) {
+    public ResponseEntity<Student> getStudentById(@PathVariable Long sectionId, @PathVariable String id) {
         Optional<Student> student = studentService.getStudentById(id);
 
         return student.map(s -> new ResponseEntity<>(s, HttpStatus.OK))
@@ -43,6 +43,7 @@ public class StudentController {
 
     @PostMapping
     public ResponseEntity<Student> createStudent(
+            @PathVariable Long sectionId,
             @Valid @RequestBody Student student) {
 
         try {
@@ -55,6 +56,7 @@ public class StudentController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Student> updateStudent(
+            @PathVariable Long sectionId,
             @PathVariable String id, 
             @Valid @RequestBody Student updatedStudent) {
 
@@ -71,7 +73,7 @@ public class StudentController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteStudent(@PathVariable String id) {
+    public ResponseEntity<Void> deleteStudent(@PathVariable Long sectionId, @PathVariable String id) {
         
         try {
             studentService.deleteStudent(id);
