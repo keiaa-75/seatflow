@@ -21,19 +21,23 @@ public class StudentServiceImpl implements StudentService {
     private AcademicStructureRepository academicStructureRepository;
 
     @Override
-    public List<Student> getAllStudents() {
-        return studentRepository.findAll();
+    public List<Student> getStudentsBySectionId(Long sectionId) {
+        if (!academicStructureRepository.existsById(sectionId)) {
+            throw new RuntimeException("Academic Structure with ID " + sectionId + " not found");
+        }
+        return studentRepository.findByAcademicStructureId(sectionId);
     }
 
     @Override
-    public Optional<Student> getStudentById(String id) {
-        return studentRepository.findById(id);
+    public Optional<Student> getStudentById(Long sectionId, String id) {
+        if (!academicStructureRepository.existsById(sectionId)) {
+            throw new RuntimeException("Academic Structure with ID " + sectionId + " not found");
+        }
+        return studentRepository.findByStudentIdAndAcademicStructureId(id, sectionId);
     }
 
     @Override
-    public Student createStudent(Student student) {
-        // When creating a student, we need to fetch the full AcademicStructure entity
-        Long sectionId = student.getAcademicStructure().getId();
+    public Student createStudent(Long sectionId, Student student) {
         Optional<AcademicStructure> sectionOpt = academicStructureRepository.findById(sectionId);
 
         if (sectionOpt.isEmpty()) {
@@ -45,43 +49,35 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Student updateStudent(String id, Student updatedStudent) {
-        Optional<Student> existingStudentOpt = studentRepository.findById(id);
+    public Student updateStudent(Long sectionId, String id, Student updatedStudent) {
+        if (!academicStructureRepository.existsById(sectionId)) {
+            throw new RuntimeException("Academic Structure with ID " + sectionId + " not found");
+        }
+        Optional<Student> existingStudentOpt = studentRepository.findByStudentIdAndAcademicStructureId(id, sectionId);
 
         if (existingStudentOpt.isPresent()) {
             Student existingStudent = existingStudentOpt.get();
 
-            Long newSectionId = updatedStudent.getAcademicStructure().getId();
-            Optional<AcademicStructure> newSectionOpt = academicStructureRepository.findById(newSectionId);
-            
-            if (newSectionOpt.isEmpty()) {
-                throw new RuntimeException("Academic Structure with ID " + newSectionId + " not found");
-            }
-
             existingStudent.setFirstName(updatedStudent.getFirstName());
             existingStudent.setLastName(updatedStudent.getLastName());
-            existingStudent.setStudentId(updatedStudent.getStudentId());
-            existingStudent.setAcademicStructure(newSectionOpt.get()); // Update the link
+            
+            // The studentId (PK) and academicStructure should not be changed here
 
             return studentRepository.save(existingStudent);
         } else {
-            throw new RuntimeException("Student with ID " + id + " not found");
+            throw new RuntimeException("Student with ID " + id + " not found in section " + sectionId);
         }
     }
 
     @Override
-    public void deleteStudent(String id) {
-        if (!studentRepository.existsById(id)) {
-            throw new RuntimeException("Student with ID " + id + " not found");
-        }
-        studentRepository.deleteById(id);
-    }
-
-    @Override
-    public List<Student> getStudentsBySectionId(Long sectionId) {
+    public void deleteStudent(Long sectionId, String id) {
         if (!academicStructureRepository.existsById(sectionId)) {
             throw new RuntimeException("Academic Structure with ID " + sectionId + " not found");
         }
-        return studentRepository.findByAcademicStructureId(sectionId);
+        if (!studentRepository.findByStudentIdAndAcademicStructureId(id, sectionId).isPresent()) {
+            throw new RuntimeException("Student with ID " + id + " not found in section " + sectionId);
+        }
+
+        studentRepository.deleteById(id);
     }
 }
