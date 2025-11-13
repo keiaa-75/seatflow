@@ -6,10 +6,9 @@ import java.util.Optional;
 import com.xinnsuu.seatflow.model.Student;
 
 public interface StudentService {
-    List<Student> getAllStudents();
-    Optional<Student> getStudentById(String id);
     List<Student> getStudentsBySectionId(Long sectionId);
-    Student createStudent(Student student);
-    Student updateStudent(String id, Student updatedStudent);
-    void deleteStudent(String id);
+    Optional<Student> getStudentById(Long sectionId, String id);
+    Student createStudent(Long sectionId, Student student);
+    Student updateStudent(Long sectionId, String id, Student updatedStudent);
+    void deleteStudent(Long sectionId, String id);
 }
