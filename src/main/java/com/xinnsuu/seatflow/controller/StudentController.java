@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.xinnsuu.seatflow.model.Student;
 import com.xinnsuu.seatflow.service.StudentService;
@@ -35,7 +37,7 @@ public class StudentController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Student> getStudentById(@PathVariable Long sectionId, @PathVariable String id) {
-        Optional<Student> student = studentService.getStudentById(id);
+        Optional<Student> student = studentService.getStudentById(sectionId, id);
 
         return student.map(s -> new ResponseEntity<>(s, HttpStatus.OK))
                       .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
@@ -47,8 +49,21 @@ public class StudentController {
             @Valid @RequestBody Student student) {
 
         try {
-            Student savedStudent = studentService.createStudent(student);
+            Student savedStudent = studentService.createStudent(sectionId, student);
             return new ResponseEntity<>(savedStudent, HttpStatus.CREATED);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/import")
+    public ResponseEntity<Void> importStudentsFromCsv(
+            @PathVariable Long sectionId,
+            @RequestParam("file") MultipartFile file) {
+        
+        try {
+            studentService.importStudentsFromCsv(sectionId, file);
+            return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -61,7 +76,7 @@ public class StudentController {
             @Valid @RequestBody Student updatedStudent) {
 
         try {
-            Student updated = studentService.updateStudent(id, updatedStudent);
+            Student updated = studentService.updateStudent(sectionId, id, updatedStudent);
             return new ResponseEntity<>(updated, HttpStatus.OK);
         } catch (RuntimeException e) {
             if (e.getMessage().contains("not found")) {
@@ -76,7 +91,7 @@ public class StudentController {
     public ResponseEntity<Void> deleteStudent(@PathVariable Long sectionId, @PathVariable String id) {
         
         try {
-            studentService.deleteStudent(id);
+            studentService.deleteStudent(sectionId, id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

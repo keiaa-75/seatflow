@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.xinnsuu.seatflow.model.AcademicStructure;
 import com.xinnsuu.seatflow.model.Student;
@@ -46,6 +47,14 @@ public class StudentServiceImpl implements StudentService {
 
         student.setAcademicStructure(sectionOpt.get());
         return studentRepository.save(student);
+    }
+
+    @Override
+    public void importStudentsFromCsv(Long sectionId, MultipartFile file) {
+        if (!academicStructureRepository.existsById(sectionId)) {
+            throw new RuntimeException("Academic Structure with ID " + sectionId + " not found");
+        }
+        // Placeholder for CSV import logic
     }
 
     @Override
