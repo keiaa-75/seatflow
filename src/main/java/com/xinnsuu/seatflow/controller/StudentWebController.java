@@ -25,50 +25,53 @@ public class StudentWebController {
     @Autowired
     private AcademicStructureService academicStructureService;
 
-    @GetMapping
-    public String listStudents(Model model) {
-        model.addAttribute("students", studentService.getAllStudents());
+    @GetMapping("/{sectionId}")
+    public String listStudents(@PathVariable Long sectionId, Model model) {
+        model.addAttribute("students", studentService.getStudentsBySectionId(sectionId));
+        model.addAttribute("sectionId", sectionId);
         return "students";
     }
 
-    @GetMapping("/new")
-    public String showCreateForm(Model model) {
+    @GetMapping("/{sectionId}/new")
+    public String showCreateForm(@PathVariable Long sectionId, Model model) {
         model.addAttribute("student", new Student());
         model.addAttribute("structures", academicStructureService.getAllSections());
+        model.addAttribute("sectionId", sectionId);
         return "student-form";
     }
 
-    @PostMapping("/new")
-    public String createStudent(@Valid @ModelAttribute("student") Student student, BindingResult result) {
+    @PostMapping("/{sectionId}/new")
+    public String createStudent(@PathVariable Long sectionId, @Valid @ModelAttribute("student") Student student, BindingResult result) {
         if (result.hasErrors()) {
             return "student-form";
         }
-        studentService.createStudent(student);
-        return "redirect:/students";
+        studentService.createStudent(sectionId, student);
+        return "redirect:/students/" + sectionId;
     }
 
-    @GetMapping("/edit/{id}")
-    public String showUpdateForm(@PathVariable("id") String id, Model model) {
-        Student student = studentService.getStudentById(id)
+    @GetMapping("/{sectionId}/edit/{id}")
+    public String showUpdateForm(@PathVariable Long sectionId, @PathVariable String id, Model model) {
+        Student student = studentService.getStudentById(sectionId, id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid student Id:" + id));
         model.addAttribute("student", student);
         model.addAttribute("structures", academicStructureService.getAllSections());
+        model.addAttribute("sectionId", sectionId);
         return "student-form";
     }
 
-    @PostMapping("/edit/{id}")
-    public String updateStudent(@PathVariable("id") String id, @Valid @ModelAttribute("student") Student student,
+    @PostMapping("/{sectionId}/edit/{id}")
+    public String updateStudent(@PathVariable Long sectionId, @PathVariable String id, @Valid @ModelAttribute("student") Student student,
             BindingResult result) {
         if (result.hasErrors()) {
             return "student-form";
         }
-        studentService.updateStudent(id, student);
-        return "redirect:/students";
+        studentService.updateStudent(sectionId, id, student);
+        return "redirect:/students/" + sectionId;
     }
 
-    @GetMapping("/delete/{id}")
-    public String deleteStudent(@PathVariable("id") String id) {
-        studentService.deleteStudent(id);
-        return "redirect:/students";
+    @GetMapping("/{sectionId}/delete/{id}")
+    public String deleteStudent(@PathVariable Long sectionId, @PathVariable String id) {
+        studentService.deleteStudent(sectionId, id);
+        return "redirect:/students/" + sectionId;
     }
 }

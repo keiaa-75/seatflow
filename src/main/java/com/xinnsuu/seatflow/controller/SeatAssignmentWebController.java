@@ -45,7 +45,7 @@ public class SeatAssignmentWebController {
     public String showCreateForm(@RequestParam("sectionId") Long sectionId, Model model) {
         model.addAttribute("assignment", new SeatAssignment());
         model.addAttribute("sectionId", sectionId);
-        model.addAttribute("students", studentService.getAllStudents());
+        model.addAttribute("students", studentService.getStudentsBySectionId(sectionId));
         model.addAttribute("layouts", classroomLayoutService.getAllLayouts());
         return "seat-assignment-form";
     }
@@ -68,7 +68,7 @@ public class SeatAssignmentWebController {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid assignment Id:" + id));
         model.addAttribute("assignment", assignment);
         model.addAttribute("sectionId", sectionId);
-        model.addAttribute("students", studentService.getAllStudents());
+        model.addAttribute("students", studentService.getStudentsBySectionId(sectionId));
         model.addAttribute("layouts", classroomLayoutService.getAllLayouts());
         return "seat-assignment-form";
     }
