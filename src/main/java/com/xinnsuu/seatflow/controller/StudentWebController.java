@@ -16,7 +16,7 @@ import com.xinnsuu.seatflow.service.AcademicStructureService;
 import com.xinnsuu.seatflow.service.StudentService;
 
 @Controller
-@RequestMapping("/students")
+@RequestMapping("/sections/{sectionId}/students")
 public class StudentWebController {
 
     @Autowired
@@ -25,14 +25,14 @@ public class StudentWebController {
     @Autowired
     private AcademicStructureService academicStructureService;
 
-    @GetMapping("/{sectionId}")
+    @GetMapping
     public String listStudents(@PathVariable Long sectionId, Model model) {
         model.addAttribute("students", studentService.getStudentsBySectionId(sectionId));
         model.addAttribute("sectionId", sectionId);
         return "students";
     }
 
-    @GetMapping("/{sectionId}/new")
+    @GetMapping("/new")
     public String showCreateForm(@PathVariable Long sectionId, Model model) {
         model.addAttribute("student", new Student());
         model.addAttribute("structures", academicStructureService.getAllSections());
@@ -40,16 +40,16 @@ public class StudentWebController {
         return "student-form";
     }
 
-    @PostMapping("/{sectionId}/new")
+    @PostMapping("/new")
     public String createStudent(@PathVariable Long sectionId, @Valid @ModelAttribute("student") Student student, BindingResult result) {
         if (result.hasErrors()) {
             return "student-form";
         }
         studentService.createStudent(sectionId, student);
-        return "redirect:/students/" + sectionId;
+        return "redirect:/sections/" + sectionId + "/students";
     }
 
-    @GetMapping("/{sectionId}/edit/{id}")
+    @GetMapping("/edit/{id}")
     public String showUpdateForm(@PathVariable Long sectionId, @PathVariable String id, Model model) {
         Student student = studentService.getStudentById(sectionId, id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid student Id:" + id));
@@ -59,19 +59,19 @@ public class StudentWebController {
         return "student-form";
     }
 
-    @PostMapping("/{sectionId}/edit/{id}")
+    @PostMapping("/edit/{id}")
     public String updateStudent(@PathVariable Long sectionId, @PathVariable String id, @Valid @ModelAttribute("student") Student student,
             BindingResult result) {
         if (result.hasErrors()) {
             return "student-form";
         }
         studentService.updateStudent(sectionId, id, student);
-        return "redirect:/students/" + sectionId;
+        return "redirect:/sections/" + sectionId + "/students";
     }
 
-    @GetMapping("/{sectionId}/delete/{id}")
+    @GetMapping("/delete/{id}")
     public String deleteStudent(@PathVariable Long sectionId, @PathVariable String id) {
         studentService.deleteStudent(sectionId, id);
-        return "redirect:/students/" + sectionId;
+        return "redirect:/sections/" + sectionId + "/students";
     }
 }
