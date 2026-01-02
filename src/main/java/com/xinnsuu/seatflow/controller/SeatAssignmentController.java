@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.xinnsuu.seatflow.model.SeatAssignment;
+import com.xinnsuu.seatflow.model.SeatAssignmentDetailDTO;
 import com.xinnsuu.seatflow.service.SeatAssignmentService;
 
 @RestController
@@ -31,6 +32,12 @@ public class SeatAssignmentController {
     public ResponseEntity<List<SeatAssignment>> getAllAssignments(@PathVariable Long sectionId) {
         List<SeatAssignment> assignments = seatAssignmentService.getAssignmentsBySectionId(sectionId);
         return new ResponseEntity<>(assignments, HttpStatus.OK);
+    }
+
+    @GetMapping("/details")
+    public ResponseEntity<List<SeatAssignmentDetailDTO>> getAssignmentDetails(@PathVariable Long sectionId) {
+        List<SeatAssignmentDetailDTO> details = seatAssignmentService.getAssignmentDetailsBySectionId(sectionId);
+        return new ResponseEntity<>(details, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")

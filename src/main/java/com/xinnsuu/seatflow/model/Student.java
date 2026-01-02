@@ -50,8 +50,7 @@ public class Student {
 	@OneToMany(mappedBy = "student")
 	private Set<SeatAssignment> seatAssignments;
 
-	@ManyToOne
-	@JoinColumn(name = "section_id")
-	@NotNull(message = "Student must be assigned to an academic structure")
-	private AcademicStructure academicStructure;
+    @ManyToOne
+    @JoinColumn(name = "section_id")
+    private AcademicStructure academicStructure;
 }

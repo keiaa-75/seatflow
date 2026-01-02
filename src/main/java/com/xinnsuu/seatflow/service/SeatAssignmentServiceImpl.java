@@ -1,5 +1,6 @@
 package com.xinnsuu.seatflow.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.xinnsuu.seatflow.model.AcademicStructure;
 import com.xinnsuu.seatflow.model.ClassroomLayout;
 import com.xinnsuu.seatflow.model.SeatAssignment;
+import com.xinnsuu.seatflow.model.SeatAssignmentDetailDTO;
 import com.xinnsuu.seatflow.model.Student;
 import com.xinnsuu.seatflow.repository.AcademicStructureRepository;
 import com.xinnsuu.seatflow.repository.ClassroomLayoutRepository;
@@ -148,5 +150,30 @@ public class SeatAssignmentServiceImpl implements SeatAssignmentService {
             throw new RuntimeException("Seat Assignment with ID " + id + " not found in section " + sectionId);
         }
         seatAssignmentRepository.deleteById(id);
+    }
+
+    @Override
+    public List<SeatAssignmentDetailDTO> getAssignmentDetailsBySectionId(Long sectionId) {
+        Optional<AcademicStructure> sectionOpt = academicStructureRepository.findById(sectionId);
+        if (sectionOpt.isEmpty()) {
+            throw new RuntimeException("Academic Structure with ID " + sectionId + " not found");
+        }
+        List<SeatAssignment> assignments = seatAssignmentRepository.findByAcademicStructureId(sectionId);
+        List<SeatAssignmentDetailDTO> details = new ArrayList<>();
+        for (SeatAssignment a : assignments) {
+            SeatAssignmentDetailDTO dto = new SeatAssignmentDetailDTO();
+            dto.setId(a.getId());
+            dto.setAssignmentName(a.getAssignmentName());
+            dto.setDescription(a.getDescription());
+            dto.setCreatedAt(a.getCreatedAt());
+            dto.setStudentId(a.getStudent().getStudentId());
+            dto.setStudentName(a.getStudent().getFirstName() + " " + a.getStudent().getLastName());
+            dto.setLayoutId(a.getClassroomLayout().getId());
+            dto.setLayoutName(a.getClassroomLayout().getName());
+            dto.setRowNumber(a.getRowNumber());
+            dto.setColumnNumber(a.getColumnNumber());
+            details.add(dto);
+        }
+        return details;
     }
 }
