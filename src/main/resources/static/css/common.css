@@ -18,6 +18,12 @@ body {
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
+.title-card {
+    background-color: #00BCD4;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
 .full-width-header .title {
     color: white;
 }

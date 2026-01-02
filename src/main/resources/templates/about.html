@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('About')}"></head>
+<body>
+    <th:block th:insert="~{fragments/navbar :: navbar}"></th:block>
+    <section class="section">
+        <div class="container">
+            <div class="columns is-centered">
+                <div class="column is-8">
+                    <div class="title-card has-text-white p-5">
+                        <h1 class="title is-2 has-text-white">About Seatflow</h1>
+                        <p class="subtitle is-5 has-text-white">Seatflow is a simple web-app for seating assignment, in aid of classroom management.</p>
+                    </div>
+                    
+                    <div class="box mt-5">
+                        <h2 class="title is-4">How can we do better?</h2>
+                        <p>Your feedback helps us improve Seatflow. We value your thoughts and suggestions.</p>
+                        <button class="button is-primary mt-3">Take the survey</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
