@@ -29,7 +29,7 @@ public class Student {
 
 	@Id
 	@NotBlank(message = "Student ID is required")
-	@Size(max = 12)
+	@Size(min = 12, max = 12, message = "Student ID must be exactly 12 characters")
 	private String studentId;
 
 	@NotBlank(message = "First name is required")

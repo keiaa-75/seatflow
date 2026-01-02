@@ -1,8 +1,82 @@
-{
-	"studentId": "136883130441",
-	"firstName": "Tzu Hsien",
-	"lastName": "Yang",
-	"academicStructure": {
-		"id": 1
+[
+	{
+		"studentId": "123456789012",
+		"firstName": "Yunah",
+		"lastName": "Noh"
+	},
+	{
+		"studentId": "123456789013",
+		"firstName": "Minju",
+		"lastName": "Park"
+	},
+	{
+		"studentId": "123456789014",
+		"firstName": "Moka",
+		"lastName": "Sakai"
+	},
+	{
+		"studentId": "123456789015",
+		"firstName": "Wonhee",
+		"lastName": "Lee"
+	},
+	{
+		"studentId": "123456789016",
+		"firstName": "Iroha",
+		"lastName": "Hokazono"
+	},
+	{
+		"studentId": "123456789017",
+		"firstName": "Gaeul",
+		"lastName": "Kim"
+	},
+	{
+		"studentId": "123456789018",
+		"firstName": "Yu-jin",
+		"lastName": "An"
+	},
+	{
+		"studentId": "123456789019",
+		"firstName": "Rei",
+		"lastName": "Naoi"
+	},
+	{
+		"studentId": "123456789020",
+		"firstName": "Won-young",
+		"lastName": "Jang"
+	},
+	{
+		"studentId": "123456789021",
+		"firstName": "Ji-won",
+		"lastName": "Kim"
+	},
+	{
+		"studentId": "123456789022",
+		"firstName": "Hyun-seo",
+		"lastName": "Lee"
+	},
+	{
+		"studentId": "123456789023",
+		"firstName": "Sakura",
+		"lastName": "Miyawaki"
+	},
+	{
+		"studentId": "123456789024",
+		"firstName": "Chaewon",
+		"lastName": "Kim"
+	},
+	{
+		"studentId": "123456789025",
+		"firstName": "Yunjin",
+		"lastName": "Huh"
+	},
+	{
+		"studentId": "123456789026",
+		"firstName": "Kazuha",
+		"lastName": "Nakamura"
+	},
+	{
+		"studentId": "123456789027",
+		"firstName": "Eunchae",
+		"lastName": "Hong"
 	}
-}
+]

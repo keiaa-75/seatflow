@@ -17,8 +17,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.xinnsuu.seatflow.model.AssignmentGenerateRequest;
 import com.xinnsuu.seatflow.model.SeatAssignment;
 import com.xinnsuu.seatflow.model.SeatAssignmentDetailDTO;
+import com.xinnsuu.seatflow.service.AssignmentPresetService;
 import com.xinnsuu.seatflow.service.SeatAssignmentService;
 
 @RestController
@@ -27,6 +29,9 @@ public class SeatAssignmentController {
 
 	@Autowired
 	private SeatAssignmentService seatAssignmentService;
+
+	@Autowired
+	private AssignmentPresetService assignmentPresetService;
 
 	@GetMapping
     public ResponseEntity<List<SeatAssignment>> getAllAssignments(@PathVariable Long sectionId) {
@@ -56,6 +61,24 @@ public class SeatAssignmentController {
         try {
             SeatAssignment savedAssignment = seatAssignmentService.createAssignmentForSection(sectionId, assignment);
             return new ResponseEntity<>(savedAssignment, HttpStatus.CREATED);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/generate")
+    public ResponseEntity<List<SeatAssignment>> generateAssignments(
+            @PathVariable Long sectionId,
+            @Valid @RequestBody AssignmentGenerateRequest request) {
+
+        try {
+            List<SeatAssignment> assignments = assignmentPresetService.generateAssignments(
+                    sectionId,
+                    request.getLayoutId(),
+                    request.getPresetType(),
+                    request.getAssignmentName()
+            );
+            return new ResponseEntity<>(assignments, HttpStatus.CREATED);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
