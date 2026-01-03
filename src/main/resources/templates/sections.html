@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Select Section')}"></head>
+<body>
+    <th:block th:insert="~{fragments/navbar :: navbar}"></th:block>
+    <section class="section">
+        <div class="container" data-spa-content>
+            <th:block th:replace="~{fragments/pages/sections-content :: content}"/>
+        </div>
+    </section>
+</body>
+</html>

@@ -2,11 +2,13 @@ package com.xinnsuu.seatflow.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.xinnsuu.seatflow.model.AcademicStructure;
+import com.xinnsuu.seatflow.model.enums.Strand;
 import com.xinnsuu.seatflow.repository.AcademicStructureRepository;
 
 @Service
@@ -53,5 +55,22 @@ public class AcademicStructureServiceImpl implements AcademicStructureService {
             throw new RuntimeException("Academic Structure with ID " + id + " not found");
         }
         academicStructureRepository.deleteById(id);
+    }
+
+    @Override
+    public List<AcademicStructure> searchSections(String query) {
+        String lowerQuery = query.toLowerCase();
+        return academicStructureRepository.findAll().stream()
+                .filter(s -> s.getSectionName().toLowerCase().contains(lowerQuery)
+                        || s.getGradeLevel().getDisplayValue().contains(lowerQuery)
+                        || s.getStrand().name().toLowerCase().contains(lowerQuery))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<AcademicStructure> filterByStrand(List<AcademicStructure> structures, Strand strand) {
+        return structures.stream()
+                .filter(s -> s.getStrand() == strand)
+                .collect(Collectors.toList());
     }
 }

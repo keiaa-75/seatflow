@@ -1,0 +1,95 @@
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="content">
+    <div class="columns is-centered mb-2">
+        <div class="column is-8">
+            <div class="full-width-header">
+                <div class="header-content">
+                    <a href="/sections" class="is-hidden" data-spa-link>
+                        <i class="fas fa-arrow-left has-text-white header-about-button" style="font-size: 1.5rem;"></i>
+                    </a>
+                    <h1 class="title is-4 has-text-white" style="margin-bottom: 0;">Select a section</h1>
+                    <div style="width: 24px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="columns is-centered">
+        <div class="column is-8">
+            <div class="field has-addons">
+                <div class="control is-expanded">
+                    <input type="text" class="input" id="section-search" placeholder="Search sections...">
+                </div>
+                <div class="control">
+                    <a class="button is-primary">
+                        <i class="fas fa-search"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="sections-view">
+        <div class="columns is-centered">
+            <div class="column is-8">
+                <div class="tabs is-toggle is-fullwidth">
+                    <ul>
+                        <li class="is-active" data-grade="all">
+                            <a>All</a>
+                        </li>
+                        <li data-grade="ELEVEN">
+                            <a>Grade 11</a>
+                        </li>
+                        <li data-grade="TWELVE">
+                            <a>Grade 12</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <th:block th:each="strand : ${T(com.xinnsuu.seatflow.model.enums.Strand).values()}">
+            <th:block th:with="strandStructures=${structures.?[strand == strand]}">
+                <div class="columns is-centered strand-section" th:data-strand="${strand}" th:if="${!#lists.isEmpty(strandStructures)}">
+                    <div class="column is-8">
+                        <article class="message is-primary" style="background-color: #00BCD4;">
+                            <div class="message-header clickable-row" th:data-toggle="${'strand-' + strand}">
+                                <span th:text="${#strings.replace(strand, '_', ' ')}">Strand Name</span>
+                                <span class="icon">
+                                    <i class="fas fa-chevron-down"></i>
+                                </span>
+                            </div>
+                            <div class="message-body is-hidden" th:id="${'strand-' + strand}">
+                                <div class="content">
+                                    <div th:each="structure : ${strandStructures}"
+                                         class="box mb-2 clickable-row section-item"
+                                         th:data-section-id="${structure.id}"
+                                         th:data-grade="${structure.gradeLevel}">
+                                        <div class="is-flex is-justify-content-space-between is-align-items-center">
+                                            <div>
+                                                <strong th:text="${structure.gradeLevel.displayValue}">11</strong> -
+                                                <span th:text="${#strings.replace(structure.strand, '_', ' ')}">STEM</span>
+                                            </div>
+                                            <span class="tag is-info" th:text="${structure.sectionName}">Section Name</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </th:block>
+        </th:block>
+    </div>
+
+    <div id="sections-results" class="is-hidden">
+        <div class="columns is-centered">
+            <div class="column is-8">
+                <p class="has-text-centered has-text-grey mb-4">Search results</p>
+            </div>
+        </div>
+    </div>
+
+    <button class="button is-primary add-fab" id="new-section-btn" data-spa-link th:href="@{/sections/new}">
+        <i class="fas fa-plus"></i>
+    </button>
+</th:block>

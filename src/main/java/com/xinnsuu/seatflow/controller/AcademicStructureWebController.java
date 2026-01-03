@@ -1,5 +1,7 @@
 package com.xinnsuu.seatflow.controller;
 
+import java.util.List;
+
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.xinnsuu.seatflow.model.AcademicStructure;
 import com.xinnsuu.seatflow.service.AcademicStructureService;
@@ -22,45 +25,64 @@ public class AcademicStructureWebController {
     private AcademicStructureService academicStructureService;
 
     @GetMapping
-    public String listStructures(Model model) {
+    public String listStructures(@RequestParam(required = false, defaultValue = "false") Boolean fragment, Model model) {
         model.addAttribute("structures", academicStructureService.getAllSections());
-        return "academic-structures";
+        if (fragment) {
+            return "fragments/pages/sections-content :: content";
+        }
+        return "sections";
+    }
+
+    @GetMapping("/search")
+    public String searchSections(@RequestParam("q") String query, @RequestParam(required = false, defaultValue = "false") Boolean fragment, Model model) {
+        List<AcademicStructure> results = academicStructureService.searchSections(query);
+        model.addAttribute("results", results);
+        if (fragment) {
+            return "fragments/pages/sections-results :: content";
+        }
+        return "sections";
     }
 
     @GetMapping("/new")
-    public String showCreateForm(Model model) {
+    public String showCreateForm(@RequestParam(required = false, defaultValue = "false") Boolean fragment, Model model) {
         model.addAttribute("structure", new AcademicStructure());
-        return "academic-structure-form";
+        if (fragment) {
+            return "fragments/forms/section-form :: form";
+        }
+        return "sections-edit";
     }
 
     @PostMapping("/new")
     public String createStructure(@Valid @ModelAttribute("structure") AcademicStructure structure, BindingResult result) {
         if (result.hasErrors()) {
-            return "academic-structure-form";
+            return "sections-edit";
         }
         academicStructureService.createAcademicStructure(structure);
         return "redirect:/sections";
     }
 
     @GetMapping("/edit/{id}")
-    public String showUpdateForm(@PathVariable("id") Long id, Model model) {
+    public String showUpdateForm(@PathVariable("id") Long id, @RequestParam(required = false, defaultValue = "false") Boolean fragment, Model model) {
         AcademicStructure structure = academicStructureService.getSectionById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid structure Id:" + id));
         model.addAttribute("structure", structure);
-        return "academic-structure-form";
+        if (fragment) {
+            return "fragments/forms/section-form :: form";
+        }
+        return "sections-edit";
     }
 
     @PostMapping("/edit/{id}")
     public String updateStructure(@PathVariable("id") Long id, @Valid @ModelAttribute("structure") AcademicStructure structure,
             BindingResult result) {
         if (result.hasErrors()) {
-            return "academic-structure-form";
+            return "sections-edit";
         }
         academicStructureService.updateAcademicStructure(id, structure);
         return "redirect:/sections";
     }
 
-    @GetMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
     public String deleteStructure(@PathVariable("id") Long id) {
         academicStructureService.deleteAcademicStructure(id);
         return "redirect:/sections";

@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Edit Section')}"></head>
+<body>
+    <th:block th:insert="~{fragments/navbar :: navbar}"></th:block>
+    <section class="section">
+        <div class="container" data-spa-content>
+            <th:block th:replace="~{fragments/forms/section-form :: form}"/>
+        </div>
+    </section>
+</body>
+</html>

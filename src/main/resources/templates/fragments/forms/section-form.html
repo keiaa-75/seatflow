@@ -1,0 +1,84 @@
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="form">
+    <div class="columns is-centered mb-2">
+        <div class="column is-8">
+            <div class="full-width-header">
+                <div class="header-content">
+                    <a href="/sections" data-spa-link>
+                        <i class="fas fa-arrow-left has-text-white header-about-button" style="font-size: 1.5rem;"></i>
+                    </a>
+                    <h1 class="title is-4 has-text-white" style="margin-bottom: 0;">Edit details</h1>
+                    <div style="width: 24px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="columns is-centered">
+        <div class="column is-8">
+            <form id="section-form" th:action="@{/sections/edit/{id}(id=${structure.id})}" method="post" th:object="${structure}">
+                <div class="field">
+                    <label class="label">Grade Level*</label>
+                    <div class="control">
+                        <div class="select is-fullwidth">
+                            <select th:field="*{gradeLevel}" required>
+                                <option value="" disabled>Select grade level</option>
+                                <option th:each="level : ${T(com.xinnsuu.seatflow.model.enums.GradeLevel).values()}"
+                                        th:value="${level}"
+                                        th:text="${level.displayValue}">11</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Strand*</label>
+                    <div class="control">
+                        <div class="select is-fullwidth">
+                            <select th:field="*{strand}" required>
+                                <option value="" disabled>Select strand</option>
+                                <option th:each="strand : ${T(com.xinnsuu.seatflow.model.enums.Strand).values()}"
+                                        th:value="${strand}"
+                                        th:text="${#strings.replace(strand, '_', ' ')}">STEM</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Section Name</label>
+                    <div class="control">
+                        <input type="text" class="input" th:field="*{sectionName}" placeholder="Enter section name...">
+                    </div>
+                </div>
+
+                <div class="field is-grouped is-grouped-centered mt-5">
+                    <div class="control">
+                        <button type="submit" class="button is-primary">Save</button>
+                    </div>
+                    <div class="control">
+                        <button type="button" class="button is-danger" id="delete-section-btn">Delete</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal" id="delete-modal">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Delete Section</p>
+                <button class="delete" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+                <p>Are you sure you want to delete this section? This action cannot be undone.</p>
+            </section>
+            <footer class="modal-card-foot">
+                <form th:action="@{/sections/delete/{id}(id=${structure.id})}" method="post">
+                    <button type="submit" class="button is-danger">Delete</button>
+                </form>
+                <button class="button modal-cancel">Cancel</button>
+            </footer>
+        </div>
+    </div>
+</th:block>
