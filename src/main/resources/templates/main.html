@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/head :: head('About')}"></head>
+<head th:replace="~{fragments/head :: head('Seatflow')}"></head>
 <body>
     <th:block th:insert="~{fragments/navbar :: navbar}"></th:block>
+
     <section class="section">
         <div class="container" data-spa-content>
-            <th:block th:replace="~{fragments/about-content :: content}"/>
+            <th:block th:replace="${content}"/>
         </div>
     </section>
+
+    <th:block th:insert="~{fragments/about-modal :: aboutModal}"></th:block>
 </body>
 </html>
