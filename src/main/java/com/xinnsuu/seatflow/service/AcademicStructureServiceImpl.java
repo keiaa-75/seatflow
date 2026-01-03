@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.xinnsuu.seatflow.model.AcademicStructure;
+import com.xinnsuu.seatflow.model.enums.GradeLevel;
 import com.xinnsuu.seatflow.model.enums.Strand;
 import com.xinnsuu.seatflow.repository.AcademicStructureRepository;
 
@@ -20,6 +21,13 @@ public class AcademicStructureServiceImpl implements AcademicStructureService {
     @Override
     public List<AcademicStructure> getAllSections() {
         return academicStructureRepository.findAll();
+    }
+
+    @Override
+    public List<AcademicStructure> getSectionsByGradeLevel(com.xinnsuu.seatflow.model.enums.GradeLevel gradeLevel) {
+        return academicStructureRepository.findAll().stream()
+                .filter(s -> s.getGradeLevel() == gradeLevel)
+                .collect(Collectors.toList());
     }
 
     @Override

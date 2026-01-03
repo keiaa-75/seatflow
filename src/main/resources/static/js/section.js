@@ -1,31 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const detailsElements = document.querySelectorAll('details.message');
-    detailsElements.forEach(details => {
-        const summary = details.querySelector('summary');
-        const icon = summary.querySelector('.fa-chevron-down, .fa-chevron-up');
-        if (summary && icon) {
-            details.addEventListener('toggle', function() {
-                if (this.open) {
-                    icon.classList.remove('fa-chevron-down');
-                    icon.classList.add('fa-chevron-up');
-                } else {
-                    icon.classList.remove('fa-chevron-up');
-                    icon.classList.add('fa-chevron-down');
-                }
-            });
-        }
-    });
-
-    const tabs = document.querySelectorAll('.tabs li');
-    tabs.forEach(tab => {
-        tab.addEventListener('click', function() {
-            tabs.forEach(t => t.classList.remove('is-active'));
-            this.classList.add('is-active');
-            const grade = this.getAttribute('data-grade');
-            filterByGrade(grade);
-        });
-    });
-
     const searchInput = document.getElementById('section-search');
     if (searchInput) {
         searchInput.addEventListener('input', debounce(function() {
@@ -47,18 +20,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     document.querySelectorAll('.modal .delete, .modal-background, .modal-cancel').forEach(button => {
-        button.addEventListener('click', function() {
-            deleteModal.classList.remove('is-active');
-        });
-    });
-
-    document.addEventListener('click', function(e) {
-        const sectionItem = e.target.closest('.section-item');
-        if (sectionItem) {
-            const sectionId = sectionItem.getAttribute('data-section-id');
-            if (sectionId) {
-                window.location.href = '/sections/edit/' + sectionId;
-            }
+        if (deleteModal) {
+            button.addEventListener('click', function() {
+                deleteModal.classList.remove('is-active');
+            });
         }
     });
 });
@@ -70,21 +35,6 @@ function debounce(func, wait) {
         clearTimeout(timeout);
         timeout = setTimeout(() => func.apply(context, args), wait);
     };
-}
-
-function filterByGrade(grade) {
-    document.querySelectorAll('.message-body .mb-3').forEach(gradeBlock => {
-        if (grade === 'all') {
-            gradeBlock.classList.remove('is-hidden');
-        } else {
-            const blockGrade = gradeBlock.getAttribute('data-grade');
-            if (blockGrade === grade) {
-                gradeBlock.classList.remove('is-hidden');
-            } else {
-                gradeBlock.classList.add('is-hidden');
-            }
-        }
-    });
 }
 
 async function performSearch(query) {
@@ -119,23 +69,14 @@ function renderSearchResults(sections) {
     sections.forEach(section => {
         const grade = section.gradeLevel && section.gradeLevel.displayValue ? section.gradeLevel.displayValue : '';
         const strand = section.strand ? section.strand.replace(/_/g, ' ') : '';
-        html += '<div class="box mb-2 clickable-row section-item" data-section-id="' + section.id + '">';
+        html += '<a class="box mb-2 is-block" href="/sections/edit/' + section.id + '">';
         html += '<div class="is-flex is-justify-content-space-between is-align-items-center">';
         html += '<span class="has-text-weight-medium">' + escapeHtml(section.sectionName) + '</span>';
         html += '<span class="tag is-info is-light">' + escapeHtml(grade) + '</span>';
-        html += '</div></div>';
+        html += '</div></a>';
     });
     html += '</div>';
     container.innerHTML = html;
-
-    document.querySelectorAll('#results-container .clickable-row').forEach(row => {
-        row.addEventListener('click', function() {
-            const sectionId = this.getAttribute('data-section-id');
-            if (sectionId) {
-                window.location.href = '/sections/edit/' + sectionId;
-            }
-        });
-    });
 }
 
 function showDefaultView() {

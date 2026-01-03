@@ -44,7 +44,9 @@ const SpaRouter = (function() {
         currentRoute = path;
 
         try {
-            const response = await fetch(path + '?fragment=true', {
+            const url = new URL(path, window.location.origin);
+            url.searchParams.set('fragment', 'true');
+            const response = await fetch(url.toString(), {
                 headers: { 'X-Requested-With': 'XMLHttpRequest' }
             });
 

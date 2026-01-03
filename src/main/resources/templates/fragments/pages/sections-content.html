@@ -22,14 +22,14 @@
                 </div>
                 <div class="tabs is-toggle is-fullwidth">
                     <ul>
-                        <li class="is-active" data-grade="all">
-                            <a>All</a>
+                        <li th:class="${param.grade == null or param.grade[0] == 'all'} ? 'is-active'">
+                            <a th:href="@{/sections(grade=all)}">All</a>
                         </li>
-                        <li data-grade="ELEVEN">
-                            <a>Grade 11</a>
+                        <li th:class="${param.grade != null and param.grade[0] == 'ELEVEN'} ? 'is-active'">
+                            <a th:href="@{/sections(grade=ELEVEN)}">Grade 11</a>
                         </li>
-                        <li data-grade="TWELVE">
-                            <a>Grade 12</a>
+                        <li th:class="${param.grade != null and param.grade[0] == 'TWELVE'} ? 'is-active'">
+                            <a th:href="@{/sections(grade=TWELVE)}">Grade 12</a>
                         </li>
                     </ul>
                 </div>
@@ -40,38 +40,40 @@
     <div id="sections-view">
         <th:block th:each="strand : ${T(com.xinnsuu.seatflow.model.enums.Strand).values()}">
             <th:block th:with="strandStructures=${structures.?[strand == strand]}">
-                <th:block th:if="${!#lists.isEmpty(strandStructures)}">
-                    <div class="columns is-centered mb-3">
-                        <div class="column is-8">
-                            <details class="message is-primary" style="background-color: #00BCD4; border-radius: 8px;">
-                                <summary class="message-header clickable-row p-3" style="cursor: pointer; border-radius: 8px 8px 0 0; display: flex; justify-content: space-between; align-items: center;">
-                                    <span th:text="${#strings.replace(strand, '_', ' ')}">Strand Name</span>
-                                    <i class="fas fa-chevron-down" style="transition: transform 0.2s;"></i>
-                                </summary>
-                                <div class="message-body p-3" style="border-radius: 0 0 8px 8px;">
+                <div class="columns is-centered mb-3">
+                    <div class="column is-8">
+                        <details class="message is-primary">
+                            <summary class="message-header p-3 clickable-row">
+                                <span th:text="${#strings.replace(strand, '_', ' ')}">Strand Name</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </summary>
+                            <div class="message-body p-3">
+                                <th:block th:if="${#lists.isEmpty(strandStructures)}">
+                                    <div class="has-text-centered has-text-grey">No sections in this strand</div>
+                                </th:block>
+                                <th:block th:if="${!#lists.isEmpty(strandStructures)}">
                                     <th:block th:each="grade : ${T(com.xinnsuu.seatflow.model.enums.GradeLevel).values()}">
                                         <th:block th:with="gradeStructures=${strandStructures.?[gradeLevel == grade]}">
                                             <th:block th:if="${!#lists.isEmpty(gradeStructures)}">
                                                 <div class="mb-3" th:data-grade="${grade}">
-                                                    <p class="is-size-7 has-text-weight-semibold mb-2" style="color: #00BCD4;" th:text="${grade.displayValue}">Grade</p>
-                                                    <th:block th:each="structure : ${gradeStructures}">
-                                                        <div class="box mb-2 clickable-row section-item"
-                                                             th:data-section-id="${structure.id}">
+                                                    <p class="is-size-7 has-text-weight-semibold mb-2" th:text="${grade.displayValue}">Grade</p>
+                                                     <th:block th:each="structure : ${gradeStructures}">
+                                                        <a class="box mb-2 is-block" th:href="@{/sections/edit/{id}(id=${structure.id})}">
                                                             <div class="is-flex is-justify-content-space-between is-align-items-center">
                                                                 <span class="has-text-weight-medium" th:text="${structure.sectionName}">Section Name</span>
                                                                 <span class="tag is-info is-light" th:text="${structure.gradeLevel.displayValue}">11</span>
                                                             </div>
-                                                        </div>
-                                                    </th:block>
+                                                        </a>
+                                                     </th:block>
                                                 </div>
                                             </th:block>
                                         </th:block>
                                     </th:block>
-                                </div>
-                            </details>
-                        </div>
+                                </th:block>
+                            </div>
+                        </details>
                     </div>
-                </th:block>
+                </div>
             </th:block>
         </th:block>
     </div>
@@ -84,7 +86,7 @@
         </div>
     </div>
 
-    <button class="button is-primary add-fab" id="new-section-btn" data-spa-link th:href="@{/sections/new}">
+    <a class="button is-primary add-fab" th:href="@{/sections/new}" data-spa-link>
         <i class="fas fa-plus"></i>
-    </button>
+    </a>
 </th:block>

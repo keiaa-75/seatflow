@@ -7,6 +7,7 @@ import com.xinnsuu.seatflow.model.AcademicStructure;
 
 public interface AcademicStructureService {
     List<AcademicStructure> getAllSections();
+    List<AcademicStructure> getSectionsByGradeLevel(com.xinnsuu.seatflow.model.enums.GradeLevel gradeLevel);
     Optional<AcademicStructure> getSectionById(Long id);
     AcademicStructure createAcademicStructure(AcademicStructure academicStructure);
     AcademicStructure updateAcademicStructure(Long id, AcademicStructure updatedStructure);

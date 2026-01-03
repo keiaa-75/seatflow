@@ -27,20 +27,21 @@ public class AcademicStructureWebController {
     private AcademicStructureService academicStructureService;
 
     @GetMapping
-    public String listStructures(@RequestParam(required = false, defaultValue = "false") Boolean fragment, Model model) {
-        model.addAttribute("structures", academicStructureService.getAllSections());
+    public String listStructures(@RequestParam(required = false) String grade,
+            @RequestParam(required = false, defaultValue = "false") Boolean fragment, Model model) {
+        List<AcademicStructure> structures;
+        if ("ELEVEN".equals(grade)) {
+            structures = academicStructureService.getSectionsByGradeLevel(
+                com.xinnsuu.seatflow.model.enums.GradeLevel.ELEVEN);
+        } else if ("TWELVE".equals(grade)) {
+            structures = academicStructureService.getSectionsByGradeLevel(
+                com.xinnsuu.seatflow.model.enums.GradeLevel.TWELVE);
+        } else {
+            structures = academicStructureService.getAllSections();
+        }
+        model.addAttribute("structures", structures);
         if (fragment) {
             return "fragments/pages/sections-content :: content";
-        }
-        return "sections";
-    }
-
-    @GetMapping("/search")
-    public String searchSections(@RequestParam("q") String query, @RequestParam(required = false, defaultValue = "false") Boolean fragment, Model model) {
-        List<AcademicStructure> results = academicStructureService.searchSections(query);
-        model.addAttribute("results", results);
-        if (fragment) {
-            return "fragments/pages/sections-results :: content";
         }
         return "sections";
     }
