@@ -63,8 +63,13 @@ public class AcademicStructureWebController {
     }
 
     @PostMapping("/new")
-    public String createStructure(@Valid @ModelAttribute("structure") AcademicStructure structure, BindingResult result) {
+    public String createStructure(@Valid @ModelAttribute("structure") AcademicStructure structure, BindingResult result,
+            @RequestParam(required = false, defaultValue = "false") Boolean fragment, Model model) {
         if (result.hasErrors()) {
+            model.addAttribute("structure", structure);
+            if (fragment) {
+                return "fragments/forms/section-form :: form";
+            }
             return "sections-edit";
         }
         academicStructureService.createAcademicStructure(structure);
@@ -84,8 +89,12 @@ public class AcademicStructureWebController {
 
     @PostMapping("/edit/{id}")
     public String updateStructure(@PathVariable("id") Long id, @Valid @ModelAttribute("structure") AcademicStructure structure,
-            BindingResult result) {
+            BindingResult result, @RequestParam(required = false, defaultValue = "false") Boolean fragment, Model model) {
         if (result.hasErrors()) {
+            model.addAttribute("structure", structure);
+            if (fragment) {
+                return "fragments/forms/section-form :: form";
+            }
             return "sections-edit";
         }
         academicStructureService.updateAcademicStructure(id, structure);

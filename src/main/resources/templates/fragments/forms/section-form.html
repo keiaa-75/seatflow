@@ -1,13 +1,9 @@
 <th:block xmlns:th="http://www.thymeleaf.org" th:fragment="form">
-    <div class="columns is-centered mb-2">
+    <div class="columns is-centered mb-4">
         <div class="column is-8">
-            <div class="full-width-header">
-                <div class="header-content">
-                    <a href="/sections" data-spa-link>
-                        <i class="fas fa-arrow-left has-text-white header-about-button" style="font-size: 1.5rem;"></i>
-                    </a>
-                    <h1 class="title is-4 has-text-white" style="margin-bottom: 0;">Edit details</h1>
-                    <div style="width: 24px;"></div>
+            <div class="title-card has-text-white p-5">
+                <div class="is-flex is-justify-content-space-between is-align-items-center">
+                    <h1 class="title is-4 has-text-white" th:text="${structure.id == null ? 'Create Section' : 'Edit details'}">Edit details</h1>
                 </div>
             </div>
         </div>
@@ -15,7 +11,8 @@
 
     <div class="columns is-centered">
         <div class="column is-8">
-            <form id="section-form" th:action="@{/sections/edit/{id}(id=${structure.id})}" method="post" th:object="${structure}">
+            <div class="box">
+                <form id="section-form" th:action="${structure.id == null ? '/sections/new' : '/sections/edit/' + structure.id}" method="post" th:object="${structure}">
                 <div class="field">
                     <label class="label">Grade Level*</label>
                     <div class="control">
@@ -51,15 +48,16 @@
                     </div>
                 </div>
 
-                <div class="field is-grouped is-grouped-centered mt-5">
+                <div class="field is-grouped mt-5">
                     <div class="control">
                         <button type="submit" class="button is-primary">Save</button>
                     </div>
-                    <div class="control">
+                    <div class="control" th:if="${structure.id != null}">
                         <button type="button" class="button is-danger" id="delete-section-btn">Delete</button>
                     </div>
                 </div>
-            </form>
+                </form>
+            </div>
         </div>
     </div>
 

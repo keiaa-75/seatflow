@@ -40,7 +40,7 @@ public class AcademicStructure {
 	@Enumerated(EnumType.STRING)
 	private GradeLevel gradeLevel;
 
-	@NotNull(message = "Grade Level is required")
+	@NotNull(message = "Strand is required")
 	@Enumerated(EnumType.STRING)
 	private Strand strand;
 
