@@ -1,118 +1,135 @@
-## **Implementation Plan**
+## **Implementation Plan: jQuery + Thymeleaf SPA**
 
-### **Phase 1: Backend Foundation** 
-Goal: Update models and core endpoints
+### **Phase 1: SPA Foundation**
+Goal: Setup pushState routing and fragment support
 
-1. Update SeatAssignment model
-   - Add assignmentName field
-   - Add description field (optional)
-   - Add createdAt timestamp
+1. **Create main layout template**
+   - `templates/main.html` with SPA content area
+   - Modify existing templates to use main layout
+   - Update `home.html` and `about.html` for fragment support
 
-2. Update SeatAssignmentController
-   - Modify POST/PUT to accept new fields
-   - Keep existing endpoints working
+2. **Implement jQuery SPA router**
+   - Create `static/js/spa-router.js` with pushState routing
+   - Handle link interception and browser navigation
+   - Add loading states for route transitions
 
-3. Add assignment detail DTO
-   - Create SeatAssignmentDetailDTO with student name, layout info
-   - Add endpoint: GET /api/sections/{sectionId}/assignments/details
+3. **Modify HomeWebController**
+   - Add fragment detection: `@RequestParam String fragment`
+   - Return `fragments/home-content :: content` for AJAX requests
+   - Keep full page returns for direct navigation
 
-4. Test with existing data
-   - Run migrations
-   - Verify API responses
+4. **Update bottom navigation**
+   - Convert navigation links to SPA routing
+   - Maintain active state management
+   - Handle browser history correctly
 
+### **Phase 2: Section Management**
+Goal: Complete section CRUD with SPA
 
-### **Phase 2: Assignment Presets (Backend)**
-Goal: Auto-assignment logic
+1. **Modify AcademicStructureWebController**
+   - Add fragment detection to all methods
+   - Return fragments for AJAX: `fragments/sections :: content`
+   - Return forms: `fragments/forms/section-form :: form`
 
-1. Add preset service
-   - Create AssignmentPresetService
-   - Implement: alphabetical (A-Z), reverse (Z-A), random
+2. **Create section templates**
+   - `fragments/pages/sections-content.html` - Section list
+   - `fragments/forms/section-form.html` - Add/edit form
+   - Include grade level and strand dropdowns
 
-2. Add preset endpoint
-   - POST /api/sections/{sectionId}/assignments/generate
-   - Body: { layoutId, presetType, assignmentName }
-   - Returns: created assignments
+3. **Implement AJAX form handling**
+   - Client-side validation before submission
+   - Handle success/error responses
+   - Update list content without page reload
 
+4. **Add confirmation dialogs**
+   - Delete confirmations with modal
+   - Form change warnings
 
-### **Phase 3: Frontend Core Structure**
-Goal: Basic navigation and section selection
+### **Phase 3: Student Management**
+Goal: Complete student CRUD with CSV import
 
-1. Setup frontend framework (assuming you're using one?)
-   - Configure routing
-   - Setup API client/service layer
+1. **Modify StudentWebController**
+   - Add fragment detection to all methods
+   - Return fragments for list and forms
+   - Handle CSV import via AJAX
 
-2. Implement wireframes 001-002
-   - Section selection screen
-   - Section action menu ("What to do")
-   - Navigation between Home/Manage/About
+2. **Create student templates**
+   - `fragments/pages/students-content.html` - Student list with search
+   - `fragments/forms/student-form.html` - Add/edit form
+   - `fragments/forms/csv-import.html` - CSV upload form
 
-3. API integration
-   - Fetch sections: GET /api/sections
-   - Display with grade level grouping
+3. **Implement student features**
+   - Client-side search/filter
+   - AJAX file upload with progress
+   - Inline error handling
 
+4. **Add validation and notifications**
+   - Client-side form validation
+   - Success/error notifications
+   - CSV import progress feedback
 
+### **Phase 4: Assignments & Layouts**
+Goal: Seat assignment generation and layout management
 
-### **Phase 4: Seat Assignment Flow**
-Goal: Create and view assignments
+1. **Modify SeatAssignmentWebController**
+   - Add fragment support
+   - Handle assignment generation via AJAX
+   - Return assignment grid fragments
 
-1. Implement wireframes 003-004
-   - Layout selection screen
-   - Seat assignment grid (interactive)
-   - Manual seat clicking/assignment
+2. **Modify ClassroomLayoutWebController**
+   - Add fragment support
+   - Layout CRUD operations via AJAX
 
-2. Implement wireframe 006
-   - Assignment list view
-   - View assignment details
+3. **Create assignment templates**
+   - `fragments/pages/assignments-content.html` - Assignment list
+   - `fragments/pages/assignment-grid.html` - Interactive seat grid
+   - `fragments/forms/assignment-form.html` - Create/generate form
+   - `fragments/forms/layout-form.html` - Layout form
 
-3. Connect to preset API
-   - Dropdown for A-Z, Z-A, Random
-   - Call generate endpoint
+4. **Implement assignment features**
+   - Interactive seat grid with jQuery
+   - Assignment generation dropdown (A-Z, Z-A, Random)
+   - Print styling for assignments
 
-4. Add print styling
-   - CSS @media print for clean output
+### **Phase 5: UX Polish & Error Handling**
+Goal: Complete user experience
 
+1. **Global notification system**
+   - Success/error toast notifications
+   - Auto-dismiss after 5 seconds
+   - Stack multiple notifications
 
-### **Phase 5: Student Management**
-Goal: CRUD for students
+2. **Enhanced loading states**
+   - Spinner overlays for AJAX operations
+   - Progress bars for file uploads
+   - Skeleton screens for content loading
 
-1. Implement wireframe 005
-   - Student list with search
-   - Add/Edit/Delete student forms
-   - Client-side name filtering
+3. **Advanced error handling**
+   - Client-side validation
+   - Server-side error display
+   - Network error recovery
+   - Form state preservation
 
-2. Implement wireframe 007
-   - CSV import UI
-   - File upload with validation
-   - Processing states and error handling
+4. **Accessibility and browser support**
+   - Keyboard navigation
+   - Screen reader support
+   - Fallback for JavaScript disabled
 
+### **Phase 6: Testing & Optimization**
+Goal: Production readiness
 
-### **Phase 6: Section Management**
-Goal: Section CRUD
+1. **End-to-end testing**
+   - Test all CRUD operations
+   - Test browser navigation
+   - Test form validation
+   - Test error scenarios
 
-1. Implement wireframe 008
-   - Section edit form
-   - Grade level and strand dropdowns
-   - Save/Delete actions
+2. **Performance optimization**
+   - Minimize DOM manipulations
+   - Optimize AJAX calls
+   - Cache frequently used data
 
-2. Add section creation
-   - "New Section" button from wireframe 001
-   - Same form as edit
-
-
-### **Phase 7: Polish & Testing**
-Goal: UX refinements
-
-1. Confirmation dialogs
-   - Delete confirmations
-   - Reset confirmations
-
-2. Success/Error toasts
-   - Task successful messages
-   - Error handling
-
-3. Loading states
-   - Spinners for async operations
-
-4. End-to-end testing
-   - Test full workflows
-   - Fix bugs
+3. **Final polish**
+   - Smooth transitions
+   - Responsive design verification
+   - Cross-browser compatibility
