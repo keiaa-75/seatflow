@@ -1,0 +1,11 @@
+The wireframe for @.plan/wireframes/007.png depicts a simple, focused interface for editing section details. 
+
+At the top, the header reads “Edit details,” accompanied by a back arrow for navigation. Below this, there are three input fields:
+
+1. Grade Level*: A dropdown menu allowing users to select the appropriate grade level. (Required, see ENUM in the model)
+2. Strand*: Another dropdown menu for selecting the academic strand. (Required, see ENUM in the model)
+3. Section Name: A text input field with placeholder text “Enter section name…” for users to type in the desired section name.
+
+Beneath these fields, two action buttons are positioned side by side:
+- Save: A standard button to confirm and save changes.
+- Delete: A button highlighted with a pinkish hue, indicating a destructive action to remove the section.

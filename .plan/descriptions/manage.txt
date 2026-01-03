@@ -1,0 +1,5 @@
+This is a clean, intuitive interface for selecting a section. At the top, there’s a header labeled “Select a section,” accompanied by a back arrow for navigation. Below this, a search bar with a magnifying glass icon allows users to quickly find sections. 
+
+Under the search bar, is A SEPARATE FRAGMENT (not a page, more of a component). There are two distinct buttons (tabs) labeled “Grade 11” and “Grade 12” provide quick access to grade-specific sections. Beneath these buttons, four expandable categories (accordions) are listed: “Accountancy and Business Management,” “Humanities and Social Sciences,”, “Science, Technology, Engineering, and Math…” and "Technical Vocational Livelihood." Each category has a dropdown arrow indicating that more options can be revealed.
+
+Search should be dynamic. Meaning, the showed details should change as per keystroke entered by the user. On search event, the above view fragment should be replaced by ANOTHER FRAGMENT (COMPONENT) which is a simple list of all possible matches.
