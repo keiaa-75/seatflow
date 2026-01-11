@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.xinnsuu.seatflow.model.ClassroomLayout;
 import com.xinnsuu.seatflow.service.ClassroomLayoutService;
@@ -22,14 +23,20 @@ public class ClassroomLayoutWebController {
     private ClassroomLayoutService classroomLayoutService;
 
     @GetMapping
-    public String listLayouts(Model model) {
+    public String listLayouts(@RequestParam(required = false, defaultValue = "false") Boolean fragment, Model model) {
         model.addAttribute("layouts", classroomLayoutService.getAllLayouts());
+        if (fragment) {
+            return "fragments/pages/layouts-content :: content";
+        }
         return "classroom-layouts";
     }
 
     @GetMapping("/new")
-    public String showCreateForm(Model model) {
+    public String showCreateForm(@RequestParam(required = false, defaultValue = "false") Boolean fragment, Model model) {
         model.addAttribute("layout", new ClassroomLayout());
+        if (fragment) {
+            return "fragments/forms/layout-form :: form";
+        }
         return "classroom-layout-form";
     }
 
@@ -43,10 +50,14 @@ public class ClassroomLayoutWebController {
     }
 
     @GetMapping("/edit/{id}")
-    public String showUpdateForm(@PathVariable("id") Long id, Model model) {
+    public String showUpdateForm(@PathVariable("id") Long id, 
+            @RequestParam(required = false, defaultValue = "false") Boolean fragment, Model model) {
         ClassroomLayout layout = classroomLayoutService.getLayoutById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid layout Id:" + id));
         model.addAttribute("layout", layout);
+        if (fragment) {
+            return "fragments/forms/layout-form :: form";
+        }
         return "classroom-layout-form";
     }
 

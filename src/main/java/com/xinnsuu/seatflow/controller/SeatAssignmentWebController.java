@@ -33,20 +33,28 @@ public class SeatAssignmentWebController {
     private ClassroomLayoutService classroomLayoutService;
 
     @GetMapping
-    public String listAssignments(@RequestParam(name = "sectionId", required = false) Long sectionId, Model model) {
+    public String listAssignments(@RequestParam(name = "sectionId", required = false) Long sectionId, 
+            @RequestParam(required = false, defaultValue = "false") Boolean fragment, Model model) {
         model.addAttribute("sections", academicStructureService.getAllSections());
         if (sectionId != null) {
             model.addAttribute("assignments", seatAssignmentService.getAssignmentsBySectionId(sectionId));
+        }
+        if (fragment) {
+            return "fragments/pages/assignments-content :: content";
         }
         return "seat-assignments";
     }
 
     @GetMapping("/new")
-    public String showCreateForm(@RequestParam("sectionId") Long sectionId, Model model) {
+    public String showCreateForm(@RequestParam("sectionId") Long sectionId, 
+            @RequestParam(required = false, defaultValue = "false") Boolean fragment, Model model) {
         model.addAttribute("assignment", new SeatAssignment());
         model.addAttribute("sectionId", sectionId);
         model.addAttribute("students", studentService.getStudentsBySectionId(sectionId));
         model.addAttribute("layouts", classroomLayoutService.getAllLayouts());
+        if (fragment) {
+            return "fragments/forms/assignment-form :: form";
+        }
         return "seat-assignment-form";
     }
 
@@ -63,13 +71,17 @@ public class SeatAssignmentWebController {
     }
 
     @GetMapping("/edit/{id}")
-    public String showUpdateForm(@PathVariable("id") Long id, @RequestParam("sectionId") Long sectionId, Model model) {
+    public String showUpdateForm(@PathVariable("id") Long id, @RequestParam("sectionId") Long sectionId,
+            @RequestParam(required = false, defaultValue = "false") Boolean fragment, Model model) {
         SeatAssignment assignment = seatAssignmentService.getAssignmentByIdAndSectionId(id, sectionId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid assignment Id:" + id));
         model.addAttribute("assignment", assignment);
         model.addAttribute("sectionId", sectionId);
         model.addAttribute("students", studentService.getStudentsBySectionId(sectionId));
         model.addAttribute("layouts", classroomLayoutService.getAllLayouts());
+        if (fragment) {
+            return "fragments/forms/assignment-form :: form";
+        }
         return "seat-assignment-form";
     }
 
