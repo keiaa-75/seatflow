@@ -101,17 +101,17 @@
     <!-- JavaScript -->
     <script>
         function showDeleteConfirm() {
-            document.getElementById('delete-modal').classList.add('is-active');
+            $('#delete-modal').addClass('is-active');
         }
 
         function hideDeleteConfirm() {
-            document.getElementById('delete-modal').classList.remove('is-active');
+            $('#delete-modal').removeClass('is-active');
         }
 
         function confirmDelete() {
-            const studentId = document.getElementById('studentId').value;
+            const studentId = $('#studentId').val();
             const sectionId = /*[[${sectionId}]]*/ null;
-            
+
             fetch(`/sections/${sectionId}/students/${studentId}`, {
                 method: 'DELETE',
                 headers: {
@@ -131,11 +131,9 @@
             });
         }
 
-        // Handle success messages
         function showSuccessNotification(message) {
-            const overlay = document.createElement('div');
-            overlay.className = 'success-overlay';
-            overlay.innerHTML = `
+            const $overlay = $('<div class="success-overlay"></div>');
+            $overlay.html(`
                 <div class="success-notification">
                     <div class="success-header">
                         <h2 class="success-title">Task successful!</h2>
@@ -143,37 +141,31 @@
                     </div>
                     <p class="success-message">${message}</p>
                 </div>
-            `;
-            
-            document.body.appendChild(overlay);
-            
-            // Auto-dismiss after 3 seconds
+            `);
+
+            $('body').append($overlay);
+
             setTimeout(() => {
                 hideSuccessNotification();
             }, 3000);
         }
 
         function hideSuccessNotification() {
-            const overlay = document.querySelector('.success-overlay');
-            if (overlay) {
-                overlay.style.opacity = '0';
+            const $overlay = $('.success-overlay');
+            if ($overlay.length) {
+                $overlay.css('opacity', '0');
                 setTimeout(() => {
-                    overlay.remove();
+                    $overlay.remove();
                 }, 200);
             }
         }
 
-        // Show success message if redirected with success
-        const urlParams = new URLSearchParams(window.location.search);
         const successMsg = /*[[${successMessage}]]*/ null;
         if (successMsg) {
             showSuccessNotification(successMsg);
         }
 
-        // Handle form submission
-        document.getElementById('student-form').addEventListener('submit', function(e) {
-            // For SPA, let the form submit normally
-            // Success will be handled on redirect
+        $('#student-form').on('submit', function(e) {
         });
     </script>
 </th:block>

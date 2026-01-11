@@ -63,7 +63,7 @@
 
     <!-- Success Message Check -->
     <script th:if="${successMessage != null}">
-        document.addEventListener('DOMContentLoaded', function() {
+        $(document).ready(function() {
             showSuccessNotification(/*[[${successMessage}]]*/);
         });
     </script>
@@ -71,9 +71,8 @@
     <!-- Success Notification Function -->
     <script>
         function showSuccessNotification(message) {
-            const overlay = document.createElement('div');
-            overlay.className = 'success-overlay';
-            overlay.innerHTML = `
+            const $overlay = $('<div class="success-overlay"></div>');
+            $overlay.html(`
                 <div class="success-notification">
                     <div class="success-header">
                         <h2 class="success-title">Task successful!</h2>
@@ -81,69 +80,65 @@
                     </div>
                     <p class="success-message">${message}</p>
                 </div>
-            `;
-            
-            document.body.appendChild(overlay);
-            
-            // Auto-dismiss after 3 seconds
+            `);
+
+            $('body').append($overlay);
+
             setTimeout(() => {
                 hideSuccessNotification();
             }, 3000);
         }
 
         function hideSuccessNotification() {
-            const overlay = document.querySelector('.success-overlay');
-            if (overlay) {
-                overlay.style.opacity = '0';
+            const $overlay = $('.success-overlay');
+            if ($overlay.length) {
+                $overlay.css('opacity', '0');
                 setTimeout(() => {
-                    overlay.remove();
-                },200);
+                    $overlay.remove();
+                }, 200);
             }
         }
     </script>
 
     <!-- Student List JavaScript -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const searchInput = document.getElementById('student-search');
-            const studentsView = document.getElementById('students-view');
-            const studentsList = document.getElementById('students-list');
-            const searchResults = document.getElementById('search-results');
-            const searchResultsContainer = document.getElementById('search-results-container');
+        $(document).ready(function() {
+            const $searchInput = $('#student-search');
+            const $studentsView = $('#students-view');
+            const $studentsList = $('#students-list');
+            const $searchResults = $('#search-results');
+            const $searchResultsContainer = $('#search-results-container');
 
-            // Student data for client-side search
-            const students = Array.from(document.querySelectorAll('#students-list a')).map(link => ({
-                element: link,
-                name: link.querySelector('.has-text-weight-medium').textContent,
-                id: link.querySelector('.tag').textContent
-            }));
+            const students = $('#students-list a').map(function() {
+                const $link = $(this);
+                return {
+                    element: $link,
+                    name: $link.find('.has-text-weight-medium').text(),
+                    id: $link.find('.tag').text()
+                };
+            }).get();
 
-            searchInput.addEventListener('input', debounce(function() {
-                const query = searchInput.value.toLowerCase().trim();
-                
+            $searchInput.on('input', debounce(function() {
+                const query = $(this).val().toLowerCase().trim();
+
                 if (query === '') {
-                    // Show original list
-                    studentsList.classList.remove('is-hidden');
-                    searchResults.classList.add('is-hidden');
+                    $studentsList.removeClass('is-hidden');
+                    $searchResults.addClass('is-hidden');
                 } else {
-                    // Filter and show search results
-                    const filteredStudents = students.filter(student => 
-                        student.name.toLowerCase().includes(query) || 
+                    const filteredStudents = students.filter(student =>
+                        student.name.toLowerCase().includes(query) ||
                         student.id.toLowerCase().includes(query)
                     );
 
-                    // Hide original list, show results
-                    studentsList.classList.add('is-hidden');
-                    searchResults.classList.remove('is-hidden');
+                    $studentsList.addClass('is-hidden');
+                    $searchResults.removeClass('is-hidden');
 
-                    // Build search results HTML
-                    searchResultsContainer.innerHTML = filteredStudents.length > 0 
-                        ? filteredStudents.map(student => student.element.outerHTML).join('')
-                        : '<div class="has-text-centered has-text-grey py-5">No students found matching your search.</div>';
+                    $searchResultsContainer.html(filteredStudents.length > 0
+                        ? filteredStudents.map(student => student.element.prop('outerHTML')).join('')
+                        : '<div class="has-text-centered has-text-grey py-5">No students found matching your search.</div>');
                 }
             }, 300));
 
-            // Debounce function
             function debounce(func, wait) {
                 let timeout;
                 return function executedFunction(...args) {
