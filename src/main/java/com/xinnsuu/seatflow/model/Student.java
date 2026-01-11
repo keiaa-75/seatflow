@@ -53,4 +53,21 @@ public class Student {
     @ManyToOne
     @JoinColumn(name = "section_id")
     private AcademicStructure academicStructure;
+    
+    public String getFullName() {
+        StringBuilder fullName = new StringBuilder();
+        if (firstName != null && !firstName.trim().isEmpty()) {
+            fullName.append(firstName.trim());
+        }
+        if (middleName != null && !middleName.trim().isEmpty()) {
+            fullName.append(" ").append(middleName.trim());
+        }
+        if (lastName != null && !lastName.trim().isEmpty()) {
+            fullName.append(" ").append(lastName.trim());
+        }
+        if (suffix != null && !suffix.trim().isEmpty()) {
+            fullName.append(" ").append(suffix.trim());
+        }
+        return fullName.toString().trim();
+    }
 }

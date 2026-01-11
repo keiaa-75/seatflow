@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.xinnsuu.seatflow.model.Student;
 import com.xinnsuu.seatflow.service.AcademicStructureService;
@@ -26,52 +29,90 @@ public class StudentWebController {
     private AcademicStructureService academicStructureService;
 
     @GetMapping
-    public String listStudents(@PathVariable Long sectionId, Model model) {
+    public String listStudents(@PathVariable Long sectionId, 
+            @RequestParam(required = false, defaultValue = "false") Boolean fragment, Model model) {
         model.addAttribute("students", studentService.getStudentsBySectionId(sectionId));
         model.addAttribute("sectionId", sectionId);
+        if (fragment) {
+            return "fragments/pages/students-content :: content";
+        }
         return "students";
     }
 
     @GetMapping("/new")
-    public String showCreateForm(@PathVariable Long sectionId, Model model) {
+    public String showCreateForm(@PathVariable Long sectionId, 
+            @RequestParam(required = false, defaultValue = "false") Boolean fragment, Model model) {
         model.addAttribute("student", new Student());
         model.addAttribute("structures", academicStructureService.getAllSections());
         model.addAttribute("sectionId", sectionId);
+        if (fragment) {
+            return "fragments/forms/student-form :: content";
+        }
         return "student-form";
     }
 
     @PostMapping("/new")
-    public String createStudent(@PathVariable Long sectionId, @Valid @ModelAttribute("student") Student student, BindingResult result) {
+    public String createStudent(@PathVariable Long sectionId, @Valid @ModelAttribute("student") Student student, 
+            BindingResult result, RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             return "student-form";
         }
         studentService.createStudent(sectionId, student);
+        redirectAttributes.addFlashAttribute("successMessage", "Student details have been saved.");
         return "redirect:/sections/" + sectionId + "/students";
     }
 
     @GetMapping("/edit/{id}")
-    public String showUpdateForm(@PathVariable Long sectionId, @PathVariable String id, Model model) {
+    public String showUpdateForm(@PathVariable Long sectionId, @PathVariable String id,
+            @RequestParam(required = false, defaultValue = "false") Boolean fragment, Model model) {
         Student student = studentService.getStudentById(sectionId, id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid student Id:" + id));
         model.addAttribute("student", student);
         model.addAttribute("structures", academicStructureService.getAllSections());
         model.addAttribute("sectionId", sectionId);
+        if (fragment) {
+            return "fragments/forms/student-form :: content";
+        }
         return "student-form";
     }
 
     @PostMapping("/edit/{id}")
     public String updateStudent(@PathVariable Long sectionId, @PathVariable String id, @Valid @ModelAttribute("student") Student student,
-            BindingResult result) {
+            BindingResult result, RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             return "student-form";
         }
         studentService.updateStudent(sectionId, id, student);
+        redirectAttributes.addFlashAttribute("successMessage", "Student details have been saved.");
         return "redirect:/sections/" + sectionId + "/students";
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteStudent(@PathVariable Long sectionId, @PathVariable String id) {
+    public String deleteStudent(@PathVariable Long sectionId, @PathVariable String id, RedirectAttributes redirectAttributes) {
         studentService.deleteStudent(sectionId, id);
+        redirectAttributes.addFlashAttribute("successMessage", "Student deleted successfully.");
+        return "redirect:/sections/" + sectionId + "/students";
+    }
+
+    @GetMapping("/import")
+    public String showImportForm(@PathVariable Long sectionId, 
+            @RequestParam(required = false, defaultValue = "false") Boolean fragment, Model model) {
+        model.addAttribute("sectionId", sectionId);
+        if (fragment) {
+            return "fragments/forms/students-import :: content";
+        }
+        return "students-import";
+    }
+
+    @PostMapping("/import")
+    public String importStudents(@PathVariable Long sectionId, @RequestParam("file") MultipartFile file, 
+            RedirectAttributes redirectAttributes) {
+        try {
+            studentService.importStudentsFromCsv(sectionId, file);
+            redirectAttributes.addFlashAttribute("successMessage", "Students imported successfully.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error importing students: " + e.getMessage());
+        }
         return "redirect:/sections/" + sectionId + "/students";
     }
 }

@@ -1,0 +1,166 @@
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="content">
+    <!-- Sticky Header -->
+    <div class="full-width-header section-header">
+        <div class="header-content">
+            <a th:href="@{/sections/{sectionId}/students(sectionId=${sectionId})}" class="back-arrow" data-spa-link>
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <h1 class="title is-5 has-text-white" th:text="${student.studentId != null ? 'Edit Details' : 'New Student'}">Edit Details</h1>
+        </div>
+    </div>
+
+    <!-- Content Area -->
+    <div class="section-detail-container">
+        <!-- Form -->
+        <div class="box">
+            <form th:action="@{/sections/{sectionId}/students/new(sectionId=${sectionId})}" 
+                  th:object="${student}" method="post" id="student-form">
+                
+                <!-- Student ID -->
+                <div class="field">
+                    <label class="label">Student ID *</label>
+                    <div class="control">
+                        <input type="text" class="input" th:field="*{studentId}" 
+                               th:readonly="${student.studentId != null}" required>
+                    </div>
+                    <p th:if="${#fields.hasErrors('studentId')}" 
+                       th:errors="*{studentId}" class="help is-danger"></p>
+                </div>
+
+                <!-- First Name -->
+                <div class="field">
+                    <label class="label">First Name *</label>
+                    <div class="control">
+                        <input type="text" class="input" th:field="*{firstName}" required>
+                    </div>
+                    <p th:if="${#fields.hasErrors('firstName')}" 
+                       th:errors="*{firstName}" class="help is-danger"></p>
+                </div>
+
+                <!-- Middle Name -->
+                <div class="field">
+                    <label class="label">Middle Name</label>
+                    <div class="control">
+                        <input type="text" class="input" th:field="*{middleName}">
+                    </div>
+                    <p th:if="${#fields.hasErrors('middleName')}" 
+                       th:errors="*{middleName}" class="help is-danger"></p>
+                </div>
+
+                <!-- Last Name -->
+                <div class="field">
+                    <label class="label">Last Name *</label>
+                    <div class="control">
+                        <input type="text" class="input" th:field="*{lastName}" required>
+                    </div>
+                    <p th:if="${#fields.hasErrors('lastName')}" 
+                       th:errors="*{lastName}" class="help is-danger"></p>
+                </div>
+
+                <!-- Suffix -->
+                <div class="field">
+                    <label class="label">Suffix</label>
+                    <div class="control">
+                        <input type="text" class="input" th:field="*{suffix}">
+                    </div>
+                    <p th:if="${#fields.hasErrors('suffix')}" 
+                       th:errors="*{suffix}" class="help is-danger"></p>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="field is-grouped mt-5">
+                    <div class="control">
+                        <button type="submit" class="button is-primary">Save</button>
+                    </div>
+                    <div class="control" th:if="${student.studentId != null}">
+                        <button type="button" class="button is-danger" 
+                                onclick="showDeleteConfirm()">Delete</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal" id="delete-modal">
+        <div class="modal-background" onclick="hideDeleteConfirm()"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Confirm</p>
+            </header>
+            <section class="modal-card-body">
+                Would you like to delete this student entry permanently?
+            </section>
+            <footer class="modal-card-foot">
+                <button class="button is-primary" onclick="confirmDelete()">Yes</button>
+                <button class="button" onclick="hideDeleteConfirm()">No</button>
+            </footer>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        function showDeleteConfirm() {
+            document.getElementById('delete-modal').classList.add('is-active');
+        }
+
+        function hideDeleteConfirm() {
+            document.getElementById('delete-modal').classList.remove('is-active');
+        }
+
+        function confirmDelete() {
+            // Create a hidden form for delete
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = document.getElementById('student-form').action.replace('/new', '/delete/' + document.getElementById('studentId').value);
+            
+            document.body.appendChild(form);
+            form.submit();
+        }
+
+        // Handle success messages
+        function showSuccessNotification(message) {
+            const overlay = document.createElement('div');
+            overlay.className = 'success-overlay';
+            overlay.innerHTML = `
+                <div class="success-notification">
+                    <div class="success-header">
+                        <h2 class="success-title">Task successful!</h2>
+                        <button class="success-dismiss" onclick="hideSuccessNotification()">&times;</button>
+                    </div>
+                    <p class="success-message">${message}</p>
+                </div>
+            `;
+            
+            document.body.appendChild(overlay);
+            
+            // Auto-dismiss after 3 seconds
+            setTimeout(() => {
+                hideSuccessNotification();
+            }, 3000);
+        }
+
+        function hideSuccessNotification() {
+            const overlay = document.querySelector('.success-overlay');
+            if (overlay) {
+                overlay.style.opacity = '0';
+                setTimeout(() => {
+                    overlay.remove();
+                }, 200);
+            }
+        }
+
+        // Show success message if redirected with success
+        const urlParams = new URLSearchParams(window.location.search);
+        const successMsg = /*[[${successMessage}]]*/ null;
+        if (successMsg) {
+            showSuccessNotification(successMsg);
+        }
+
+        // Handle form submission
+        document.getElementById('student-form').addEventListener('submit', function(e) {
+            // For SPA, let the form submit normally
+            // Success will be handled on redirect
+        });
+    </script>
+</th:block>

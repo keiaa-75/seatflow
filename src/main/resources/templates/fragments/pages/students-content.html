@@ -1,0 +1,169 @@
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="content">
+    <!-- Sticky Header -->
+    <div class="full-width-header section-header">
+        <div class="header-content">
+            <a th:href="@{/sections/{id}(id=${sectionId})}" class="back-arrow" data-spa-link>
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <h1 class="title is-5 has-text-white">What to do</h1>
+        </div>
+    </div>
+
+    <!-- Content Area -->
+    <div class="section-detail-container">
+        <!-- Title Card -->
+        <div class="title-card has-text-white p-5 mb-4">
+            <h1 class="title is-4 has-text-white">Manage Student Entries</h1>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="box mb-4">
+            <div class="field has-addons mb-4">
+                <div class="control is-expanded">
+                    <input type="text" class="input" id="student-search" placeholder="Search students...">
+                </div>
+                <div class="control">
+                    <button class="button is-primary">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Students List -->
+        <div id="students-view">
+            <div class="box">
+                <div id="students-list">
+                    <th:block th:if="${#lists.isEmpty(students)}">
+                        <div class="has-text-centered has-text-grey py-5">
+                            No students found. Add your first student to get started.
+                        </div>
+                    </th:block>
+                    
+                    <th:block th:if="${!#lists.isEmpty(students)}">
+                        <th:block th:each="student : ${students}">
+                            <a th:href="@{/sections/{sectionId}/students/edit/{id}(sectionId=${sectionId}, id=${student.studentId})}" 
+                               class="box mb-3 is-block" data-spa-link>
+                                <div class="is-flex is-justify-content-space-between is-align-items-center">
+                                    <div>
+                                        <span class="has-text-weight-medium" th:text="${student.fullName}">John Doe</span>
+                                    </div>
+                                    <div>
+                                        <span class="tag is-info is-light" th:text="${student.studentId}">20230001</span>
+                                    </div>
+                                </div>
+                            </a>
+                        </th:block>
+                    </th:block>
+                </div>
+
+                <!-- Search Results (Hidden by default) -->
+                <div id="search-results" class="is-hidden">
+                    <div id="search-results-container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Action Button -->
+    <a th:href="@{/sections/{sectionId}/students/new(sectionId=${sectionId})}" class="add-fab" data-spa-link>
+        <i class="fas fa-plus"></i>
+    </a>
+
+    <!-- Success Message Check -->
+    <script th:if="${successMessage != null}">
+        document.addEventListener('DOMContentLoaded', function() {
+            showSuccessNotification(/*[[${successMessage}]]*/);
+        });
+    </script>
+
+    <!-- Success Notification Function -->
+    <script>
+        function showSuccessNotification(message) {
+            const overlay = document.createElement('div');
+            overlay.className = 'success-overlay';
+            overlay.innerHTML = `
+                <div class="success-notification">
+                    <div class="success-header">
+                        <h2 class="success-title">Task successful!</h2>
+                        <button class="success-dismiss" onclick="hideSuccessNotification()">&times;</button>
+                    </div>
+                    <p class="success-message">${message}</p>
+                </div>
+            `;
+            
+            document.body.appendChild(overlay);
+            
+            // Auto-dismiss after 3 seconds
+            setTimeout(() => {
+                hideSuccessNotification();
+            }, 3000);
+        }
+
+        function hideSuccessNotification() {
+            const overlay = document.querySelector('.success-overlay');
+            if (overlay) {
+                overlay.style.opacity = '0';
+                setTimeout(() => {
+                    overlay.remove();
+                },200);
+            }
+        }
+    </script>
+
+    <!-- Student List JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('student-search');
+            const studentsView = document.getElementById('students-view');
+            const studentsList = document.getElementById('students-list');
+            const searchResults = document.getElementById('search-results');
+            const searchResultsContainer = document.getElementById('search-results-container');
+
+            // Student data for client-side search
+            const students = Array.from(document.querySelectorAll('#students-list a')).map(link => ({
+                element: link,
+                name: link.querySelector('.has-text-weight-medium').textContent,
+                id: link.querySelector('.tag').textContent
+            }));
+
+            searchInput.addEventListener('input', debounce(function() {
+                const query = searchInput.value.toLowerCase().trim();
+                
+                if (query === '') {
+                    // Show original list
+                    studentsList.classList.remove('is-hidden');
+                    searchResults.classList.add('is-hidden');
+                } else {
+                    // Filter and show search results
+                    const filteredStudents = students.filter(student => 
+                        student.name.toLowerCase().includes(query) || 
+                        student.id.toLowerCase().includes(query)
+                    );
+
+                    // Hide original list, show results
+                    studentsList.classList.add('is-hidden');
+                    searchResults.classList.remove('is-hidden');
+
+                    // Build search results HTML
+                    searchResultsContainer.innerHTML = filteredStudents.length > 0 
+                        ? filteredStudents.map(student => student.element.outerHTML).join('')
+                        : '<div class="has-text-centered has-text-grey py-5">No students found matching your search.</div>';
+                }
+            }, 300));
+
+            // Debounce function
+            function debounce(func, wait) {
+                let timeout;
+                return function executedFunction(...args) {
+                    const later = () => {
+                        clearTimeout(timeout);
+                        func(...args);
+                    };
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                };
+            }
+        });
+    </script>
+</th:block>

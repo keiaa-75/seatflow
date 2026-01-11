@@ -473,3 +473,75 @@ details[open] summary i.fa-chevron-down {
 .section-detail-container .box {
     margin-bottom: 1.5rem;
 }
+
+/* Success Notification System */
+.success-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 1;
+    transition: opacity 0.2s ease;
+}
+
+.success-notification {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    max-width: 400px;
+    padding: 2rem;
+    position: relative;
+    animation: slideIn 0.3s ease;
+}
+
+.success-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.success-title {
+    color: #333;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.success-dismiss {
+    background: none;
+    border: none;
+    color: #666;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    transition: color 0.2s ease;
+}
+
+.success-dismiss:hover {
+    color: #333;
+}
+
+.success-message {
+    color: #666;
+    font-size: 1rem;
+    margin: 0;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
