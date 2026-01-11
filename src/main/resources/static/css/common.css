@@ -390,3 +390,86 @@ details[open] > summary ~ * {
 details[open] summary i.fa-chevron-down {
     transform: rotate(180deg);
 }
+
+.section-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background-color: #00BCD4;
+    margin-bottom: 0;
+}
+
+.section-header .header-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.back-arrow {
+    color: white;
+    font-size: 1.2rem;
+    padding: 0.5rem;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+}
+
+.back-arrow:hover {
+    opacity: 0.8;
+    color: white;
+}
+
+.section-subtitle {
+    font-size: 0.875rem;
+    color: #666;
+    margin-bottom: 0.75rem;
+    font-weight: 500;
+}
+
+.section-main-card {
+    margin-bottom: 1.5rem;
+}
+
+.section-main-card .title {
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.section-strand-badge {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+.section-divider {
+    margin: 1.5rem 0;
+    background-color: #e0e0e0;
+    border: none;
+    height: 1px;
+}
+
+.action-card {
+    background-color: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #333;
+    text-decoration: none;
+    display: block;
+}
+
+.action-card:hover {
+    background-color: #f8f9fa;
+    border-color: #00BCD4;
+}
+
+.section-detail-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 1.5rem 1rem;
+}
+
+.section-detail-container .box {
+    margin-bottom: 1.5rem;
+}

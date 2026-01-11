@@ -77,6 +77,26 @@ public class AcademicStructureWebController {
         return "redirect:/sections";
     }
 
+    @GetMapping("/{id}")
+    public String showSectionDetail(@PathVariable("id") Long id, 
+            @RequestParam(required = false, defaultValue = "false") Boolean fragment, Model model) {
+        AcademicStructure section = academicStructureService.getSectionById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid section Id:" + id));
+        
+        // Get counts for dashboard
+        int studentCount = academicStructureService.getStudentCountBySection(id);
+        int assignmentCount = academicStructureService.getAssignmentCountBySection(id);
+        
+        model.addAttribute("section", section);
+        model.addAttribute("studentCount", studentCount);
+        model.addAttribute("assignmentCount", assignmentCount);
+        
+        if (fragment) {
+            return "fragments/pages/section-detail-content :: content";
+        }
+        return "section-detail";
+    }
+
     @GetMapping("/edit/{id}")
     public String showUpdateForm(@PathVariable("id") Long id, @RequestParam(required = false, defaultValue = "false") Boolean fragment, Model model) {
         AcademicStructure structure = academicStructureService.getSectionById(id)

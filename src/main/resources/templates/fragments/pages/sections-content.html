@@ -55,14 +55,14 @@
                                     <th:block th:if="${!#lists.isEmpty(gradeEntry.value)}">
                                         <div class="mb-3" th:data-grade="${gradeEntry.key}">
                                             <p class="is-size-7 has-text-weight-semibold mb-2" th:text="${gradeEntry.key.displayValue}">Grade</p>
-                                            <th:block th:each="structure : ${gradeEntry.value}">
-                                                <a class="box mb-2 is-block" th:href="@{/sections/edit/{id}(id=${structure.id})}">
-                                                    <div class="is-flex is-justify-content-space-between is-align-items-center">
-                                                        <span class="has-text-weight-medium" th:text="${structure.sectionName}">Section Name</span>
-                                                        <span class="tag is-info is-light" th:text="${structure.gradeLevel.displayValue}">11</span>
-                                                    </div>
-                                                </a>
-                                            </th:block>
+                                                     <th:block th:each="structure : ${gradeEntry.value}">
+                                                        <a class="box mb-2 is-block" th:href="@{/sections/{id}(id=${structure.id})}" data-spa-link>
+                                                            <div class="is-flex is-justify-content-space-between is-align-items-center">
+                                                                <span class="has-text-weight-medium" th:text="${structure.sectionName}">Section Name</span>
+                                                                <span class="tag is-info is-light" th:text="${structure.gradeLevel.displayValue}">11</span>
+                                                            </div>
+                                                        </a>
+                                                     </th:block>
                                         </div>
                                     </th:block>
                                 </th:block>

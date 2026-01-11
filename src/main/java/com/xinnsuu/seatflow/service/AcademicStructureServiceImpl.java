@@ -123,4 +123,18 @@ public class AcademicStructureServiceImpl implements AcademicStructureService {
 
         return result;
     }
+
+    @Override
+    public int getStudentCountBySection(Long sectionId) {
+        return academicStructureRepository.findById(sectionId)
+                .map(section -> section.getStudents() != null ? section.getStudents().size() : 0)
+                .orElse(0);
+    }
+
+    @Override
+    public int getAssignmentCountBySection(Long sectionId) {
+        return academicStructureRepository.findById(sectionId)
+                .map(section -> section.getSeatAssignments() != null ? section.getSeatAssignments().size() : 0)
+                .orElse(0);
+    }
 }

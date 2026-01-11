@@ -17,4 +17,6 @@ public interface AcademicStructureService {
     List<AcademicStructure> filterByStrand(List<AcademicStructure> structures, com.xinnsuu.seatflow.model.enums.Strand strand);
     List<SectionGroupByStrand> getSectionsGroupedByStrand();
     List<SectionGroupByStrand> getSectionsGroupedByStrandAndGradeLevel(com.xinnsuu.seatflow.model.enums.GradeLevel gradeLevel);
+    int getStudentCountBySection(Long sectionId);
+    int getAssignmentCountBySection(Long sectionId);
 }
