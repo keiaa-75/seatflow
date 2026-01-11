@@ -1,32 +1,22 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const aboutButton = document.getElementById('aboutButton');
-    const aboutModal = document.getElementById('aboutModal');
-    const htmlElement = document.documentElement;
+$(document).ready(function() {
+    const $aboutModal = $('#aboutModal');
+    const $htmlElement = $('html');
 
-    if (aboutButton && aboutModal) {
-        aboutButton.addEventListener('click', function() {
-            aboutModal.classList.add('is-active');
-            htmlElement.classList.add('is-modal-active');
-        });
-    }
-    
-    const modalCloseButtons = document.querySelectorAll('.modal .delete, .modal-background');
-    modalCloseButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            if (aboutModal) {
-                aboutModal.classList.remove('is-active');
-                htmlElement.classList.remove('is-modal-active');
-            }
-        });
+    $('#aboutButton').on('click', function() {
+        $aboutModal.addClass('is-active');
+        $htmlElement.addClass('is-modal-active');
+    });
+
+    $('.modal .delete, .modal-background').on('click', function() {
+        $aboutModal.removeClass('is-active');
+        $htmlElement.removeClass('is-modal-active');
     });
 });
 
 function closeAboutModal() {
-    const aboutModal = document.getElementById('aboutModal');
-    const htmlElement = document.documentElement;
-    
-    if (aboutModal) {
-        aboutModal.classList.remove('is-active');
-        htmlElement.classList.remove('is-modal-active');
-    }
+    const $aboutModal = $('#aboutModal');
+    const $htmlElement = $('html');
+
+    $aboutModal.removeClass('is-active');
+    $htmlElement.removeClass('is-modal-active');
 }

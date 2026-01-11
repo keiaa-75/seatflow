@@ -1,8 +1,10 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.getElementById('section-search');
-    if (searchInput) {
-        searchInput.addEventListener('input', debounce(function() {
-            const query = this.value.trim();
+$(document).ready(function() {
+    const $searchInput = $('#section-search');
+    const $deleteModal = $('#delete-modal');
+
+    if ($searchInput.length) {
+        $searchInput.on('input', debounce(function() {
+            const query = $(this).val().trim();
             if (query.length > 0) {
                 performSearch(query);
             } else {
@@ -11,20 +13,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 300));
     }
 
-    const deleteModal = document.getElementById('delete-modal');
-    const deleteBtn = document.getElementById('delete-section-btn');
-    if (deleteBtn && deleteModal) {
-        deleteBtn.addEventListener('click', function() {
-            deleteModal.classList.add('is-active');
-        });
-    }
+    $('#delete-section-btn').on('click', function() {
+        $deleteModal.addClass('is-active');
+    });
 
-    document.querySelectorAll('.modal .delete, .modal-background, .modal-cancel').forEach(button => {
-        if (deleteModal) {
-            button.addEventListener('click', function() {
-                deleteModal.classList.remove('is-active');
-            });
-        }
+    $('.modal .delete, .modal-background, .modal-cancel').on('click', function() {
+        $deleteModal.removeClass('is-active');
     });
 });
 
@@ -53,15 +47,15 @@ async function performSearch(query) {
 }
 
 function renderSearchResults(sections) {
-    const container = document.getElementById('results-container');
-    const view = document.getElementById('sections-view');
-    const results = document.getElementById('sections-results');
+    const $container = $('#results-container');
+    const $view = $('#sections-view');
+    const $results = $('#sections-results');
 
-    view.classList.add('is-hidden');
-    results.classList.remove('is-hidden');
+    $view.addClass('is-hidden');
+    $results.removeClass('is-hidden');
 
     if (sections.length === 0) {
-        container.innerHTML = '<div class="box has-text-centered"><p class="has-text-grey">No sections found.</p></div>';
+        $container.html('<div class="box has-text-centered"><p class="has-text-grey">No sections found.</p></div>');
         return;
     }
 
@@ -76,16 +70,14 @@ function renderSearchResults(sections) {
         html += '</div></a>';
     });
     html += '</div>';
-    container.innerHTML = html;
+    $container.html(html);
 }
 
 function showDefaultView() {
-    document.getElementById('sections-results').classList.add('is-hidden');
-    document.getElementById('sections-view').classList.remove('is-hidden');
+    $('#sections-results').addClass('is-hidden');
+    $('#sections-view').removeClass('is-hidden');
 }
 
 function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
+    return $('<div>').text(text).html();
 }
