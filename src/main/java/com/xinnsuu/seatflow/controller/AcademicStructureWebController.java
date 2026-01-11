@@ -2,6 +2,7 @@ package com.xinnsuu.seatflow.controller;
 
 import java.util.List;
 
+import com.xinnsuu.seatflow.dto.SectionGroupByStrand;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -29,17 +30,17 @@ public class AcademicStructureWebController {
     @GetMapping
     public String listStructures(@RequestParam(required = false) String grade,
             @RequestParam(required = false, defaultValue = "false") Boolean fragment, Model model) {
-        List<AcademicStructure> structures;
+        List<SectionGroupByStrand> groupedSections;
         if ("ELEVEN".equals(grade)) {
-            structures = academicStructureService.getSectionsByGradeLevel(
+            groupedSections = academicStructureService.getSectionsGroupedByStrandAndGradeLevel(
                 com.xinnsuu.seatflow.model.enums.GradeLevel.ELEVEN);
         } else if ("TWELVE".equals(grade)) {
-            structures = academicStructureService.getSectionsByGradeLevel(
+            groupedSections = academicStructureService.getSectionsGroupedByStrandAndGradeLevel(
                 com.xinnsuu.seatflow.model.enums.GradeLevel.TWELVE);
         } else {
-            structures = academicStructureService.getAllSections();
+            groupedSections = academicStructureService.getSectionsGroupedByStrand();
         }
-        model.addAttribute("structures", structures);
+        model.addAttribute("groupedSections", groupedSections);
         if (fragment) {
             return "fragments/pages/sections-content :: content";
         }

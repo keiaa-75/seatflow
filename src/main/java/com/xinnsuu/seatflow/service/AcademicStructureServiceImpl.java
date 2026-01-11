@@ -1,12 +1,15 @@
 package com.xinnsuu.seatflow.service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.xinnsuu.seatflow.dto.SectionGroupByStrand;
 import com.xinnsuu.seatflow.model.AcademicStructure;
 import com.xinnsuu.seatflow.model.enums.GradeLevel;
 import com.xinnsuu.seatflow.model.enums.Strand;
@@ -80,5 +83,44 @@ public class AcademicStructureServiceImpl implements AcademicStructureService {
         return structures.stream()
                 .filter(s -> s.getStrand() == strand)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<SectionGroupByStrand> getSectionsGroupedByStrand() {
+        List<AcademicStructure> allSections = academicStructureRepository.findAll();
+        Map<Strand, List<AcademicStructure>> groupedByStrand = allSections.stream()
+                .collect(Collectors.groupingBy(AcademicStructure::getStrand));
+
+        List<SectionGroupByStrand> result = new ArrayList<>();
+        for (Strand strand : Strand.values()) {
+            List<AcademicStructure> strandSections = groupedByStrand.getOrDefault(strand, new ArrayList<>());
+            Map<GradeLevel, List<AcademicStructure>> groupedByGrade = strandSections.stream()
+                    .collect(Collectors.groupingBy(AcademicStructure::getGradeLevel));
+
+            result.add(new SectionGroupByStrand(strand, groupedByGrade));
+        }
+
+        return result;
+    }
+
+    @Override
+    public List<SectionGroupByStrand> getSectionsGroupedByStrandAndGradeLevel(GradeLevel gradeLevel) {
+        List<AcademicStructure> filteredSections = academicStructureRepository.findAll().stream()
+                .filter(s -> s.getGradeLevel() == gradeLevel)
+                .collect(Collectors.toList());
+
+        Map<Strand, List<AcademicStructure>> groupedByStrand = filteredSections.stream()
+                .collect(Collectors.groupingBy(AcademicStructure::getStrand));
+
+        List<SectionGroupByStrand> result = new ArrayList<>();
+        for (Strand strand : Strand.values()) {
+            List<AcademicStructure> strandSections = groupedByStrand.getOrDefault(strand, new ArrayList<>());
+            Map<GradeLevel, List<AcademicStructure>> groupedByGrade = strandSections.stream()
+                    .collect(Collectors.groupingBy(AcademicStructure::getGradeLevel));
+
+            result.add(new SectionGroupByStrand(strand, groupedByGrade));
+        }
+
+        return result;
     }
 }

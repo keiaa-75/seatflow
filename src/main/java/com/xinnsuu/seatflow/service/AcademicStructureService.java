@@ -3,6 +3,7 @@ package com.xinnsuu.seatflow.service;
 import java.util.List;
 import java.util.Optional;
 
+import com.xinnsuu.seatflow.dto.SectionGroupByStrand;
 import com.xinnsuu.seatflow.model.AcademicStructure;
 
 public interface AcademicStructureService {
@@ -14,4 +15,6 @@ public interface AcademicStructureService {
     void deleteAcademicStructure(Long id);
     List<AcademicStructure> searchSections(String query);
     List<AcademicStructure> filterByStrand(List<AcademicStructure> structures, com.xinnsuu.seatflow.model.enums.Strand strand);
+    List<SectionGroupByStrand> getSectionsGroupedByStrand();
+    List<SectionGroupByStrand> getSectionsGroupedByStrandAndGradeLevel(com.xinnsuu.seatflow.model.enums.GradeLevel gradeLevel);
 }
