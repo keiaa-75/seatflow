@@ -7,8 +7,22 @@ const SpaRouter = (function() {
     function init() {
         document.addEventListener('click', handleLinkClick);
         window.addEventListener('popstate', handlePopState);
-        document.addEventListener('DOMContentLoaded', function() {
+        observeNav();
+    }
+
+    function observeNav() {
+        const observer = new MutationObserver(function() {
             updateActiveNav(window.location.pathname);
+        });
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const nav = document.querySelector('[data-spa-link]');
+            if (nav) {
+                updateActiveNav(window.location.pathname);
+            } else {
+                const body = document.querySelector('body');
+                observer.observe(body, { childList: true, subtree: true });
+            }
         });
     }
 

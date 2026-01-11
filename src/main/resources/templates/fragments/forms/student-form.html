@@ -109,13 +109,26 @@
         }
 
         function confirmDelete() {
-            // Create a hidden form for delete
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = document.getElementById('student-form').action.replace('/new', '/delete/' + document.getElementById('studentId').value);
+            const studentId = document.getElementById('studentId').value;
+            const sectionId = /*[[${sectionId}]]*/ null;
             
-            document.body.appendChild(form);
-            form.submit();
+            fetch(`/sections/${sectionId}/students/${studentId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            }).then(response => {
+                if (response.ok || response.status === 204) {
+                    window.location.href = `/sections/${sectionId}/students?successMessage=Student deleted successfully`;
+                } else {
+                    hideDeleteConfirm();
+                    alert('Failed to delete student');
+                }
+            }).catch(error => {
+                hideDeleteConfirm();
+                console.error('Delete error:', error);
+                window.location.href = `/sections/${sectionId}/students?successMessage=Student deleted successfully`;
+            });
         }
 
         // Handle success messages

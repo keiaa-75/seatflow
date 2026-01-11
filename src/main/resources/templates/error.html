@@ -4,76 +4,78 @@
 <body>
     <th:block th:insert="~{fragments/header :: header('Error')}"></th:block>
     
-    <section class="section">
-        <div class="container">
-            <div class="columns is-centered">
-                <div class="column is-6">
-                    <div class="box has-text-centered">
-                        <div class="is-size-1 mb-4" style="color: #dc3545;">
-                            <i class="fas fa-exclamation-triangle"></i>
-                        </div>
-                        <h1 class="title is-2" th:text="${error}?: 'An error occurred'">An error occurred</h1>
-                        <p class="subtitle is-5">Something went wrong, but we're working on fixing it.</p>
-                        
-                        <div class="mt-6">
-                            <div class="buttons is-centered">
-                                <a href="/" class="button is-primary is-medium">
-                                    <span class="icon">
-                                        <i class="fas fa-home"></i>
-                                    </span>
-                                    <span>Go Home</span>
-                                </a>
-                                <button class="button is-light is-medium" onclick="window.history.back();">
-                                    <span class="icon">
-                                        <i class="fas fa-arrow-left"></i>
-                                    </span>
-                                    <span>Go Back</span>
-                                </button>
+    <div data-spa-content>
+        <section class="section">
+            <div class="container">
+                <div class="columns is-centered">
+                    <div class="column is-6">
+                        <div class="box has-text-centered">
+                            <div class="is-size-1 mb-4" style="color: #dc3545;">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <h1 class="title is-2" th:text="${error}?: 'An error occurred'">An error occurred</h1>
+                            <p class="subtitle is-5">Something went wrong, but we're working on fixing it.</p>
+                            
+                            <div class="mt-6">
+                                <div class="buttons is-centered">
+                                    <a href="/" class="button is-primary is-medium" data-spa-link>
+                                        <span class="icon">
+                                            <i class="fas fa-home"></i>
+                                        </span>
+                                        <span>Go Home</span>
+                                    </a>
+                                    <button class="button is-light is-medium" onclick="window.history.back();">
+                                        <span class="icon">
+                                            <i class="fas fa-arrow-left"></i>
+                                        </span>
+                                        <span>Go Back</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Repository promotion section -->
-    <section class="section">
-        <div class="container">
-            <div class="columns is-centered">
-                <div class="column is-6">
-                    <div class="card">
-                        <header class="card-header">
-                            <h3 class="card-header-title">Check out these projects</h3>
-                        </header>
-                        <div class="card-content">
-                            <div class="content">
-                                <div class="media">
-                                    <div class="media-content">
-                                        <p class="title is-6 mb-5">safepoint</p>
-                                        <p class="subtitle is-6">A simple web application for reporting bullying incidents.</p>
+        <!-- Repository promotion section -->
+        <section class="section">
+            <div class="container">
+                <div class="columns is-centered">
+                    <div class="column is-6">
+                        <div class="card">
+                            <header class="card-header">
+                                <h3 class="card-header-title">Check out these projects</h3>
+                            </header>
+                            <div class="card-content">
+                                <div class="content">
+                                    <div class="media">
+                                        <div class="media-content">
+                                            <p class="title is-6 mb-5">safepoint</p>
+                                            <p class="subtitle is-6">A simple web application for reporting bullying incidents.</p>
+                                        </div>
+                                        <div class="media-right">
+                                            <a href="https://github.com/keiaa-75/safepoint" class="button is-small is-link is-outlined">
+                                                <span class="icon">
+                                                    <i class="fab fa-github"></i>
+                                                </span>
+                                                <span>GitHub</span>
+                                            </a>
+                                        </div>
                                     </div>
-                                    <div class="media-right">
-                                        <a href="https://github.com/keiaa-75/safepoint" class="button is-small is-link is-outlined">
-                                            <span class="icon">
-                                                <i class="fab fa-github"></i>
-                                            </span>
-                                            <span>GitHub</span>
-                                        </a>
-                                    </div>
-                                </div>
-                                <div class="media">
-                                    <div class="media-content">
-                                        <p class="title is-6 mb-5">inquestia</p>
-                                        <p class="subtitle is-6">A survey platform built to bridge the gap between researchers and participants.</p>
-                                    </div>
-                                    <div class="media-right">
-                                        <a href="https://github.com/kalachuuchiiii/inquestia" class="button is-small is-link is-outlined">
-                                            <span class="icon">
-                                                <i class="fab fa-github"></i>
-                                            </span>
-                                            <span>GitHub</span>
-                                        </a>
+                                    <div class="media">
+                                        <div class="media-content">
+                                            <p class="title is-6 mb-5">inquestia</p>
+                                            <p class="subtitle is-6">A survey platform built to bridge the gap between researchers and participants.</p>
+                                        </div>
+                                        <div class="media-right">
+                                            <a href="https://github.com/kalachuuchiiii/inquestia" class="button is-small is-link is-outlined">
+                                                <span class="icon">
+                                                    <i class="fab fa-github"></i>
+                                                </span>
+                                                <span>GitHub</span>
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -81,8 +83,8 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+    </div>
 
     <th:block th:insert="~{fragments/navbar :: navbar}"></th:block>
     <th:block th:insert="~{fragments/about-modal :: aboutModal}"></th:block>

@@ -5,17 +5,12 @@
             <a th:href="@{/sections/{id}(id=${sectionId})}" class="back-arrow" data-spa-link>
                 <i class="fas fa-arrow-left"></i>
             </a>
-            <h1 class="title is-5 has-text-white">What to do</h1>
+            <h1 class="title is-5 has-text-white">Manage Student Entries</h1>
         </div>
     </div>
 
     <!-- Content Area -->
     <div class="section-detail-container">
-        <!-- Title Card -->
-        <div class="title-card has-text-white p-5 mb-4">
-            <h1 class="title is-4 has-text-white">Manage Student Entries</h1>
-        </div>
-
         <!-- Search Bar -->
         <div class="box mb-4">
             <div class="field has-addons mb-4">
@@ -32,35 +27,31 @@
 
         <!-- Students List -->
         <div id="students-view">
-            <div class="box">
-                <div id="students-list">
-                    <th:block th:if="${#lists.isEmpty(students)}">
-                        <div class="has-text-centered has-text-grey py-5">
-                            No students found. Add your first student to get started.
-                        </div>
+            <div id="students-list">
+                <th:block th:if="${#lists.isEmpty(students)}">
+                    <div class="has-text-centered has-text-grey py-5">
+                        No students found. Add your first student to get started.
+                    </div>
+                </th:block>
+                
+                <th:block th:if="${!#lists.isEmpty(students)}">
+                    <th:block th:each="student : ${students}">
+                        <a th:href="@{/sections/{sectionId}/students/edit/{id}(sectionId=${sectionId}, id=${student.studentId})}" 
+                           class="box mb-3 is-block" data-spa-link>
+                            <div>
+                                <span class="has-text-weight-medium" th:text="${student.fullName}">John Doe</span>
+                            </div>
+                            <div>
+                                <span class="tag is-info is-light" th:text="${student.studentId}">20230001</span>
+                            </div>
+                        </a>
                     </th:block>
-                    
-                    <th:block th:if="${!#lists.isEmpty(students)}">
-                        <th:block th:each="student : ${students}">
-                            <a th:href="@{/sections/{sectionId}/students/edit/{id}(sectionId=${sectionId}, id=${student.studentId})}" 
-                               class="box mb-3 is-block" data-spa-link>
-                                <div class="is-flex is-justify-content-space-between is-align-items-center">
-                                    <div>
-                                        <span class="has-text-weight-medium" th:text="${student.fullName}">John Doe</span>
-                                    </div>
-                                    <div>
-                                        <span class="tag is-info is-light" th:text="${student.studentId}">20230001</span>
-                                    </div>
-                                </div>
-                            </a>
-                        </th:block>
-                    </th:block>
-                </div>
+                </th:block>
+            </div>
 
-                <!-- Search Results (Hidden by default) -->
-                <div id="search-results" class="is-hidden">
-                    <div id="search-results-container"></div>
-                </div>
+            <!-- Search Results (Hidden by default) -->
+            <div id="search-results" class="is-hidden">
+                <div id="search-results-container"></div>
             </div>
         </div>
     </div>
