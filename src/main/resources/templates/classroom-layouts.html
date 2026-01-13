@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Select Layout')}"></head>
+<body>
+    <th:block th:insert="~{fragments/navbar :: navbar}"></th:block>
+    <section class="section">
+        <div class="container">
+            <div th:insert="~{fragments/notifications :: notifications}"></div>
+            
+            <!-- Layout Selection Header -->
+            <div class="columns is-centered mb-4">
+                <div class="column is-8">
+                    <div class="title-card has-text-white p-5">
+                        <h1 class="title is-4 has-text-white">Select layout</h1>
+                        <p class="subtitle is-6 has-text-white mb-0" th:if="${section != null}" 
+                           th:text="'For ' + ${section.gradeLevel.displayValue} + ' - ' + ${section.sectionName}">For Grade 11 - Section A</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="columns is-centered mb-4">
+                <div class="column is-8">
+                    <div class="box">
+                        <div class="field has-addons">
+                            <div class="control is-expanded">
+                                <input type="text" class="input" id="layout-search" placeholder="Search layouts...">
+                            </div>
+                            <div class="control">
+                                <a class="button is-primary">
+                                    <i class="fas fa-search"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Layout List -->
+            <div class="columns is-centered">
+                <div class="column is-8">
+                    <th:block th:if="${#lists.isEmpty(layouts)}">
+                        <div class="box has-text-centered has-text-grey">
+                            <p>No layouts available</p>
+                            <p class="is-size-7">Create your first layout to get started</p>
+                        </div>
+                    </th:block>
+                    
+                    <th:block th:if="${!#lists.isEmpty(layouts)}">
+                        <th:block th:each="layout : ${layouts}">
+                            <a class="box mb-3 is-block layout-item" th:href="@{/sections/{id}/assignments/assign(id=${sectionId}, layoutId=${layout.id})}">
+                                <div class="is-flex is-justify-content-space-between is-align-items-center">
+                                    <div>
+                                        <p class="has-text-weight-medium" th:text="${layout.name}">Layout Name</p>
+                                        <p class="is-size-7 has-text-grey" th:text="${layout.rows + ' by ' + layout.columns}">Dimensions</p>
+                                    </div>
+                                    <div class="tags has-addons">
+                                        <span class="tag is-light" th:text="${layout.rows}">5</span>
+                                        <span class="tag is-primary">×</span>
+                                        <span class="tag is-light" th:text="${layout.columns}">5</span>
+                                    </div>
+                                </div>
+                            </a>
+                        </th:block>
+                    </th:block>
+                </div>
+            </div>
+
+            <!-- Add New Layout Button -->
+            <a class="button is-primary add-fab" th:href="@{/layouts/new(sectionId=${sectionId})}">
+                <i class="fas fa-plus"></i>
+            </a>
+        </div>
+    </section>
+
+    <script>
+        // Simple search functionality
+        document.getElementById('layout-search').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const layoutItems = document.querySelectorAll('.layout-item');
+            
+            layoutItems.forEach(item => {
+                const layoutName = item.querySelector('p').textContent.toLowerCase();
+                if (layoutName.includes(searchTerm)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

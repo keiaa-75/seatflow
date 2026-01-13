@@ -42,11 +42,20 @@ public class SeatAssignmentWebController {
     }
 
     @GetMapping("/new")
-    public String showCreateForm(@RequestParam("sectionId") Long sectionId, Model model) {
+    public String showLayoutSelection(@RequestParam("sectionId") Long sectionId, Model model) {
+        model.addAttribute("sectionId", sectionId);
+        model.addAttribute("layouts", classroomLayoutService.getAllLayouts());
+        return "classroom-layouts";
+    }
+
+    @GetMapping("/new/assign")
+    public String showCreateForm(@RequestParam("sectionId") Long sectionId, 
+                                @RequestParam("layoutId") Long layoutId, Model model) {
         model.addAttribute("assignment", new SeatAssignment());
         model.addAttribute("sectionId", sectionId);
+        model.addAttribute("layoutId", layoutId);
+        model.addAttribute("layout", classroomLayoutService.getLayoutById(layoutId).orElse(null));
         model.addAttribute("students", studentService.getStudentsBySectionId(sectionId));
-        model.addAttribute("layouts", classroomLayoutService.getAllLayouts());
         return "seat-assignment-form";
     }
 

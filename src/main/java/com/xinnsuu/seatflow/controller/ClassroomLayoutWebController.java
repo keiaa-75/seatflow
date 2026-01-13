@@ -28,18 +28,32 @@ public class ClassroomLayoutWebController {
         return "classroom-layouts";
     }
 
+    @GetMapping("/select")
+    public String selectLayout(Model model) {
+        model.addAttribute("layouts", classroomLayoutService.getAllLayouts());
+        return "classroom-layouts";
+    }
+
     @GetMapping("/new")
-    public String showCreateForm(Model model) {
+    public String showCreateForm(@RequestParam(name = "sectionId", required = false) Long sectionId, Model model) {
         model.addAttribute("layout", new ClassroomLayout());
+        model.addAttribute("sectionId", sectionId);
         return "classroom-layout-form";
     }
 
     @PostMapping("/new")
-    public String createLayout(@Valid @ModelAttribute("layout") ClassroomLayout layout, BindingResult result) {
+    public String createLayout(@Valid @ModelAttribute("layout") ClassroomLayout layout, 
+                              @RequestParam(name = "sectionId", required = false) Long sectionId,
+                              BindingResult result, Model model) {
         if (result.hasErrors()) {
+            model.addAttribute("sectionId", sectionId);
             return "classroom-layout-form";
         }
         classroomLayoutService.createLayout(layout);
+        
+        if (sectionId != null) {
+            return "redirect:/sections/" + sectionId + "/assignments/new";
+        }
         return "redirect:/layouts";
     }
 

@@ -3,6 +3,7 @@ package com.xinnsuu.seatflow.controller;
 import java.util.List;
 
 import com.xinnsuu.seatflow.dto.SectionGroupByStrand;
+import com.xinnsuu.seatflow.service.ClassroomLayoutService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,9 @@ public class AcademicStructureWebController {
 
     @Autowired
     private AcademicStructureService academicStructureService;
+
+    @Autowired
+    private ClassroomLayoutService classroomLayoutService;
 
     @GetMapping
     public String listStructures(@RequestParam(required = false) String grade, Model model) {
@@ -105,5 +109,30 @@ public class AcademicStructureWebController {
     public String deleteStructure(@PathVariable("id") Long id) {
         academicStructureService.deleteAcademicStructure(id);
         return "redirect:/sections";
+    }
+
+    // Assignment routes for sections
+    @GetMapping("/{id}/assignments/new")
+    public String showLayoutSelection(@PathVariable("id") Long id, Model model) {
+        AcademicStructure section = academicStructureService.getSectionById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid section Id:" + id));
+        
+        model.addAttribute("section", section);
+        model.addAttribute("sectionId", id);
+        model.addAttribute("layouts", classroomLayoutService.getAllLayouts());
+        return "classroom-layouts";
+    }
+
+    @GetMapping("/{id}/assignments/assign")
+    public String showAssignmentForm(@PathVariable("id") Long id, 
+                                   @RequestParam("layoutId") Long layoutId, Model model) {
+        AcademicStructure section = academicStructureService.getSectionById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid section Id:" + id));
+        
+        model.addAttribute("section", section);
+        model.addAttribute("sectionId", id);
+        model.addAttribute("layoutId", layoutId);
+        model.addAttribute("layout", classroomLayoutService.getLayoutById(layoutId).orElse(null));
+        return "seat-assignment-form";
     }
 }
