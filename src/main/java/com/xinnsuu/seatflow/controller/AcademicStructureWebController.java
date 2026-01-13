@@ -125,14 +125,13 @@ public class AcademicStructureWebController {
 
     @GetMapping("/{id}/assignments/assign")
     public String showAssignmentForm(@PathVariable("id") Long id, 
-                                   @RequestParam("layoutId") Long layoutId, Model model) {
+                                   @RequestParam("layoutType") String layoutType, Model model) {
         AcademicStructure section = academicStructureService.getSectionById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid section Id:" + id));
         
         model.addAttribute("section", section);
         model.addAttribute("sectionId", id);
-        model.addAttribute("layoutId", layoutId);
-        model.addAttribute("layout", classroomLayoutService.getLayoutById(layoutId).orElse(null));
+        model.addAttribute("layoutType", layoutType);
         return "seat-assignment-form";
     }
 }
