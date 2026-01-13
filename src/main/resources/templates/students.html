@@ -3,7 +3,8 @@
 <head th:replace="~{fragments/head :: head('Manage Student Entries')}"></head>
 <body>
     <th:block th:insert="~{fragments/navbar :: navbar}"></th:block>
-    <div data-spa-content>
+    <div>
+        <div th:insert="~{fragments/notifications :: notifications}"></div>
         <th:block th:replace="~{fragments/pages/students-content :: content}"/>
     </div>
 </body>

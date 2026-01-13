@@ -28,8 +28,7 @@ public class AcademicStructureWebController {
     private AcademicStructureService academicStructureService;
 
     @GetMapping
-    public String listStructures(@RequestParam(required = false) String grade,
-            @RequestParam(required = false, defaultValue = "false") Boolean fragment, Model model) {
+    public String listStructures(@RequestParam(required = false) String grade, Model model) {
         List<SectionGroupByStrand> groupedSections;
         if ("ELEVEN".equals(grade)) {
             groupedSections = academicStructureService.getSectionsGroupedByStrandAndGradeLevel(
@@ -41,9 +40,6 @@ public class AcademicStructureWebController {
             groupedSections = academicStructureService.getSectionsGroupedByStrand();
         }
         model.addAttribute("groupedSections", groupedSections);
-        if (fragment) {
-            return "fragments/pages/sections-content :: content";
-        }
         return "sections";
     }
 
@@ -55,22 +51,15 @@ public class AcademicStructureWebController {
     }
 
     @GetMapping("/new")
-    public String showCreateForm(@RequestParam(required = false, defaultValue = "false") Boolean fragment, Model model) {
+    public String showCreateForm(Model model) {
         model.addAttribute("structure", new AcademicStructure());
-        if (fragment) {
-            return "fragments/forms/section-form :: form";
-        }
         return "sections-edit";
     }
 
     @PostMapping("/new")
-    public String createStructure(@Valid @ModelAttribute("structure") AcademicStructure structure, BindingResult result,
-            @RequestParam(required = false, defaultValue = "false") Boolean fragment, Model model) {
+    public String createStructure(@Valid @ModelAttribute("structure") AcademicStructure structure, BindingResult result, Model model) {
         if (result.hasErrors()) {
             model.addAttribute("structure", structure);
-            if (fragment) {
-                return "fragments/forms/section-form :: form";
-            }
             return "sections-edit";
         }
         academicStructureService.createAcademicStructure(structure);
@@ -78,8 +67,7 @@ public class AcademicStructureWebController {
     }
 
     @GetMapping("/{id}")
-    public String showSectionDetail(@PathVariable("id") Long id, 
-            @RequestParam(required = false, defaultValue = "false") Boolean fragment, Model model) {
+    public String showSectionDetail(@PathVariable("id") Long id, Model model) {
         AcademicStructure section = academicStructureService.getSectionById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid section Id:" + id));
         
@@ -91,31 +79,22 @@ public class AcademicStructureWebController {
         model.addAttribute("studentCount", studentCount);
         model.addAttribute("assignmentCount", assignmentCount);
         
-        if (fragment) {
-            return "fragments/pages/section-detail-content :: content";
-        }
         return "section-detail";
     }
 
     @GetMapping("/edit/{id}")
-    public String showUpdateForm(@PathVariable("id") Long id, @RequestParam(required = false, defaultValue = "false") Boolean fragment, Model model) {
+    public String showUpdateForm(@PathVariable("id") Long id, Model model) {
         AcademicStructure structure = academicStructureService.getSectionById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid structure Id:" + id));
         model.addAttribute("structure", structure);
-        if (fragment) {
-            return "fragments/forms/section-form :: form";
-        }
         return "sections-edit";
     }
 
     @PostMapping("/edit/{id}")
     public String updateStructure(@PathVariable("id") Long id, @Valid @ModelAttribute("structure") AcademicStructure structure,
-            BindingResult result, @RequestParam(required = false, defaultValue = "false") Boolean fragment, Model model) {
+            BindingResult result, Model model) {
         if (result.hasErrors()) {
             model.addAttribute("structure", structure);
-            if (fragment) {
-                return "fragments/forms/section-form :: form";
-            }
             return "sections-edit";
         }
         academicStructureService.updateAcademicStructure(id, structure);

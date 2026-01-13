@@ -29,25 +29,17 @@ public class StudentWebController {
     private AcademicStructureService academicStructureService;
 
     @GetMapping
-    public String listStudents(@PathVariable Long sectionId, 
-            @RequestParam(required = false, defaultValue = "false") Boolean fragment, Model model) {
+    public String listStudents(@PathVariable Long sectionId, Model model) {
         model.addAttribute("students", studentService.getStudentsBySectionId(sectionId));
         model.addAttribute("sectionId", sectionId);
-        if (fragment) {
-            return "fragments/pages/students-content :: content";
-        }
         return "students";
     }
 
     @GetMapping("/new")
-    public String showCreateForm(@PathVariable Long sectionId, 
-            @RequestParam(required = false, defaultValue = "false") Boolean fragment, Model model) {
+    public String showCreateForm(@PathVariable Long sectionId, Model model) {
         model.addAttribute("student", new Student());
         model.addAttribute("structures", academicStructureService.getAllSections());
         model.addAttribute("sectionId", sectionId);
-        if (fragment) {
-            return "fragments/forms/student-form :: content";
-        }
         return "student-form";
     }
 
@@ -63,16 +55,12 @@ public class StudentWebController {
     }
 
     @GetMapping("/edit/{id}")
-    public String showUpdateForm(@PathVariable Long sectionId, @PathVariable String id,
-            @RequestParam(required = false, defaultValue = "false") Boolean fragment, Model model) {
+    public String showUpdateForm(@PathVariable Long sectionId, @PathVariable String id, Model model) {
         Student student = studentService.getStudentById(sectionId, id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid student Id:" + id));
         model.addAttribute("student", student);
         model.addAttribute("structures", academicStructureService.getAllSections());
         model.addAttribute("sectionId", sectionId);
-        if (fragment) {
-            return "fragments/forms/student-form :: content";
-        }
         return "student-form";
     }
 
@@ -95,12 +83,8 @@ public class StudentWebController {
     }
 
     @GetMapping("/import")
-    public String showImportForm(@PathVariable Long sectionId, 
-            @RequestParam(required = false, defaultValue = "false") Boolean fragment, Model model) {
+    public String showImportForm(@PathVariable Long sectionId, Model model) {
         model.addAttribute("sectionId", sectionId);
-        if (fragment) {
-            return "fragments/forms/students-import :: content";
-        }
         return "students-import";
     }
 

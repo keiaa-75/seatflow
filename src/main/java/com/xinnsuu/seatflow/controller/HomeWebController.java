@@ -8,18 +8,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class HomeWebController {
 
     @GetMapping("/")
-    public String home(@RequestParam(required = false, defaultValue = "false") Boolean fragment) {
-        if (fragment) {
-            return "fragments/home-content :: content";
-        }
+    public String home() {
         return "home";
     }
 
     @GetMapping("/about")
-    public String about(@RequestParam(required = false, defaultValue = "false") Boolean fragment) {
-        if (fragment) {
-            return "fragments/about-content :: content";
-        }
+    public String about() {
         return "about";
     }
 

@@ -1,0 +1,25 @@
+<div xmlns:th="http://www.thymeleaf.org" th:fragment="notifications" class="notification-container">
+    <!-- Success Messages -->
+    <div th:if="${successMessage}" class="notification is-success">
+        <button class="delete" onclick="this.parentElement.remove()"></button>
+        <span th:text="${successMessage}">Success message</span>
+    </div>
+    
+    <!-- Error Messages -->
+    <div th:if="${errorMessage}" class="notification is-danger">
+        <button class="delete" onclick="this.parentElement.remove()"></button>
+        <span th:text="${errorMessage}">Error message</span>
+    </div>
+    
+    <!-- Warning Messages -->
+    <div th:if="${warningMessage}" class="notification is-warning">
+        <button class="delete" onclick="this.parentElement.remove()"></button>
+        <span th:text="${warningMessage}">Warning message</span>
+    </div>
+    
+    <!-- Info Messages -->
+    <div th:if="${infoMessage}" class="notification is-info">
+        <button class="delete" onclick="this.parentElement.remove()"></button>
+        <span th:text="${infoMessage}">Info message</span>
+    </div>
+</div>

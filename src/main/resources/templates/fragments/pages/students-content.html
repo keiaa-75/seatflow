@@ -2,7 +2,7 @@
     <!-- Sticky Header -->
     <div class="full-width-header section-header">
         <div class="header-content">
-            <a th:href="@{/sections/{id}(id=${sectionId})}" class="back-arrow" data-spa-link>
+            <a th:href="@{/sections/{id}(id=${sectionId})}" class="back-arrow">
                 <i class="fas fa-arrow-left"></i>
             </a>
             <h1 class="title is-5 has-text-white">Manage Student Entries</h1>
@@ -37,7 +37,7 @@
                 <th:block th:if="${!#lists.isEmpty(students)}">
                     <th:block th:each="student : ${students}">
                         <a th:href="@{/sections/{sectionId}/students/edit/{id}(sectionId=${sectionId}, id=${student.studentId})}" 
-                           class="box mb-3 is-block" data-spa-link>
+                           class="box mb-3 is-block">
                             <div>
                                 <span class="has-text-weight-medium" th:text="${student.fullName}">John Doe</span>
                             </div>
@@ -57,48 +57,11 @@
     </div>
 
     <!-- Floating Action Button -->
-    <a th:href="@{/sections/{sectionId}/students/new(sectionId=${sectionId})}" class="add-fab" data-spa-link>
+    <a th:href="@{/sections/{sectionId}/students/new(sectionId=${sectionId})}" class="add-fab">
         <i class="fas fa-plus"></i>
     </a>
 
-    <!-- Success Message Check -->
-    <script th:if="${successMessage != null}">
-        $(document).ready(function() {
-            showSuccessNotification(/*[[${successMessage}]]*/);
-        });
-    </script>
 
-    <!-- Success Notification Function -->
-    <script>
-        function showSuccessNotification(message) {
-            const $overlay = $('<div class="success-overlay"></div>');
-            $overlay.html(`
-                <div class="success-notification">
-                    <div class="success-header">
-                        <h2 class="success-title">Task successful!</h2>
-                        <button class="success-dismiss" onclick="hideSuccessNotification()">&times;</button>
-                    </div>
-                    <p class="success-message">${message}</p>
-                </div>
-            `);
-
-            $('body').append($overlay);
-
-            setTimeout(() => {
-                hideSuccessNotification();
-            }, 3000);
-        }
-
-        function hideSuccessNotification() {
-            const $overlay = $('.success-overlay');
-            if ($overlay.length) {
-                $overlay.css('opacity', '0');
-                setTimeout(() => {
-                    $overlay.remove();
-                }, 200);
-            }
-        }
-    </script>
 
     <!-- Student List JavaScript -->
     <script>

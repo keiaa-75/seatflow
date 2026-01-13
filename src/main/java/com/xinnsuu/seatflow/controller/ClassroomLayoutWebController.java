@@ -23,20 +23,14 @@ public class ClassroomLayoutWebController {
     private ClassroomLayoutService classroomLayoutService;
 
     @GetMapping
-    public String listLayouts(@RequestParam(required = false, defaultValue = "false") Boolean fragment, Model model) {
+    public String listLayouts(Model model) {
         model.addAttribute("layouts", classroomLayoutService.getAllLayouts());
-        if (fragment) {
-            return "fragments/pages/layouts-content :: content";
-        }
         return "classroom-layouts";
     }
 
     @GetMapping("/new")
-    public String showCreateForm(@RequestParam(required = false, defaultValue = "false") Boolean fragment, Model model) {
+    public String showCreateForm(Model model) {
         model.addAttribute("layout", new ClassroomLayout());
-        if (fragment) {
-            return "fragments/forms/layout-form :: form";
-        }
         return "classroom-layout-form";
     }
 
@@ -50,14 +44,10 @@ public class ClassroomLayoutWebController {
     }
 
     @GetMapping("/edit/{id}")
-    public String showUpdateForm(@PathVariable("id") Long id, 
-            @RequestParam(required = false, defaultValue = "false") Boolean fragment, Model model) {
+    public String showUpdateForm(@PathVariable("id") Long id, Model model) {
         ClassroomLayout layout = classroomLayoutService.getLayoutById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid layout Id:" + id));
         model.addAttribute("layout", layout);
-        if (fragment) {
-            return "fragments/forms/layout-form :: form";
-        }
         return "classroom-layout-form";
     }
 
