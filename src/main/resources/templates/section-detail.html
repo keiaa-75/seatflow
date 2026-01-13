@@ -5,7 +5,57 @@
     <th:block th:insert="~{fragments/navbar :: navbar}"></th:block>
     <div>
         <div th:insert="~{fragments/notifications :: notifications}"></div>
-        <th:block th:replace="~{fragments/pages/section-detail-content :: content}"/>
+        
+        <!-- Sticky Header -->
+        <div class="full-width-header section-header">
+            <div class="header-content">
+                <a th:href="@{/sections}" class="back-arrow">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <h1 class="title is-5 has-text-white">What to do</h1>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="section-detail-container">
+            <!-- You Selected -->
+            <p class="section-subtitle">You selected</p>
+            
+            <!-- Main Section Card -->
+            <div class="box section-main-card">
+                <h2 class="title is-4 mb-2" th:text="${section.gradeLevel.displayValue + ' - ' + section.sectionName}">11 - Pahimis</h2>
+                <span class="tag section-strand-badge" th:text="${section.strand.name()}">TVL</span>
+            </div>
+            
+            <!-- Divider -->
+            <hr class="section-divider">
+            
+            <!-- Seat Assignment Section -->
+            <p class="section-subtitle">Seat assignment</p>
+            <a th:href="@{/sections/{id}/assignments/new(id=${section.id})}" 
+               class="action-card">
+                New seat assignment
+            </a>
+            <a th:href="@{/sections/{id}/assignments(id=${section.id})}" 
+               class="action-card">
+                Manage seat assignment
+            </a>
+            
+            <!-- Section Management -->
+            <p class="section-subtitle">Section management</p>
+            <a th:href="@{/sections/{id}/students(id=${section.id})}" 
+               class="action-card">
+                Manage student entries
+            </a>
+            <a th:href="@{/sections/{id}/students/import(id=${section.id})}" 
+               class="action-card">
+                Import student entries
+            </a>
+            <a th:href="@{/sections/{id}/edit(id=${section.id})}" 
+               class="action-card">
+                Manage section details
+            </a>
+        </div>
     </div>
 </body>
 </html>
