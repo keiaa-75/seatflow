@@ -16,10 +16,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.xinnsuu.seatflow.model.AcademicStructure;
+import com.xinnsuu.seatflow.model.SeatAssignment;
 import com.xinnsuu.seatflow.service.AcademicStructureService;
+import com.xinnsuu.seatflow.service.SeatAssignmentService;
+import java.util.Map;
+import java.util.HashMap;
 
 @Controller
 @RequestMapping("/sections")
@@ -30,6 +35,12 @@ public class AcademicStructureWebController {
 
     @Autowired
     private ClassroomLayoutService classroomLayoutService;
+    
+    @Autowired
+    private SeatAssignmentService seatAssignmentService;
+    
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @GetMapping
     public String listStructures(@RequestParam(required = false) String grade, Model model) {
@@ -133,5 +144,46 @@ public class AcademicStructureWebController {
         model.addAttribute("sectionId", id);
         model.addAttribute("layoutType", layoutType);
         return "seat-assignment-form";
+    }
+
+    @PostMapping("/{id}/assignments/save")
+    public String saveAssignment(@PathVariable("id") Long id, 
+                               @RequestParam String assignmentName,
+                               @RequestParam String assignmentData,
+                               @RequestParam String layoutType,
+                               @RequestParam(required = false) String assignmentPreset,
+                               Model model) {
+        try {
+            AcademicStructure section = academicStructureService.getSectionById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid section Id:" + id));
+            
+            // Parse assignment data from JSON string
+            @SuppressWarnings("unchecked")
+            Map<String, Object> parsedAssignmentData = objectMapper.readValue(assignmentData, Map.class);
+            
+            // Create new seat assignment
+            SeatAssignment assignment = new SeatAssignment();
+            assignment.setAssignmentName(assignmentName);
+            assignment.setAcademicStructure(section);
+            
+            // Handle assignment preset if provided
+            // TODO: Implement preset handling logic when AssignmentPresetType is available
+            if (assignmentPreset != null && !assignmentPreset.isEmpty()) {
+                // For now, just log it or add to description
+                assignment.setDescription("Preset: " + assignmentPreset);
+            }
+            
+            // Save the assignment
+            seatAssignmentService.createAssignmentForSection(id, assignment);
+            
+            return "redirect:/sections/" + id;
+            
+        } catch (Exception e) {
+            // Add error to model and return to form
+            model.addAttribute("error", "Failed to save assignment: " + e.getMessage());
+            model.addAttribute("sectionId", id);
+            model.addAttribute("layoutType", layoutType);
+            return "seat-assignment-form";
+        }
     }
 }

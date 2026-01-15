@@ -54,6 +54,18 @@
             cursor: pointer;
             transition: all 0.2s ease;
             text-align: center;
+            min-height: 280px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .preset-header {
+            padding: 1rem 0 1.5rem 0;
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
         
         .preset-card:hover {
@@ -70,6 +82,10 @@
             padding: 10px;
             background-color: #f8f9fa;
             border-radius: 4px;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .preview-seat {
@@ -118,7 +134,7 @@
             });
             
             // Add click handlers using event delegation
-            document.getElementById('layout-container').addEventListener('click', function(e) {
+            document.querySelector('.layout-presets').addEventListener('click', function(e) {
                 const layoutPreset = e.target.closest('.layout-preset');
                 if (layoutPreset) {
                     const layoutType = layoutPreset.getAttribute('data-layout-type');
