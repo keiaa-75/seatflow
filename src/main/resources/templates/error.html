@@ -2,7 +2,9 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/head :: head('Error')}"></head>
 <body>
-    <th:block th:insert="~{fragments/header :: header('Error')}"></th:block>
+    <th:block th:insert="~{fragments/navbar :: navbar}"></th:block>
+    
+    <th:block th:insert="~{fragments/title-card :: titleCard('Error', false, null)}"></th:block>
     
     <div>
         <div th:insert="~{fragments/notifications :: notifications}"></div>

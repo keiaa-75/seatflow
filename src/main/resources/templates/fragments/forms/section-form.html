@@ -1,5 +1,5 @@
 <th:block xmlns:th="http://www.thymeleaf.org" th:fragment="form">
-    <div th:insert="~{fragments/title-card :: titleCard(${structure.id == null ? 'Create Section' : 'Edit details'}, true, '/sections')}"></div>
+    <th:block th:insert="~{fragments/title-card :: titleCard(${structure.id == null ? 'Create Section' : 'Edit details'}, true, '/sections')}"></th:block>
 
     <div class="columns is-centered">
         <div class="column is-8">

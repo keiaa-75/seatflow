@@ -3,10 +3,11 @@
 <head th:replace="~{fragments/head :: head('Manage Student Entries')}"></head>
 <body>
     <th:block th:insert="~{fragments/navbar :: navbar}"></th:block>
+    
+    <th:block th:insert="~{fragments/title-card :: titleCard('Manage Student Entries', true, '/sections/' + ${sectionId})}"></th:block>
+    
     <div>
         <div th:insert="~{fragments/notifications :: notifications}"></div>
-        
-        <div th:insert="~{fragments/title-card :: titleCard('Manage Student Entries', true, '/sections/' + ${sectionId})}"></div>
 
         <!-- Content Area -->
         <div class="section-detail-container">

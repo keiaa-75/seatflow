@@ -3,11 +3,12 @@
 <head th:replace="~{fragments/head :: head('Select Section')}"></head>
 <body>
     <th:block th:insert="~{fragments/navbar :: navbar}"></th:block>
+    
+    <th:block th:insert="~{fragments/title-card :: titleCard('Select a section', false, null)}"></th:block>
+    
     <section class="section">
         <div class="container">
             <div th:insert="~{fragments/notifications :: notifications}"></div>
-            
-            <div th:insert="~{fragments/title-card :: simpleTitleCard('Select a section')}"></div>
 
             <div class="columns is-centered mb-4">
                 <div class="column is-8">

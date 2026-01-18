@@ -1,5 +1,7 @@
 <th:block xmlns:th="http://www.thymeleaf.org" th:fragment="content">
-    <div th:insert="~{fragments/title-card :: titleCard(${student.studentId != null ? 'Edit Details' : 'New Student'}, true, '/sections/' + ${sectionId} + '/students')}"></div>
+    <th:block th:insert="~{fragments/title-card :: titleCard(${student.studentId != null ? 'Edit Details' : 'New Student'}, true, '/sections/' + ${sectionId} + '/students')}"></th:block>
+
+    <div th:insert="~{fragments/notifications :: notifications}"></div>
 
     <!-- Content Area -->
     <div class="section-detail-container">
