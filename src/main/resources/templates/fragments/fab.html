@@ -1,0 +1,21 @@
+<a xmlns:th="http://www.thymeleaf.org" th:fragment="fab(url)" th:href="${url}" class="button is-primary add-fab">
+    <style th:inline="css">
+        .add-fab.button {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            z-index: 999;
+            padding: 1.25rem 1.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
+            font-size: 1.5rem;
+            border-radius: 12px !important;
+            backdrop-filter: blur(8px);
+            background-color: rgba(0, 188, 212, 0.95) !important;
+        }
+        
+        .add-fab.button:hover {
+            box-shadow: 0 6px 16px rgba(0,0,0,0.4) !important;
+        }
+    </style>
+    <i class="fas fa-plus"></i>
+</a>

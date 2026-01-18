@@ -1,21 +1,25 @@
 <th:block xmlns:th="http://www.thymeleaf.org" th:fragment="form">
     <th:block th:insert="~{fragments/title-card :: titleCard(${structure.id == null ? 'Create Section' : 'Edit details'}, true, '/sections')}"></th:block>
 
-    <div class="columns is-centered">
-        <div class="column is-8">
-            <div class="box">
-                <form id="section-form" th:action="${structure.id == null ? '/sections/new' : '/sections/edit/' + structure.id}" method="post" th:object="${structure}">
-                <div class="field">
-                    <label class="label">Grade Level*</label>
-                    <div class="control">
-                        <div class="select is-fullwidth">
-                            <select th:field="*{gradeLevel}" required>
-                                <option value="" disabled>Select grade level</option>
-                                <option th:each="level : ${T(com.xinnsuu.seatflow.model.enums.GradeLevel).values()}"
-                                        th:value="${level}"
-                                        th:text="${level.displayValue}">11</option>
-                            </select>
-                        </div>
+    <div th:insert="~{fragments/notifications :: notifications}"></div>
+
+    <section class="section">
+        <div class="container">
+            <div class="columns is-centered">
+                <div class="column is-8">
+                    <div class="box">
+                        <form id="section-form" th:action="${structure.id == null ? '/sections/new' : '/sections/edit/' + structure.id}" method="post" th:object="${structure}">
+                        <div class="field">
+                            <label class="label">Grade Level*</label>
+                            <div class="control">
+                                <div class="select is-fullwidth">
+                                    <select th:field="*{gradeLevel}" required>
+                                        <option value="" disabled>Select grade level</option>
+                                        <option th:each="level : ${T(com.xinnsuu.seatflow.model.enums.GradeLevel).values()}"
+                                                th:value="${level}"
+                                                th:text="${level.displayValue}">11</option>
+                                    </select>
+                                </div>
                     </div>
                 </div>
 
@@ -71,4 +75,7 @@
             </footer>
         </div>
     </div>
+        </div>
+    </div>
+</section>
 </th:block>

@@ -22,7 +22,7 @@ body {
     background-color: #00BCD4;
     color: white;
     padding: 1.5rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.3rem;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
@@ -377,6 +377,97 @@ details[open] > summary ~ * {
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
+}
+
+/* Accordion Styles */
+.accordion-item {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: box-shadow 0.2s ease;
+}
+
+.accordion-item:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.accordion-header {
+    background: white;
+    padding: 1rem 1.25rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.2s ease;
+    user-select: none;
+}
+
+.accordion-header:hover {
+    background-color: #f8f9fa;
+}
+
+.accordion-header .accordion-title {
+    font-weight: 600;
+    color: #333;
+    font-size: 1rem;
+}
+
+.accordion-header .accordion-icon {
+    color: #00BCD4;
+    transition: transform 0.2s ease;
+}
+
+details[open] .accordion-icon {
+    transform: rotate(180deg);
+}
+
+.accordion-body {
+    padding: 0 1.25rem 1rem 1.25rem;
+    background: white;
+}
+
+.accordion-section-group {
+    margin-bottom: 0.75rem;
+}
+
+.accordion-section-group:last-child {
+    margin-bottom: 0;
+}
+
+.accordion-section-item {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-decoration: none;
+    color: #333;
+    transition: all 0.2s ease;
+}
+
+.accordion-section-item:hover {
+    background: white;
+    border-color: #00BCD4;
+    transform: translateX(4px);
+}
+
+.accordion-section-item:last-child {
+    margin-bottom: 0;
+}
+
+.accordion-section-name {
+    font-weight: 500;
+}
+
+.accordion-empty {
+    text-align: center;
+    color: #999;
+    padding: 1rem;
+    font-style: italic;
 }
 
 .tabs li.is-active a {

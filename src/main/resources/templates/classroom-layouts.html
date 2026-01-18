@@ -4,7 +4,7 @@
 <body>
     <th:block th:insert="~{fragments/navbar :: navbar}"></th:block>
     
-    <th:block th:insert="~{fragments/title-card :: titleCardWithSubtitle('Select layout', ${section != null} ? 'For ' + ${section.gradeLevel.displayValue} + ' - ' + ${section.sectionName} : null, true, '/sections/' + ${section?.id})}"></th:block>
+    <th:block th:insert="~{fragments/title-card :: titleCard('Select layout', true, '/sections/' + ${section?.id})}"></th:block>
     
     <section class="section">
         <div class="container">

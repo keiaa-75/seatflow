@@ -57,9 +57,7 @@
         </div>
 
         <!-- Floating Action Button -->
-        <a th:href="@{/sections/{sectionId}/students/new(sectionId=${sectionId})}" class="add-fab">
-            <i class="fas fa-plus"></i>
-        </a>
+        <th:block th:insert="~{fragments/fab :: fab('/sections/' + ${sectionId} + '/students/new')}"></th:block>
 
 
         <!-- Student List JavaScript -->
