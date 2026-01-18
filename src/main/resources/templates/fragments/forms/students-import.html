@@ -1,51 +1,85 @@
 <th:block xmlns:th="http://www.thymeleaf.org" th:fragment="content">
-    <!-- Sticky Header -->
-    <div class="full-width-header section-header">
-        <div class="header-content">
-            <a th:href="@{/sections/{sectionId}/students(sectionId=${sectionId})}" class="back-arrow">
-                <i class="fas fa-arrow-left"></i>
-            </a>
-            <h1 class="title is-5 has-text-white">Import Student Entries</h1>
-        </div>
-    </div>
+    <th:block th:insert="~{fragments/title-card :: titleCard('Import Student Entries', true, '/sections/' + ${sectionId} + '/students')}"></th:block>
 
-    <!-- Content Area -->
+    <div th:insert="~{fragments/notifications :: notifications}"></div>
+
     <div class="section-detail-container">
-        <!-- Upload Form -->
         <div class="box">
+            <h2 class="title is-5 mb-4">Upload CSV File</h2>
+            
             <form th:action="@{/sections/{sectionId}/students/import(sectionId=${sectionId})}" 
-                  method="post" enctype="multipart/form-data">
+                  method="post" enctype="multipart/form-data" id="import-form">
                 
                 <div class="field">
                     <label class="label">Choose CSV File</label>
                     <div class="control">
-                        <div class="file is-primary is-fullwidth">
+                        <div class="file has-name is-fullwidth">
                             <label class="file-label">
-                                <input class="file-input" type="file" name="file" accept=".csv" required>
+                                <input class="file-input" type="file" name="file" accept=".csv" required id="file-input">
                                 <span class="file-cta">
                                     <span class="file-icon">
                                         <i class="fas fa-upload"></i>
                                     </span>
-                                    <span class="file-label">
-                                        Choose a file…
-                                    </span>
+                                    <span class="file-label">Choose a file…</span>
                                 </span>
+                                <span class="file-name" id="file-name">No file selected</span>
                             </label>
                         </div>
                     </div>
-                    <p class="help is-info">Upload a CSV file with student information. The file should contain columns for Student ID, First Name, Middle Name, Last Name, and Suffix.</p>
+                    <p class="help mt-2">
+                        <i class="fas fa-info-circle"></i> 
+                        CSV file should contain: Student ID, First Name, Middle Name, Last Name, and Suffix
+                    </p>
                 </div>
 
-                <div class="field is-grouped">
+                <div class="field is-grouped mt-5">
                     <div class="control">
-                        <button type="submit" class="button is-primary">Import Students</button>
+                        <button type="submit" class="button is-primary">
+                            <span class="icon"><i class="fas fa-file-import"></i></span>
+                            <span>Import Students</span>
+                        </button>
                     </div>
                     <div class="control">
-                        <a th:href="@{/sections/{sectionId}/students(sectionId=${sectionId})}" 
-                           class="button is-light">Cancel</a>
+                        <a th:href="@{/sections/{sectionId}/students(sectionId=${sectionId})}" class="button is-light">
+                            <span class="icon"><i class="fas fa-times"></i></span>
+                            <span>Cancel</span>
+                        </a>
                     </div>
                 </div>
             </form>
         </div>
+
+        <div class="box mt-4">
+            <h2 class="title is-6 mb-3">
+                <i class="fas fa-question-circle"></i> CSV Format Guide
+            </h2>
+            <div class="content">
+                <p>Your CSV file should have the following columns in order:</p>
+                <ol>
+                    <li><strong>Student ID</strong> (required)</li>
+                    <li><strong>First Name</strong> (required)</li>
+                    <li><strong>Middle Name</strong> (optional)</li>
+                    <li><strong>Last Name</strong> (required)</li>
+                    <li><strong>Suffix</strong> (optional)</li>
+                </ol>
+                <p class="has-text-grey is-size-7 mt-3">
+                    <i class="fas fa-lightbulb"></i> 
+                    <strong>Tip:</strong> Make sure your CSV file uses commas as separators and includes a header row.
+                </p>
+            </div>
+        </div>
     </div>
+
+    <script>
+        const fileInput = document.getElementById('file-input');
+        const fileName = document.getElementById('file-name');
+        
+        fileInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                fileName.textContent = this.files[0].name;
+            } else {
+                fileName.textContent = 'No file selected';
+            }
+        });
+    </script>
 </th:block>
