@@ -1,13 +1,5 @@
 <th:block xmlns:th="http://www.thymeleaf.org" th:fragment="content">
-    <!-- Sticky Header -->
-    <div class="full-width-header section-header">
-        <div class="header-content">
-            <a th:href="@{/sections/{sectionId}/students(sectionId=${sectionId})}" class="back-arrow">
-                <i class="fas fa-arrow-left"></i>
-            </a>
-            <h1 class="title is-5 has-text-white" th:text="${student.studentId != null ? 'Edit Details' : 'New Student'}">Edit Details</h1>
-        </div>
-    </div>
+    <div th:insert="~{fragments/title-card :: titleCard(${student.studentId != null ? 'Edit Details' : 'New Student'}, true, '/sections/' + ${sectionId} + '/students')}"></div>
 
     <!-- Content Area -->
     <div class="section-detail-container">

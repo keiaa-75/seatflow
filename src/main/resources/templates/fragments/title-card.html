@@ -1,0 +1,40 @@
+<div xmlns:th="http://www.thymeleaf.org">
+    <!-- Title Card with Optional Back Button -->
+    <div th:fragment="titleCard(title, showBackButton, backUrl)">
+        <div class="full-width-header section-header" th:if="${showBackButton}">
+            <div class="header-content">
+                <a th:href="${backUrl ?: '#'}" class="back-arrow">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <h1 class="title is-5 has-text-white" th:text="${title}">Page Title</h1>
+            </div>
+        </div>
+        
+        <div th:unless="${showBackButton}" class="columns is-centered mb-4">
+            <div class="column is-8">
+                <div class="title-card has-text-white p-5">
+                    <h1 class="title is-4 has-text-white" th:text="${title}">Page Title</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Simple Title Card (for pages without back buttons) -->
+    <div th:fragment="simpleTitleCard(title)" class="columns is-centered mb-4">
+        <div class="column is-8">
+            <div class="title-card has-text-white p-5">
+                <h1 class="title is-4 has-text-white" th:text="${title}">Page Title</h1>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Title Card with subtitle (like classroom layouts) -->
+    <div th:fragment="titleCardWithSubtitle(title, subtitle)" class="columns is-centered mb-4">
+        <div class="column is-8">
+            <div class="title-card has-text-white p-5">
+                <h1 class="title is-4 has-text-white" th:text="${title}">Page Title</h1>
+                <p class="subtitle is-6 has-text-white mb-0" th:text="${subtitle}">Subtitle</p>
+            </div>
+        </div>
+    </div>
+</div>

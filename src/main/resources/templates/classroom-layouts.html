@@ -7,16 +7,7 @@
         <div class="container">
             <div th:insert="~{fragments/notifications :: notifications}"></div>
             
-            <!-- Layout Selection Header -->
-            <div class="columns is-centered mb-4">
-                <div class="column is-8">
-                    <div class="title-card has-text-white p-5">
-                        <h1 class="title is-4 has-text-white">Select layout</h1>
-                        <p class="subtitle is-6 has-text-white mb-0" th:if="${section != null}" 
-                           th:text="'For ' + ${section.gradeLevel.displayValue} + ' - ' + ${section.sectionName}">For Grade 11 - Section A</p>
-                    </div>
-                </div>
-            </div>
+            <div th:insert="~{fragments/title-card :: titleCardWithSubtitle('Select layout', ${section != null} ? 'For ' + ${section.gradeLevel.displayValue} + ' - ' + ${section.sectionName} : null)}"></div>
 
             <!-- Layout Presets -->
             <div class="columns is-centered">

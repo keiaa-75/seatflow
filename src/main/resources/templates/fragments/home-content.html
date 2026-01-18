@@ -1,12 +1,5 @@
 <th:block xmlns:th="http://www.thymeleaf.org" th:fragment="content">
-    <div class="columns is-centered">
-        <div class="column is-8">
-            <div class="title-card has-text-white p-5">
-                <h1 class="title is-2 has-text-white">Seatflow</h1>
-                <p class="subtitle is-5 has-text-white">Effortless classroom seat assignment management</p>
-            </div>
-        </div>
-    </div>
+    <div th:insert="~{fragments/title-card :: titleCardWithSubtitle('Seatflow', 'Effortless classroom seat assignment management')}"></div>
 
     <div class="columns is-centered">
         <div class="column is-8">

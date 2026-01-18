@@ -7,14 +7,7 @@
         <div class="container">
             <div th:insert="~{fragments/notifications :: notifications}"></div>
             
-            <!-- Sections Content -->
-            <div class="columns is-centered mb-4">
-                <div class="column is-8">
-                    <div class="title-card has-text-white p-5">
-                        <h1 class="title is-4 has-text-white">Select a section</h1>
-                    </div>
-                </div>
-            </div>
+            <div th:insert="~{fragments/title-card :: simpleTitleCard('Select a section')}"></div>
 
             <div class="columns is-centered mb-4">
                 <div class="column is-8">

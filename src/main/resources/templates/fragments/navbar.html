@@ -1,14 +1,178 @@
 <div xmlns:th="http://www.thymeleaf.org" th:fragment="navbar">
+    <style th:inline="css">
+        /* Navigation styles moved from common.css */
+        body {
+            padding-bottom: 70px; /* Space for bottom nav */
+        }
+        
+        .bottom-nav {
+            display: flex;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            z-index: 1000;
+            background-color: #00BCD4 !important;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .bottom-nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: rgba(255, 255, 255, 0.7) !important;
+            text-decoration: none;
+            padding: 8px 0;
+            transition: all 0.3s;
+        }
+        
+        .bottom-nav-item:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+            color: white !important;
+        }
+        
+        .bottom-nav-item.is-active {
+            color: white !important;
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+        
+        .bottom-nav-icon {
+            font-size: 1.4rem;
+        }
+        
+        .bottom-nav-text {
+            display: none; /* Hide text on all screen sizes */
+        }
+        
+        .navbar-item.is-active {
+            background-color: rgba(0, 0, 0, 0.1) !important;
+            font-weight: bold;
+        }
+        
+        .full-width-header {
+            background-color: #00BCD4;
+            width: 100%;
+            margin-bottom: 1.5rem;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+        }
+        
+        .full-width-header .title {
+            color: white;
+            margin-bottom: 0;
+        }
+        
+        .section-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background-color: #00BCD4;
+            margin-bottom: 1.5rem;
+            left: 0;
+            right: 0;
+            width: 100vw;
+            margin-left: calc(-50vw + 50%);
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .section-header .header-content {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .back-arrow {
+            color: white;
+            font-size: 1.2rem;
+            padding: 0.5rem;
+            text-decoration: none;
+            transition: opacity 0.2s ease;
+        }
+        
+        .back-arrow:hover {
+            opacity: 0.8;
+            color: white;
+        }
+        
+        /* Modal styles */
+        .is-modal-active .bottom-nav,
+        .is-modal-active .add-fab,
+        .is-modal-active .about-button-icon {
+            filter: brightness(0.7);
+        }
+        
+        /* About button styles */
+        #aboutButton {
+            background: none !important;
+            border: none !important;
+            text-decoration: none !important;
+            box-shadow: none !important;
+        }
+        
+        .header-about-button {
+            color: #00BCD4 !important;
+        }
+    </style>
+    
+    <script th:inline="javascript">
+        $(document).ready(function() {
+            const $aboutModal = $('#aboutModal');
+            const $htmlElement = $('html');
+
+            $('#aboutButton').on('click', function() {
+                $aboutModal.addClass('is-active');
+                $htmlElement.addClass('is-modal-active');
+            });
+
+            $('.modal .delete, .modal-background').on('click', function() {
+                $aboutModal.removeClass('is-active');
+                $htmlElement.removeClass('is-modal-active');
+            });
+            
+            // Set active navigation state based on current URL
+            setActiveNavigation();
+        });
+
+        function closeAboutModal() {
+            const $aboutModal = $('#aboutModal');
+            const $htmlElement = $('html');
+            $aboutModal.removeClass('is-active');
+            $htmlElement.removeClass('is-modal-active');
+        }
+        
+        function setActiveNavigation() {
+            const currentPath = window.location.pathname;
+            $('.bottom-nav-item').removeClass('is-active');
+            
+            if (currentPath === '/' || currentPath.startsWith('/home')) {
+                $('a[href="/"]').addClass('is-active');
+            } else if (currentPath.startsWith('/sections')) {
+                $('a[href="/sections"]').addClass('is-active');
+            } else if (currentPath.startsWith('/about')) {
+                $('a[href="/about"]').addClass('is-active');
+            }
+        }
+    </script>
+    
     <nav class="bottom-nav is-primary" role="navigation" aria-label="bottom navigation">
-        <a th:href="@{/}" class="bottom-nav-item">
+        <a th:href="@{/}" class="bottom-nav-item" data-nav="home">
             <i class="fas fa-home bottom-nav-icon"></i>
             <span class="bottom-nav-text">Home</span>
         </a>
-        <a th:href="@{/sections}" class="bottom-nav-item">
+        <a th:href="@{/sections}" class="bottom-nav-item" data-nav="sections">
             <i class="fas fa-tasks bottom-nav-icon"></i>
             <span class="bottom-nav-text">Manage</span>
         </a>
-        <a th:href="@{/about}" class="bottom-nav-item">
+        <a th:href="@{/about}" class="bottom-nav-item" data-nav="about">
             <i class="fas fa-info-circle bottom-nav-icon"></i>
             <span class="bottom-nav-text">About</span>
         </a>

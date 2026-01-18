@@ -1,13 +1,5 @@
 <th:block xmlns:th="http://www.thymeleaf.org" th:fragment="form">
-    <div class="columns is-centered mb-4">
-        <div class="column is-8">
-            <div class="title-card has-text-white p-5">
-                <div class="is-flex is-justify-content-space-between is-align-items-center">
-                    <h1 class="title is-4 has-text-white" th:text="${structure.id == null ? 'Create Section' : 'Edit details'}">Edit details</h1>
-                </div>
-            </div>
-        </div>
-    </div>
+    <div th:insert="~{fragments/title-card :: titleCard(${structure.id == null ? 'Create Section' : 'Edit details'}, true, '/sections')}"></div>
 
     <div class="columns is-centered">
         <div class="column is-8">
