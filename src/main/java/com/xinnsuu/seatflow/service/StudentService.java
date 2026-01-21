@@ -14,4 +14,5 @@ public interface StudentService {
     void importStudentsFromCsv(Long sectionId, MultipartFile file);
     Student updateStudent(Long sectionId, String id, Student updatedStudent);
     void deleteStudent(Long sectionId, String id);
+    List<Student> getUnassignedStudentsBySectionAndLayout(Long sectionId, Long layoutId);
 }

@@ -2,6 +2,7 @@ package com.xinnsuu.seatflow.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -175,5 +176,88 @@ public class SeatAssignmentServiceImpl implements SeatAssignmentService {
             details.add(dto);
         }
         return details;
+    }
+
+    @Override
+    public List<SeatAssignment> saveBulkAssignments(Long sectionId, String layoutType, String assignmentName, String description, Map<String, String> assignments) {
+        Optional<AcademicStructure> sectionOpt = academicStructureRepository.findById(sectionId);
+        if (sectionOpt.isEmpty()) {
+            throw new RuntimeException("Academic Structure with ID " + sectionId + " not found");
+        }
+
+        Optional<ClassroomLayout> layoutOpt = classroomLayoutRepository.findByPresetId(layoutType);
+        if (layoutOpt.isEmpty()) {
+            throw new RuntimeException("Layout with type '" + layoutType + "' not found");
+        }
+
+        ClassroomLayout layout = layoutOpt.get();
+        AcademicStructure section = sectionOpt.get();
+
+        List<SeatAssignment> createdAssignments = new ArrayList<>();
+        List<String> validationErrors = new ArrayList<>();
+
+        for (Map.Entry<String, String> entry : assignments.entrySet()) {
+            String seatKey = entry.getKey();
+            String studentId = entry.getValue();
+
+            String[] parts = seatKey.split("-");
+            if (parts.length != 2) {
+                validationErrors.add("Invalid seat format: " + seatKey);
+                continue;
+            }
+
+            try {
+                int row = Integer.parseInt(parts[0]);
+                int col = Integer.parseInt(parts[1]);
+
+                if (row < 1 || row > layout.getRows() || col < 1 || col > layout.getColumns()) {
+                    validationErrors.add("Seat position out of bounds: " + seatKey + " (layout is " + layout.getRows() + "x" + layout.getColumns() + ")");
+                    continue;
+                }
+
+                Optional<Student> studentOpt = studentRepository.findById(studentId);
+                if (studentOpt.isEmpty()) {
+                    validationErrors.add("Student not found: " + studentId);
+                    continue;
+                }
+
+                Student student = studentOpt.get();
+
+                if (!student.getAcademicStructure().getId().equals(sectionId)) {
+                    validationErrors.add("Student " + studentId + " does not belong to this section");
+                    continue;
+                }
+
+                if (seatAssignmentRepository.existsByStudentAndClassroomLayout(student, layout)) {
+                    validationErrors.add("Student " + student.getFullName() + " is already assigned a seat in this layout");
+                    continue;
+                }
+
+                if (seatAssignmentRepository.existsByClassroomLayoutAndRowNumberAndColumnNumber(layout, row, col)) {
+                    validationErrors.add("Seat " + seatKey + " is already occupied");
+                    continue;
+                }
+
+                SeatAssignment assignment = new SeatAssignment();
+                assignment.setAcademicStructure(section);
+                assignment.setStudent(student);
+                assignment.setClassroomLayout(layout);
+                assignment.setAssignmentName(assignmentName);
+                assignment.setDescription(description);
+                assignment.setRowNumber(row);
+                assignment.setColumnNumber(col);
+
+                createdAssignments.add(seatAssignmentRepository.save(assignment));
+
+            } catch (NumberFormatException e) {
+                validationErrors.add("Invalid seat coordinates: " + seatKey);
+            }
+        }
+
+        if (!validationErrors.isEmpty()) {
+            throw new RuntimeException("Validation failed: " + String.join("; ", validationErrors));
+        }
+
+        return createdAssignments;
     }
 }

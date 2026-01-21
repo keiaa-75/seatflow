@@ -18,8 +18,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.xinnsuu.seatflow.model.AssignmentGenerateRequest;
+import com.xinnsuu.seatflow.model.ClassroomLayout;
 import com.xinnsuu.seatflow.model.SeatAssignment;
 import com.xinnsuu.seatflow.model.SeatAssignmentDetailDTO;
+import com.xinnsuu.seatflow.model.SeatAssignmentSaveRequest;
+import com.xinnsuu.seatflow.repository.ClassroomLayoutRepository;
 import com.xinnsuu.seatflow.service.AssignmentPresetService;
 import com.xinnsuu.seatflow.service.SeatAssignmentService;
 
@@ -32,6 +35,9 @@ public class SeatAssignmentController {
 
 	@Autowired
 	private AssignmentPresetService assignmentPresetService;
+
+	@Autowired
+	private ClassroomLayoutRepository classroomLayoutRepository;
 
 	@GetMapping
     public ResponseEntity<List<SeatAssignment>> getAllAssignments(@PathVariable Long sectionId) {
@@ -77,6 +83,25 @@ public class SeatAssignmentController {
                     request.getLayoutId(),
                     request.getPresetType(),
                     request.getAssignmentName()
+            );
+            return new ResponseEntity<>(assignments, HttpStatus.CREATED);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/bulk")
+    public ResponseEntity<List<SeatAssignment>> saveBulkAssignments(
+            @PathVariable Long sectionId,
+            @Valid @RequestBody SeatAssignmentSaveRequest request) {
+
+        try {
+            List<SeatAssignment> assignments = seatAssignmentService.saveBulkAssignments(
+                    sectionId,
+                    request.getLayoutType(),
+                    request.getAssignmentName(),
+                    request.getDescription(),
+                    request.getAssignments()
             );
             return new ResponseEntity<>(assignments, HttpStatus.CREATED);
         } catch (RuntimeException e) {

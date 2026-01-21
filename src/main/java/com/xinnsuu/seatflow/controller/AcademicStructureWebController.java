@@ -1,10 +1,24 @@
 package com.xinnsuu.seatflow.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import com.xinnsuu.seatflow.dto.SeatGridData;
 import com.xinnsuu.seatflow.dto.SectionGroupByStrand;
+import com.xinnsuu.seatflow.model.AcademicStructure;
+import com.xinnsuu.seatflow.model.ClassroomLayout;
+import com.xinnsuu.seatflow.model.SeatAssignment;
+import com.xinnsuu.seatflow.model.SeatAssignmentDetailDTO;
+import com.xinnsuu.seatflow.model.Student;
+import com.xinnsuu.seatflow.service.AcademicStructureService;
 import com.xinnsuu.seatflow.service.ClassroomLayoutService;
+import com.xinnsuu.seatflow.service.SeatAssignmentService;
+import com.xinnsuu.seatflow.service.StudentService;
+
 import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -16,15 +30,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.xinnsuu.seatflow.model.AcademicStructure;
-import com.xinnsuu.seatflow.model.SeatAssignment;
-import com.xinnsuu.seatflow.service.AcademicStructureService;
-import com.xinnsuu.seatflow.service.SeatAssignmentService;
-import java.util.Map;
-import java.util.HashMap;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
 @RequestMapping("/sections")
@@ -38,6 +46,9 @@ public class AcademicStructureWebController {
     
     @Autowired
     private SeatAssignmentService seatAssignmentService;
+
+    @Autowired
+    private StudentService studentService;
     
     @Autowired
     private ObjectMapper objectMapper;
@@ -140,10 +151,90 @@ public class AcademicStructureWebController {
         AcademicStructure section = academicStructureService.getSectionById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid section Id:" + id));
         
+        // Find layout by presetId
+        ClassroomLayout layout = classroomLayoutService.getAllLayouts().stream()
+                .filter(l -> l.getPresetId() != null && l.getPresetId().equals(layoutType))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Layout not found for type: " + layoutType));
+
+        List<Student> students = studentService.getStudentsBySectionId(id);
+        List<SeatAssignmentDetailDTO> existingAssignments = 
+                seatAssignmentService.getAssignmentDetailsBySectionId(id);
+
+        Map<String, SeatGridData.SeatData> seatAssignments = new HashMap<>();
+        for (SeatAssignmentDetailDTO assignment : existingAssignments) {
+            if (assignment.getLayoutId().equals(layout.getId())) {
+                String seatKey = (assignment.getRowNumber() - 1) + "-" + (assignment.getColumnNumber() - 1);
+                seatAssignments.put(seatKey, new SeatGridData.SeatData(
+                        assignment.getStudentId(),
+                        assignment.getStudentName(),
+                        getInitials(assignment.getStudentName())
+                ));
+            }
+        }
+
+        List<SeatGridData.SeatInfo> allSeats = new ArrayList<>();
+        List<String> disabledSeats = layout.getDisabledSeats() != null ? layout.getDisabledSeats() : new ArrayList<>();
+
+        for (int r = 0; r < layout.getRows(); r++) {
+            for (int c = 0; c < layout.getColumns(); c++) {
+                String seatId = r + "-" + c;
+                SeatGridData.SeatInfo seatInfo = new SeatGridData.SeatInfo();
+                seatInfo.setId(seatId);
+                seatInfo.setRow(r);
+                seatInfo.setCol(c);
+
+                if (disabledSeats.contains(seatId)) {
+                    seatInfo.setStatus("disabled");
+                } else if (seatAssignments.containsKey(seatId)) {
+                    seatInfo.setStatus("occupied");
+                    SeatGridData.SeatData assigned = seatAssignments.get(seatId);
+                    seatInfo.setStudentId(assigned.getStudentId());
+                    seatInfo.setStudentName(assigned.getStudentName());
+                    seatInfo.setInitials(assigned.getInitials());
+                } else {
+                    seatInfo.setStatus("available");
+                }
+
+                allSeats.add(seatInfo);
+            }
+        }
+
+        SeatGridData gridData = new SeatGridData(
+                id,
+                layout.getId(),
+                layout.getPresetId() != null ? layout.getPresetId() : layout.getLayoutType().name(),
+                layout.getRows(),
+                layout.getColumns(),
+                disabledSeats,
+                students,
+                seatAssignments,
+                allSeats
+        );
+
         model.addAttribute("section", section);
         model.addAttribute("sectionId", id);
         model.addAttribute("layoutType", layoutType);
+        model.addAttribute("layoutId", layout.getId());
+        model.addAttribute("layout", layout);
+        model.addAttribute("students", students);
+        model.addAttribute("gridData", gridData);
+        
         return "seat-assignment-form";
+    }
+
+    private String getInitials(String name) {
+        if (name == null || name.isEmpty()) {
+            return "";
+        }
+        String[] parts = name.split(" ");
+        StringBuilder initials = new StringBuilder();
+        for (String part : parts) {
+            if (!part.isEmpty()) {
+                initials.append(part.charAt(0));
+            }
+        }
+        return initials.toString().toUpperCase();
     }
 
     @PostMapping("/{id}/assignments/save")

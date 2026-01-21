@@ -1,0 +1,443 @@
+<div xmlns:th="http://www.thymeleaf.org" th:fragment="seat-grid(gridData)">
+    <style th:inline="css">
+        .seat-grid {
+            display: grid;
+            gap: 8px;
+            max-width: 100%;
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            overflow-x: auto;
+            box-sizing: border-box;
+        }
+
+        .seat {
+            min-width: 40px;
+            min-height: 40px;
+            width: 8vw;
+            height: 8vw;
+            max-width: 60px;
+            max-height: 60px;
+            border: 2px solid #00BCD4;
+            border-radius: 6px;
+            background-color: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-align: center;
+            line-height: 1.2;
+            aspect-ratio: 1 / 1;
+            touch-action: manipulation;
+        }
+
+        .seat.available {
+            border-color: #00BCD4;
+            background-color: white;
+        }
+
+        .seat.available:hover,
+        .seat.available:focus {
+            background-color: #e0f7fa;
+            transform: scale(1.05);
+        }
+
+        .seat.occupied {
+            background-color: #00BCD4;
+            color: white;
+            border-color: #008ba3;
+        }
+
+        .seat.occupied:hover,
+        .seat.occupied:focus {
+            background-color: #008ba3;
+        }
+
+        .seat.disabled {
+            background-color: #e9ecef;
+            border-color: #dee2e6;
+            cursor: not-allowed;
+        }
+
+        .seat-initials {
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .seat-grid {
+                padding: 10px;
+                gap: 6px;
+            }
+
+            .seat {
+                min-width: 30px;
+                min-height: 30px;
+                width: 12vw;
+                height: 12vw;
+                max-width: 50px;
+                max-height: 50px;
+                font-size: 0.6rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .seat-grid {
+                padding: 8px;
+                gap: 4px;
+            }
+
+            .seat {
+                min-width: 25px;
+                min-height: 25px;
+                width: 15vw;
+                height: 15vw;
+                max-width: 40px;
+                max-height: 40px;
+                font-size: 0.5rem;
+            }
+        }
+
+        .student-search-container {
+            margin-bottom: 1rem;
+        }
+
+        .student-search-input {
+            width: 100%;
+        }
+
+        .student-list-container {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #dbdbdb;
+            border-radius: 4px;
+        }
+
+        .student-option {
+            padding: 10px 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background-color 0.2s;
+        }
+
+        .student-option:last-child {
+            border-bottom: none;
+        }
+
+        .student-option:hover {
+            background-color: #f5f5f5;
+        }
+
+        .student-option.is-selected {
+            background-color: #00d1b2;
+            color: white;
+        }
+
+        .student-option .student-name {
+            font-weight: 500;
+        }
+
+        .student-option .student-id {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .student-option.is-selected .student-id {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .toast-container {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            z-index: 9999;
+        }
+
+        .toast {
+            margin-top: 10px;
+            padding: 1rem 1.5rem;
+            border-radius: 6px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .toast.is-success {
+            background-color: #48c774;
+            color: white;
+        }
+
+        .toast.is-danger {
+            background-color: #f14668;
+            color: white;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+
+    <div class="seat-grid"
+         th:style="'grid-template-columns: repeat(' + ${gridData.columns} + ', 1fr)'"
+         th:attr="data-section-id=${gridData.sectionId},
+                  data-layout-id=${gridData.layoutId},
+                  data-layout-type=${gridData.layoutType}">
+
+        <th:block th:each="seat : ${gridData.allSeats}">
+            <div class="seat"
+                 th:classappend="${seat.status}"
+                 th:attr="data-seat-id=${seat.id},
+                          data-row=${seat.row},
+                          data-col=${seat.col},
+                          data-status=${seat.status},
+                          data-student-id=${seat.studentId}">
+
+                <span th:if="${seat.status == 'occupied'}" class="seat-initials"
+                      th:text="${seat.initials}"
+                      th:title="${seat.studentName}"></span>
+            </div>
+        </th:block>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <div id="studentSelectModal" class="modal">
+        <div class="modal-background"></div>
+        <div class="modal-content">
+            <div class="box">
+                <h3 class="title is-4">Select Student</h3>
+
+                <div class="field student-search-container">
+                    <div class="control">
+                        <input type="text" id="studentSearchInput"
+                               class="input student-search-input"
+                               placeholder="Search students..."
+                               autocomplete="off">
+                    </div>
+                </div>
+
+                <div class="student-list-container" id="studentListContainer">
+                    <th:block th:each="student : ${gridData.students}">
+                        <div class="student-option"
+                             th:attr="data-student-id=${student.studentId},
+                                      data-student-name=${student.firstName + ' ' + student.lastName}">
+                            <div class="student-name"
+                                 th:text="${student.firstName + ' ' + student.lastName}"></div>
+                            <div class="student-id" th:text="${student.studentId}"></div>
+                        </div>
+                    </th:block>
+                </div>
+            </div>
+        </div>
+        <button class="modal-close is-large" aria-label="close"></button>
+    </div>
+
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            const seatGrid = document.querySelector('.seat-grid');
+            const sectionId = seatGrid.dataset.sectionId;
+            const layoutId = seatGrid.dataset.layoutId;
+            const layoutType = seatGrid.dataset.layoutType;
+
+            const modal = document.getElementById('studentSelectModal');
+            const modalBg = modal.querySelector('.modal-background');
+            const modalClose = modal.querySelector('.modal-close');
+            const searchInput = document.getElementById('studentSearchInput');
+            const studentList = document.getElementById('studentListContainer');
+
+            let currentSeatId = null;
+
+            function showToast(message, type) {
+                const container = document.getElementById('toastContainer');
+                const toast = document.createElement('div');
+                toast.className = 'notification toast is-' + type;
+                toast.textContent = message;
+                container.appendChild(toast);
+
+                setTimeout(function() {
+                    toast.style.animation = 'slideIn 0.3s ease-out reverse';
+                    setTimeout(function() {
+                        toast.remove();
+                    }, 300);
+                }, 3000);
+            }
+
+            function openModal(seatId) {
+                currentSeatId = seatId;
+                modal.classList.add('is-active');
+                document.documentElement.classList.add('is-modal-active');
+                searchInput.value = '';
+                filterStudents('');
+                searchInput.focus();
+            }
+
+            function closeModal() {
+                modal.classList.remove('is-active');
+                document.documentElement.classList.remove('is-modal-active');
+                currentSeatId = null;
+            }
+
+            function filterStudents(searchTerm) {
+                const term = searchTerm.toLowerCase();
+                const options = studentList.querySelectorAll('.student-option');
+                let hasVisible = false;
+
+                options.forEach(function(option) {
+                    const name = option.dataset.studentName.toLowerCase();
+                    const id = option.dataset.studentId.toLowerCase();
+
+                    if (name.includes(term) || id.includes(term)) {
+                        option.style.display = 'block';
+                        hasVisible = true;
+                    } else {
+                        option.style.display = 'none';
+                    }
+                });
+
+                if (!hasVisible) {
+                    const noResult = document.createElement('div');
+                    noResult.className = 'student-option';
+                    noResult.style.display = 'block';
+                    noResult.style.textAlign = 'center';
+                    noResult.style.color = '#666';
+                    noResult.textContent = 'No students found';
+                    studentList.appendChild(noResult);
+                } else {
+                    const noResult = studentList.querySelector('.student-option[style*="No students found"]');
+                    if (noResult) {
+                        noResult.remove();
+                    }
+                }
+            }
+
+            async function saveAssignment(seatId, studentId) {
+                const [row, col] = seatId.split('-').map(Number);
+
+                try {
+                    const response = await fetch('/api/sections/' + sectionId + '/assignments/bulk', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            assignmentName: 'Manual Assignment',
+                            layoutType: layoutType,
+                            assignments: {
+                                [seatId]: studentId
+                            }
+                        })
+                    });
+
+                    if (!response.ok) {
+                        const error = await response.text();
+                        throw new Error(error);
+                    }
+
+                    const result = await response.json();
+                    showToast('Student assigned successfully', 'success');
+
+                    updateSeatDisplay(seatId, studentId);
+
+                } catch (error) {
+                    console.error('Failed to save assignment:', error);
+                    showToast('Failed to assign student: ' + error.message, 'danger');
+                }
+            }
+
+            function updateSeatDisplay(seatId, studentId) {
+                const seat = document.querySelector('[data-seat-id="' + seatId + '"]');
+                const option = studentList.querySelector('[data-student-id="' + studentId + '"]');
+
+                if (seat && option) {
+                    const studentName = option.dataset.studentName;
+                    const initials = getInitials(studentName);
+
+                    seat.classList.remove('available');
+                    seat.classList.add('occupied');
+                    seat.dataset.studentId = studentId;
+
+                    const initialsSpan = seat.querySelector('.seat-initials') || document.createElement('span');
+                    initialsSpan.className = 'seat-initials';
+                    initialsSpan.textContent = initials;
+                    initialsSpan.title = studentName;
+
+                    if (!seat.querySelector('.seat-initials')) {
+                        seat.appendChild(initialsSpan);
+                    }
+                }
+            }
+
+            function getInitials(name) {
+                if (!name) return '';
+                return name.split(' ').map(function(n) {
+                    return n.charAt(0);
+                }).join('').toUpperCase();
+            }
+
+            seatGrid.addEventListener('click', function(e) {
+                const seat = e.target.closest('.seat');
+                if (!seat) return;
+
+                const status = seat.dataset.status;
+
+                if (status === 'disabled') return;
+
+                if (status === 'occupied') {
+                    if (confirm('Remove student from this seat?')) {
+                        const seatId = seat.dataset.seatId;
+                        const studentId = seat.dataset.studentId;
+
+                        seat.classList.remove('occupied');
+                        seat.classList.add('available');
+                        delete seat.dataset.studentId;
+
+                        const initialsSpan = seat.querySelector('.seat-initials');
+                        if (initialsSpan) {
+                            initialsSpan.remove();
+                        }
+                    }
+                    return;
+                }
+
+                if (status === 'available') {
+                    openModal(seat.dataset.seatId);
+                }
+            });
+
+            studentList.addEventListener('click', function(e) {
+                const option = e.target.closest('.student-option');
+                if (!option) return;
+
+                const studentId = option.dataset.studentId;
+
+                if (currentSeatId && studentId) {
+                    saveAssignment(currentSeatId, studentId);
+                    closeModal();
+                }
+            });
+
+            searchInput.addEventListener('input', function() {
+                filterStudents(this.value);
+            });
+
+            modalBg.addEventListener('click', closeModal);
+            modalClose.addEventListener('click', closeModal);
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && modal.classList.contains('is-active')) {
+                    closeModal();
+                }
+            });
+        });
+    </script>
+</div>

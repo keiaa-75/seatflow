@@ -98,4 +98,12 @@ public class StudentServiceImpl implements StudentService {
 
         studentRepository.deleteById(id);
     }
+
+    @Override
+    public List<Student> getUnassignedStudentsBySectionAndLayout(Long sectionId, Long layoutId) {
+        if (!academicStructureRepository.existsById(sectionId)) {
+            throw new RuntimeException("Academic Structure with ID " + sectionId + " not found");
+        }
+        return studentRepository.findUnassignedStudentsBySectionAndLayout(sectionId, layoutId);
+    }
 }

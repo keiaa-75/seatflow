@@ -43,6 +43,14 @@ public class StudentController {
                       .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    @GetMapping("/unassigned")
+    public ResponseEntity<List<Student>> getUnassignedStudents(
+            @PathVariable Long sectionId,
+            @RequestParam Long layoutId) {
+        List<Student> students = studentService.getUnassignedStudentsBySectionAndLayout(sectionId, layoutId);
+        return new ResponseEntity<>(students, HttpStatus.OK);
+    }
+
     @PostMapping
     public ResponseEntity<Student> createStudent(
             @PathVariable Long sectionId,
