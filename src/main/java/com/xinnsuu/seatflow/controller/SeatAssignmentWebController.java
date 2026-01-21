@@ -51,11 +51,10 @@ public class SeatAssignmentWebController {
 
     @GetMapping
     public String listAssignments(@RequestParam(name = "sectionId", required = false) Long sectionId, Model model) {
-        model.addAttribute("sections", academicStructureService.getAllSections());
         if (sectionId != null) {
-            model.addAttribute("assignments", seatAssignmentService.getAssignmentsBySectionId(sectionId));
+            return "redirect:/sections/" + sectionId;
         }
-        return "seat-assignments";
+        return "redirect:/sections";
     }
 
     @GetMapping("/new")
