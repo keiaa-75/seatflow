@@ -41,6 +41,7 @@ public class ClassroomLayoutServiceImpl implements ClassroomLayoutService {
             existingLayout.setName(updatedLayout.getName());
             existingLayout.setRows(updatedLayout.getRows());
             existingLayout.setColumns(updatedLayout.getColumns());
+            existingLayout.setDisabledSeats(updatedLayout.getDisabledSeats());
             
             return classroomLayoutRepository.save(existingLayout);
         } else {
@@ -48,7 +49,7 @@ public class ClassroomLayoutServiceImpl implements ClassroomLayoutService {
         }
     }
     
-    public ClassroomLayout upsertPresetLayout(String presetId, String displayName, int rows, int columns) {
+    public ClassroomLayout upsertPresetLayout(String presetId, String displayName, int rows, int columns, java.util.List<String> disabledSeats) {
         Optional<ClassroomLayout> existingLayout = classroomLayoutRepository.findByPresetId(presetId);
         
         ClassroomLayout layout;
@@ -62,6 +63,7 @@ public class ClassroomLayoutServiceImpl implements ClassroomLayoutService {
         layout.setName(displayName);
         layout.setRows(rows);
         layout.setColumns(columns);
+        layout.setDisabledSeats(disabledSeats);
         layout.setLayoutType(com.xinnsuu.seatflow.model.ClassroomLayout.LayoutType.NORMAL);
         
         return classroomLayoutRepository.save(layout);

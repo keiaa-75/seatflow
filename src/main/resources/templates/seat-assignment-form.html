@@ -196,21 +196,21 @@
         const layoutType = /*[[${layoutType}]]*/ 'NORMAL';
         const sectionId = /*[[${sectionId}]]*/ 1;
 
-        const layouts = {
-            'NORMAL': { rows: 10, cols: 10, disabled: [] },
-            'SMALL': { rows: 5, cols: 5, disabled: [] },
-            'ROWS': { rows: 8, cols: 6, disabled: [] },
-            'U_SHAPE': { rows: 8, cols: 6, disabled: generateUShapeDisabled(8, 6) },
-            'GROUPS': { rows: 6, cols: 6, disabled: generateGroupsDisabled(6, 6) }
-        };
-
+        let layouts = {}; // Will be loaded from API
+        let currentLayout = null; // Current selected layout
         let assignments = {}; // { "row-col": "studentName" }
         let students = []; // Will be loaded from server
 
         document.addEventListener('DOMContentLoaded', function() {
-            loadStudents();
-            generateGrid();
-            setupPresetHandler();
+            Promise.all([loadStudents(), fetchLayouts()]).then(() => {
+                currentLayout = layouts[layoutType];
+                if (currentLayout) {
+                    generateGrid();
+                    setupPresetHandler();
+                } else {
+                    console.error('Layout not found:', layoutType);
+                }
+            });
 
             // Add resize listener to handle window resizing
             window.addEventListener('resize', handleResize);
@@ -226,26 +226,56 @@
             }, 250);
         }
         
-        function loadStudents() {
-            // TODO: Load students from server via AJAX
-            // For now, using mock data
-            students = [
-                { id: 1, name: "John Doe" },
-                { id: 2, name: "Jane Smith" },
-                { id: 3, name: "Bob Johnson" },
-                { id: 4, name: "Alice Brown" }
-            ];
+        async function loadStudents() {
+            try {
+                // TODO: Load students from server via AJAX
+                // For now, using mock data
+                students = [
+                    { id: 1, name: "John Doe" },
+                    { id: 2, name: "Jane Smith" },
+                    { id: 3, name: "Bob Johnson" },
+                    { id: 4, name: "Alice Brown" }
+                ];
+            } catch (error) {
+                console.error('Failed to load students:', error);
+            }
+        }
+        
+        async function fetchLayouts() {
+            try {
+                const response = await fetch('/api/layouts');
+                const layoutData = await response.json();
+                
+                // Convert array to object keyed by presetId
+                layouts = layoutData.reduce((acc, layout) => {
+                    if (layout.presetId) {
+                        acc[layout.presetId] = {
+                            rows: layout.rows,
+                            cols: layout.columns,
+                            disabled: layout.disabledSeats || []
+                        };
+                    }
+                    return acc;
+                }, {});
+                
+            } catch (error) {
+                console.error('Failed to fetch layouts:', error);
+            }
         }
         
         function generateGrid() {
             const grid = document.getElementById('seat-grid');
-            const layout = layouts[layoutType];
+            
+            if (!currentLayout) {
+                console.error('No current layout selected');
+                return;
+            }
 
-            grid.style.gridTemplateColumns = `repeat(${layout.cols}, 1fr)`;
+            grid.style.gridTemplateColumns = `repeat(${currentLayout.cols}, 1fr)`;
             grid.innerHTML = '';
 
-            for (let r = 0; r < layout.rows; r++) {
-                for (let c = 0; c < layout.cols; c++) {
+            for (let r = 0; r < currentLayout.rows; r++) {
+                for (let c = 0; c < currentLayout.cols; c++) {
                     const seat = document.createElement('div');
                     const seatId = `${r}-${c}`;
 
@@ -254,7 +284,7 @@
                     seat.dataset.col = c;
                     seat.dataset.seatId = seatId;
 
-                    if (layout.disabled.includes(seatId)) {
+                    if (currentLayout.disabled.includes(seatId)) {
                         seat.classList.add('disabled');
                     } else {
                         seat.classList.add('available');
@@ -382,13 +412,12 @@
         }
         
         function getAvailableSeats() {
-            const layout = layouts[layoutType];
             const seats = [];
             
-            for (let r = 0; r < layout.rows; r++) {
-                for (let c = 0; c < layout.cols; c++) {
+            for (let r = 0; r < currentLayout.rows; r++) {
+                for (let c = 0; c < currentLayout.cols; c++) {
                     const seatId = `${r}-${c}`;
-                    if (!layout.disabled.includes(seatId)) {
+                    if (!currentLayout.disabled.includes(seatId)) {
                         seats.push(seatId);
                     }
                 }
@@ -428,31 +457,6 @@
                 updateAssignmentData();
                 document.getElementById('assignmentPreset').value = '';
             }
-        }
-        
-        function generateUShapeDisabled(rows, cols) {
-            const disabled = [];
-            const centerCols = Math.floor(cols / 3);
-            const startCol = Math.floor((cols - centerCols) / 2);
-            
-            for (let r = 1; r < rows - 1; r++) {
-                for (let c = startCol; c < startCol + centerCols; c++) {
-                    disabled.push(`${r}-${c}`);
-                }
-            }
-            return disabled;
-        }
-        
-        function generateGroupsDisabled(rows, cols) {
-            const disabled = [];
-            for (let r = 0; r < rows; r++) {
-                for (let c = 0; c < cols; c++) {
-                    if ((r + 1) % 3 === 0 || (c + 1) % 3 === 0) {
-                        disabled.push(`${r}-${c}`);
-                    }
-                }
-            }
-            return disabled;
         }
     </script>
 </body>

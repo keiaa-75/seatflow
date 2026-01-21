@@ -1,41 +1,54 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const layouts = {
-        'NORMAL': { rows: 8, cols: 8, disabled: [] },
-        'SMALL': { rows: 4, cols: 4, disabled: [] },
-        'ROWS': { rows: 6, cols: 5, disabled: [] },
-        'U_SHAPE': { rows: 6, cols: 5, disabled: generateUShapeDisabled(6, 5) },
-        'GROUPS': { rows: 5, cols: 5, disabled: generateGroupsDisabled(5, 5) }
-    };
-    
-    Object.keys(layouts).forEach(layoutType => {
-        const preview = document.querySelector(`[data-layout="${layoutType}"]`);
-        const layout = layouts[layoutType];
-        
-        preview.style.gridTemplateColumns = `repeat(${layout.cols}, 1fr)`;
-        
-        for (let r = 0; r < layout.rows; r++) {
-            for (let c = 0; c < layout.cols; c++) {
-                const seat = document.createElement('div');
-                seat.className = 'preview-seat';
-                
-                if (layout.disabled.includes(`${r}-${c}`)) {
-                    seat.classList.add('disabled');
-                }
-                
-                preview.appendChild(seat);
-            }
-        }
-    });
-    
-    // Add click handlers
-    document.querySelectorAll('.layout-card').forEach(card => {
-        card.addEventListener('click', function() {
-            const layoutType = this.getAttribute('data-layout-type');
-            const sectionId = this.getAttribute('data-section-id');
-            selectLayout(layoutType, sectionId);
-        });
-    });
+    fetchLayouts();
 });
+
+async function fetchLayouts() {
+    try {
+        const response = await fetch('/api/layouts');
+        const layouts = await response.json();
+        
+        layouts.forEach(layout => {
+            const preview = document.querySelector(`[data-layout="${layout.presetId}"]`);
+            if (preview) {
+                generateLayoutPreview(preview, layout);
+            }
+        });
+        
+        // Add click handlers
+        document.querySelectorAll('.layout-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const layoutType = this.getAttribute('data-layout-type');
+                const sectionId = this.getAttribute('data-section-id');
+                selectLayout(layoutType, sectionId);
+            });
+        });
+        
+    } catch (error) {
+        console.error('Failed to fetch layouts:', error);
+    }
+}
+
+function generateLayoutPreview(preview, layout) {
+    const cols = layout.columns;
+    const rows = layout.rows;
+    const disabledSeats = layout.disabledSeats || [];
+    
+    preview.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+    preview.innerHTML = ''; // Clear existing seats
+    
+    for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+            const seat = document.createElement('div');
+            seat.className = 'preview-seat';
+            
+            if (disabledSeats.includes(`${r}-${c}`)) {
+                seat.classList.add('disabled');
+            }
+            
+            preview.appendChild(seat);
+        }
+    }
+}
 
 function generateUShapeDisabled(rows, cols) {
     const disabled = [];

@@ -72,7 +72,8 @@ public class LayoutPresetLoader {
                     preset.getName(), 
                     preset.getDisplayName(), 
                     preset.getRows(), 
-                    preset.getColumns()
+                    preset.getColumns(),
+                    preset.getDisabledSeats()
                 );
                 logger.debug("Upserted layout preset: {}", preset.getName());
             } catch (Exception e) {

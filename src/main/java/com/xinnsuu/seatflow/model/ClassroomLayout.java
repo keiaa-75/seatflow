@@ -1,5 +1,12 @@
 package com.xinnsuu.seatflow.model;
 
+import java.util.List;
+
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -40,6 +47,11 @@ public class ClassroomLayout {
 	
 	// Store preset identifier for JSON-loaded layouts
 	private String presetId;
+	
+	// Store disabled seat positions as JSON array
+	@JsonInclude(JsonInclude.Include.NON_EMPTY)
+	@JdbcTypeCode(SqlTypes.JSON)
+	private List<String> disabledSeats;
 
 	public enum LayoutType {
 		NORMAL("Normal", "Ten by ten", 10, 10),
