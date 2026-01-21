@@ -207,8 +207,8 @@ public class SeatAssignmentServiceImpl implements SeatAssignmentService {
             }
 
             try {
-                int row = Integer.parseInt(parts[0]);
-                int col = Integer.parseInt(parts[1]);
+                int row = Integer.parseInt(parts[0]) + 1;
+                int col = Integer.parseInt(parts[1]) + 1;
 
                 if (row < 1 || row > layout.getRows() || col < 1 || col > layout.getColumns()) {
                     validationErrors.add("Seat position out of bounds: " + seatKey + " (layout is " + layout.getRows() + "x" + layout.getColumns() + ")");
