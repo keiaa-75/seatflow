@@ -1,0 +1,8 @@
+{
+  "name": "ROWS",
+  "displayName": "Rows",
+  "description": "Traditional row-based seating arrangement",
+  "rows": 8,
+  "columns": 6,
+  "disabledSeats": []
+}

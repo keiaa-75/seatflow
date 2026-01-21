@@ -11,4 +11,5 @@ public interface ClassroomLayoutService {
     ClassroomLayout createLayout(ClassroomLayout classroomLayout);
     ClassroomLayout updateLayout(Long id, ClassroomLayout updatedLayout);
     void deleteLayout(Long id);
+    ClassroomLayout upsertPresetLayout(String presetId, String displayName, int rows, int columns);
 }

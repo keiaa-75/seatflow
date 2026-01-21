@@ -1,0 +1,8 @@
+{
+  "name": "NORMAL",
+  "displayName": "Normal",
+  "description": "Standard rectangular layout with all seats available",
+  "rows": 10,
+  "columns": 10,
+  "disabledSeats": []
+}

@@ -1,6 +1,8 @@
 package com.xinnsuu.seatflow.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import jakarta.validation.Valid;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.xinnsuu.seatflow.model.ClassroomLayout;
 import com.xinnsuu.seatflow.service.ClassroomLayoutService;
+import com.xinnsuu.seatflow.service.LayoutPresetLoader;
 
 @RestController
 @RequestMapping("/api/layouts")
@@ -26,6 +29,9 @@ public class ClassroomLayoutController {
 	
 	@Autowired
 	private ClassroomLayoutService classroomLayoutService;
+	
+	@Autowired
+	private LayoutPresetLoader layoutPresetLoader;
 
 	@GetMapping
     public ResponseEntity<List<ClassroomLayout>> getAllLayouts() {
@@ -70,6 +76,22 @@ public class ClassroomLayoutController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+    
+    @PostMapping("/reload")
+    public ResponseEntity<Map<String, Object>> reloadPresets() {
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            layoutPresetLoader.loadPresetsIntoDatabase();
+            response.put("success", true);
+            response.put("message", "Layout presets reloaded successfully");
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", "Failed to reload layout presets: " + e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

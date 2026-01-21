@@ -37,6 +37,7 @@ public class ClassroomLayoutServiceImpl implements ClassroomLayoutService {
         if (existingLayoutOpt.isPresent()) {
             ClassroomLayout existingLayout = existingLayoutOpt.get();
             
+            // Don't update presetId for existing layouts (protect presets)
             existingLayout.setName(updatedLayout.getName());
             existingLayout.setRows(updatedLayout.getRows());
             existingLayout.setColumns(updatedLayout.getColumns());
@@ -45,6 +46,25 @@ public class ClassroomLayoutServiceImpl implements ClassroomLayoutService {
         } else {
             throw new RuntimeException("Classroom Layout with ID " + id + " not found");
         }
+    }
+    
+    public ClassroomLayout upsertPresetLayout(String presetId, String displayName, int rows, int columns) {
+        Optional<ClassroomLayout> existingLayout = classroomLayoutRepository.findByPresetId(presetId);
+        
+        ClassroomLayout layout;
+        if (existingLayout.isPresent()) {
+            layout = existingLayout.get();
+        } else {
+            layout = new ClassroomLayout();
+            layout.setPresetId(presetId);
+        }
+        
+        layout.setName(displayName);
+        layout.setRows(rows);
+        layout.setColumns(columns);
+        layout.setLayoutType(com.xinnsuu.seatflow.model.ClassroomLayout.LayoutType.NORMAL);
+        
+        return classroomLayoutRepository.save(layout);
     }
 
     @Override

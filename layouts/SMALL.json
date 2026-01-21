@@ -1,0 +1,8 @@
+{
+  "name": "SMALL",
+  "displayName": "Small",
+  "description": "Compact layout for small groups",
+  "rows": 5,
+  "columns": 5,
+  "disabledSeats": []
+}

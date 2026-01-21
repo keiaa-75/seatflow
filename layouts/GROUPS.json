@@ -1,0 +1,13 @@
+{
+  "name": "GROUPS",
+  "displayName": "Groups",
+  "description": "Group table layout with aisles between groups",
+  "rows": 6,
+  "columns": 6,
+  "disabledSeats": [
+    "0-2", "1-2", "2-2",
+    "0-5", "1-5", "2-5",
+    "3-2", "4-2", "5-2",
+    "3-5", "4-5", "5-5"
+  ]
+}

@@ -37,6 +37,9 @@ public class ClassroomLayout {
 	@NotNull(message = "Number of columns is required")
 	@Min(value = 1, message = "Layout must have at least 1 column")
 	private int columns;
+	
+	// Store preset identifier for JSON-loaded layouts
+	private String presetId;
 
 	public enum LayoutType {
 		NORMAL("Normal", "Ten by ten", 10, 10),
