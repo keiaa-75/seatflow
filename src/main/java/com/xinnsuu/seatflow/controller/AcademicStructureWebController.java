@@ -8,11 +8,13 @@ import java.util.Map;
 import com.xinnsuu.seatflow.dto.SeatGridData;
 import com.xinnsuu.seatflow.dto.SectionGroupByStrand;
 import com.xinnsuu.seatflow.model.AcademicStructure;
+import com.xinnsuu.seatflow.model.ClassMapping;
 import com.xinnsuu.seatflow.model.ClassroomLayout;
 import com.xinnsuu.seatflow.model.SeatAssignment;
 import com.xinnsuu.seatflow.model.SeatAssignmentDetailDTO;
 import com.xinnsuu.seatflow.model.Student;
 import com.xinnsuu.seatflow.service.AcademicStructureService;
+import com.xinnsuu.seatflow.service.ClassMappingService;
 import com.xinnsuu.seatflow.service.ClassroomLayoutService;
 import com.xinnsuu.seatflow.service.SeatAssignmentService;
 import com.xinnsuu.seatflow.service.StudentService;
@@ -44,6 +46,9 @@ public class AcademicStructureWebController {
     @Autowired
     private ClassroomLayoutService classroomLayoutService;
     
+    @Autowired
+    private ClassMappingService classMappingService;
+
     @Autowired
     private SeatAssignmentService seatAssignmentService;
 
@@ -276,5 +281,175 @@ public class AcademicStructureWebController {
             model.addAttribute("layoutType", layoutType);
             return "seat-assignment-form";
         }
+    }
+
+    // ClassMapping routes for Seating Charts
+    @GetMapping("/{id}/class-mappings")
+    public String showClassMappingsList(@PathVariable("id") Long id, Model model) {
+        return "redirect:/sections/" + id + "/class-mappings/list";
+    }
+
+    @GetMapping("/{id}/class-mappings/list")
+    public String showClassMappingsManage(@PathVariable("id") Long id, Model model) {
+        AcademicStructure section = academicStructureService.getSectionById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid section Id:" + id));
+        
+        model.addAttribute("section", section);
+        model.addAttribute("sectionId", id);
+        
+        return "class-mappings";
+    }
+
+    @GetMapping("/{id}/class-mappings/new")
+    public String showClassMappingLayoutSelection(@PathVariable("id") Long id, Model model) {
+        AcademicStructure section = academicStructureService.getSectionById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid section Id:" + id));
+        
+        model.addAttribute("section", section);
+        model.addAttribute("sectionId", id);
+        model.addAttribute("layouts", classroomLayoutService.getAllLayouts());
+        return "class-mapping-layouts";
+    }
+
+    @GetMapping("/{id}/class-mappings/new/grid")
+    public String showClassMappingGrid(@PathVariable("id") Long id,
+                                       @RequestParam("layoutType") String layoutType,
+                                       Model model) {
+        AcademicStructure section = academicStructureService.getSectionById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid section Id:" + id));
+        
+        // Find layout by presetId
+        ClassroomLayout layout = classroomLayoutService.getAllLayouts().stream()
+                .filter(l -> l.getPresetId() != null && l.getPresetId().equals(layoutType))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Layout not found for type: " + layoutType));
+
+        List<Student> students = studentService.getStudentsBySectionId(id);
+
+        // Empty seat grid (no assignments yet)
+        Map<String, SeatGridData.SeatData> seatAssignments = new HashMap<>();
+        List<SeatGridData.SeatInfo> allSeats = new ArrayList<>();
+        List<String> disabledSeats = layout.getDisabledSeats() != null ? layout.getDisabledSeats() : new ArrayList<>();
+
+        for (int r = 1; r <= layout.getRows(); r++) {
+            for (int c = 1; c <= layout.getColumns(); c++) {
+                String seatId = r + "-" + c;
+                SeatGridData.SeatInfo seatInfo = new SeatGridData.SeatInfo();
+                seatInfo.setId(seatId);
+                seatInfo.setRow(r);
+                seatInfo.setCol(c);
+
+                if (disabledSeats.contains(seatId)) {
+                    seatInfo.setStatus("disabled");
+                } else {
+                    seatInfo.setStatus("available");
+                }
+
+                allSeats.add(seatInfo);
+            }
+        }
+
+        SeatGridData gridData = new SeatGridData(
+                id,
+                layout.getId(),
+                layout.getPresetId() != null ? layout.getPresetId() : layout.getLayoutType().name(),
+                layout.getRows(),
+                layout.getColumns(),
+                disabledSeats,
+                students,
+                seatAssignments,
+                allSeats
+        );
+
+        model.addAttribute("section", section);
+        model.addAttribute("sectionId", id);
+        model.addAttribute("layoutType", layoutType);
+        model.addAttribute("layoutId", layout.getId());
+        model.addAttribute("layout", layout);
+        model.addAttribute("students", students);
+        model.addAttribute("gridData", gridData);
+        
+        return "class-mapping-grid";
+    }
+
+    @GetMapping("/{id}/class-mappings/{mappingId}")
+    public String viewClassMapping(@PathVariable("id") Long id,
+                                   @PathVariable("mappingId") Long mappingId,
+                                   Model model) {
+        AcademicStructure section = academicStructureService.getSectionById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid section Id:" + id));
+        
+        var mappingOpt = classMappingService.getMappingByIdAndSectionId(mappingId, id);
+        if (mappingOpt.isEmpty()) {
+            throw new IllegalArgumentException("ClassMapping not found: " + mappingId);
+        }
+        
+        ClassroomLayout layout = classroomLayoutService.getAllLayouts().stream()
+                .filter(l -> l.getPresetId() != null && l.getPresetId().equals(mappingOpt.get().getLayoutId()))
+                .findFirst()
+                .orElse(null);
+
+        List<Student> students = studentService.getStudentsBySectionId(id);
+        Map<String, String> assignments = mappingOpt.get().getAssignments();
+
+        Map<String, SeatGridData.SeatData> seatAssignments = new HashMap<>();
+        List<SeatGridData.SeatInfo> allSeats = new ArrayList<>();
+        List<String> disabledSeats = layout != null && layout.getDisabledSeats() != null ? layout.getDisabledSeats() : new ArrayList<>();
+
+        int rows = layout != null ? layout.getRows() : 10;
+        int cols = layout != null ? layout.getColumns() : 10;
+
+        for (int r = 1; r <= rows; r++) {
+            for (int c = 1; c <= cols; c++) {
+                String seatId = r + "-" + c;
+                SeatGridData.SeatInfo seatInfo = new SeatGridData.SeatInfo();
+                seatInfo.setId(seatId);
+                seatInfo.setRow(r);
+                seatInfo.setCol(c);
+
+                if (disabledSeats.contains(seatId)) {
+                    seatInfo.setStatus("disabled");
+                } else if (assignments.containsKey(seatId)) {
+                    String studentId = assignments.get(seatId);
+                    Student student = students.stream()
+                            .filter(s -> s.getStudentId().equals(studentId))
+                            .findFirst()
+                            .orElse(null);
+                    seatInfo.setStatus("occupied");
+                    seatInfo.setStudentId(studentId);
+                    if (student != null) {
+                        seatInfo.setStudentName(student.getFirstName() + " " + student.getLastName());
+                        seatInfo.setInitials(getInitials(seatInfo.getStudentName()));
+                    }
+                } else {
+                    seatInfo.setStatus("available");
+                }
+
+                allSeats.add(seatInfo);
+            }
+        }
+
+        SeatGridData gridData = new SeatGridData(
+                id,
+                layout != null ? layout.getId() : null,
+                mappingOpt.get().getLayoutId(),
+                rows,
+                cols,
+                disabledSeats,
+                students,
+                seatAssignments,
+                allSeats
+        );
+
+        model.addAttribute("section", section);
+        model.addAttribute("sectionId", id);
+        model.addAttribute("mapping", mappingOpt.get());
+        model.addAttribute("layoutType", mappingOpt.get().getLayoutId());
+        model.addAttribute("layoutId", layout != null ? layout.getId() : null);
+        model.addAttribute("layout", layout);
+        model.addAttribute("students", students);
+        model.addAttribute("gridData", gridData);
+        
+        return "class-mapping-view";
     }
 }

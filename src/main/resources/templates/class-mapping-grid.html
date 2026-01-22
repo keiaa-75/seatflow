@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Create Seating Chart')}"></head>
+<body>
+    <th:block th:insert="~{fragments/navbar :: navbar}"></th:block>
+    <th:block th:insert="~{fragments/title-card :: titleCard('Create Seating Chart', true, '/sections/' + ${sectionId} + '/class-mappings/new')}"/>
+    <section class="section">
+        <div class="container">
+            <div th:insert="~{fragments/notifications :: notifications}"></div>
+            
+            <div class="box mb-4">
+                <div class="level is-mobile">
+                    <div class="level-left">
+                        <div>
+                            <p class="heading">Layout</p>
+                            <p class="title is-5" th:text="${layout.name}">Normal</p>
+                        </div>
+                    </div>
+                    <div class="level-right">
+                        <div>
+                            <p class="heading">Students</p>
+                            <p class="title is-5"><span id="assigned-count">0</span> / <span th:text="${#lists.size(students)}">0</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="columns is-centered mb-4">
+                <div class="column is-10">
+                    <div class="box">
+                        <div th:if="${gridData != null}">
+                            <div th:replace="~{fragments/seat-grid :: seat-grid(${gridData})}"></div>
+                        </div>
+                        <div th:unless="${gridData != null}" class="has-text-centered">
+                            <p class="is-size-5">Loading seat grid...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="columns is-centered mb-4">
+                <div class="column is-10">
+                    <div class="box">
+                        <div class="field is-grouped">
+                            <div class="control">
+                                <button id="save-mapping-btn" class="button is-primary">
+                                    Save Seating Chart
+                                </button>
+                            </div>
+                            <div class="control">
+                                <a th:href="@{/sections/{sectionId}/class-mappings/new(sectionId=${sectionId})}" class="button">
+                                    Change Layout
+                                </a>
+                            </div>
+                            <div class="control">
+                                <a th:href="@{/sections/{sectionId}(sectionId=${sectionId})}" class="button is-light">
+                                    Cancel
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <div id="name-modal" class="modal">
+        <div class="modal-background"></div>
+        <div class="modal-content">
+            <div class="box">
+                <h3 class="title is-4">Name Your Seating Chart</h3>
+                <div class="field">
+                    <label class="label">Name</label>
+                    <div class="control">
+                        <input type="text" id="mapping-name-input" class="input" placeholder="e.g., Monday Seating, Week 3, Exam Layout">
+                    </div>
+                    <p class="help">Give this seating chart a name so you can find it later</p>
+                </div>
+                <div class="field is-grouped mt-4">
+                    <div class="control">
+                        <button id="confirm-save-btn" class="button is-primary">Save</button>
+                    </div>
+                    <div class="control">
+                        <button id="cancel-save-btn" class="button">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button class="modal-close is-large" aria-label="close"></button>
+    </div>
+    
+    <div id="success-modal" class="modal">
+        <div class="modal-background"></div>
+        <div class="modal-content">
+            <div class="box has-text-centered">
+                <div class="mb-4">
+                    <i class="fas fa-check-circle fa-3x has-text-success"></i>
+                </div>
+                <h3 class="title is-4">Seating Chart Saved!</h3>
+                <p id="saved-mapping-name" class="subtitle is-6"></p>
+                <div class="field is-grouped is-justify-content-center mt-4">
+                    <div class="control">
+                        <a id="view-mapping-link" href="#" class="button is-primary">View Seating Chart</a>
+                    </div>
+                    <div class="control">
+                        <a th:href="@{/sections/{sectionId}(sectionId=${sectionId})}" class="button">Back to Section</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button class="modal-close is-large" aria-label="close"></button>
+    </div>
+    
+    <script src="/js/class-mapping-grid.js"></script>
+</body>
+</html>

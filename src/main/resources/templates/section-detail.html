@@ -23,15 +23,15 @@
             <!-- Divider -->
             <hr class="section-divider">
             
-            <!-- Seat Assignment Section -->
-            <p class="section-subtitle">Seat assignment</p>
-            <a th:href="@{/sections/{id}/assignments/new(id=${section.id})}" 
+            <!-- Seating Charts Section -->
+            <p class="section-subtitle">Seating charts</p>
+            <a th:href="@{/sections/{id}/class-mappings/new(id=${section.id})}" 
                class="action-card">
-                New seat assignment
+                Create Seating Chart
             </a>
-            <a th:href="@{/sections/{id}/assignments(id=${section.id})}" 
+            <a th:href="@{/sections/{id}/class-mappings(id=${section.id})}" 
                class="action-card">
-                Manage seat assignment
+                Manage Seating Charts
             </a>
             
             <!-- Section Management -->

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Select Layout')}"></head>
+<body>
+    <th:block th:insert="~{fragments/navbar :: navbar}"></th:block>
+    <th:block th:insert="~{fragments/title-card :: titleCard('Create Seating Chart', true, '/sections/' + ${sectionId})}"/>
+    <section class="section">
+        <div class="container">
+            <div th:insert="~{fragments/notifications :: notifications}"></div>
+            
+            <div class="content">
+                <p class="subtitle">Select a layout for your seating chart</p>
+            </div>
+            
+            <div class="columns is-multiline">
+                <th:block th:each="layout : ${layouts}">
+                    <div class="column is-one-third">
+                        <a th:href="@{/sections/{sectionId}/class-mappings/new/grid(sectionId=${sectionId}, layoutType=${layout.presetId})}" 
+                           class="box layout-card is-block has-text-centered layout-selection-card"
+                           style="text-decoration: none; color: inherit; cursor: pointer;">
+                            <div class="layout-preview mb-4" th:attr="data-rows=${layout.rows}, data-cols=${layout.columns}">
+                                <th:block th:with="previewRows=${T(java.lang.Math).min(layout.rows, 5)}, previewCols=${T(java.lang.Math).min(layout.columns, 6)}">
+                                    <div class="seat-preview-grid" 
+                                         th:style="'grid-template-columns: repeat(' + ${previewCols} + ', 1fr); gap: 4px; max-width: 200px; margin: 0 auto;'">
+                                        <th:block th:each="r : ${#numbers.sequence(1, previewRows)}">
+                                            <th:block th:each="c : ${#numbers.sequence(1, previewCols)}">
+                                                <div class="seat-preview-cell"
+                                                     style="aspect-ratio: 1; border: 2px solid #00BCD4; border-radius: 4px; background-color: white;"></div>
+                                            </th:block>
+                                        </th:block>
+                                    </div>
+                                </th:block>
+                            </div>
+                            <h3 class="title is-5" th:text="${layout.name}">Layout Name</h3>
+                            <p class="help" th:text="${layout.rows + ' × ' + layout.columns + ' seats'}">10 × 10</p>
+                        </a>
+                    </div>
+                </th:block>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
