@@ -3,24 +3,11 @@
 <head th:replace="~{fragments/head :: head('Assigning Seats')}"></head>
 <body>
     <th:block th:insert="~{fragments/navbar :: navbar}"></th:block>
+    <th:block th:insert="~{fragments/title-card :: titleCard('Assigning seats', true, '/sections/' + ${sectionId})}"/>
     <section class="section">
         <div class="container">
             <div th:insert="~{fragments/notifications :: notifications}"></div>
             
-            <!-- Assignment Header -->
-            <div class="columns is-centered mb-4">
-                <div class="column is-10">
-                    <div class="title-card has-text-white p-5">
-                        <h1 class="title is-4 has-text-white">Assigning seats</h1>
-                        <p class="subtitle is-6 has-text-white mb-0" th:if="${section != null}" 
-                           th:text="'For ' + ${section.gradeLevel.displayValue} + ' - ' + ${section.sectionName}">For Grade 11 - Section A</p>
-                        <p class="subtitle is-6 has-text-white mb-0" th:unless="${section != null}">
-                            Click a seat to assign a student
-                        </p>
-                    </div>
-                </div>
-            </div>
-
             <!-- Seat Grid (New Fragment) -->
             <div class="columns is-centered mb-4">
                 <div class="column is-10">

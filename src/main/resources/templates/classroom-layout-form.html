@@ -3,19 +3,11 @@
 <head th:replace="~{fragments/head :: head('New Layout')}"></head>
 <body>
     <th:block th:insert="~{fragments/navbar :: navbar}"></th:block>
+    <th:block th:insert="~{fragments/title-card :: titleCard('New layout', true, '/layouts')}"/>
     <section class="section">
         <div class="container">
             <div th:insert="~{fragments/notifications :: notifications}"></div>
             
-            <!-- New Layout Header -->
-            <div class="columns is-centered mb-4">
-                <div class="column is-8">
-                    <div class="title-card has-text-white p-5">
-                        <h1 class="title is-4 has-text-white">New layout</h1>
-                    </div>
-                </div>
-            </div>
-
             <div class="columns is-centered">
                 <div class="column is-8">
                     <div class="box">
