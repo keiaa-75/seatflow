@@ -159,9 +159,9 @@
             grid.innerHTML = '';
             gridData = [];
             
-            for (let r = 0; r < rows; r++) {
+            for (let r = 1; r <= rows; r++) {
                 gridData[r] = [];
-                for (let c = 0; c < columns; c++) {
+                for (let c = 1; c <= columns; c++) {
                     const seat = document.createElement('div');
                     seat.className = 'seat';
                     seat.onclick = () => toggleSeat(r, c);

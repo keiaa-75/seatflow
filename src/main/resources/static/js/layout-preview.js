@@ -36,8 +36,8 @@ function generateLayoutPreview(preview, layout) {
     preview.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
     preview.innerHTML = ''; // Clear existing seats
     
-    for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++) {
+    for (let r = 1; r <= rows; r++) {
+        for (let c = 1; c <= cols; c++) {
             const seat = document.createElement('div');
             seat.className = 'preview-seat';
             
@@ -56,8 +56,8 @@ function generateUShapeDisabled(rows, cols) {
     const startCol = Math.floor((cols - centerCols) / 2);
     
     // Disable center columns except first row (front) and last two rows (back)
-    for (let r = 1; r < rows - 2; r++) {
-        for (let c = startCol; c < startCol + centerCols; c++) {
+    for (let r = 2; r <= rows - 2; r++) {
+        for (let c = startCol + 1; c <= startCol + centerCols; c++) {
             disabled.push(`${r}-${c}`);
         }
     }
@@ -67,9 +67,9 @@ function generateUShapeDisabled(rows, cols) {
 
 function generateGroupsDisabled(rows, cols) {
     const disabled = [];
-    for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++) {
-            if ((r + 1) % 3 === 0 || (c + 1) % 3 === 0) {
+    for (let r = 1; r <= rows; r++) {
+        for (let c = 1; c <= cols; c++) {
+            if (r % 3 === 0 || c % 3 === 0) {
                 disabled.push(`${r}-${c}`);
             }
         }

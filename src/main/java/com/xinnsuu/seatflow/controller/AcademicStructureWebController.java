@@ -164,7 +164,7 @@ public class AcademicStructureWebController {
         Map<String, SeatGridData.SeatData> seatAssignments = new HashMap<>();
         for (SeatAssignmentDetailDTO assignment : existingAssignments) {
             if (assignment.getLayoutId().equals(layout.getId())) {
-                String seatKey = (assignment.getRowNumber() - 1) + "-" + (assignment.getColumnNumber() - 1);
+                String seatKey = assignment.getRowNumber() + "-" + assignment.getColumnNumber();
                 seatAssignments.put(seatKey, new SeatGridData.SeatData(
                         assignment.getStudentId(),
                         assignment.getStudentName(),
@@ -176,8 +176,8 @@ public class AcademicStructureWebController {
         List<SeatGridData.SeatInfo> allSeats = new ArrayList<>();
         List<String> disabledSeats = layout.getDisabledSeats() != null ? layout.getDisabledSeats() : new ArrayList<>();
 
-        for (int r = 0; r < layout.getRows(); r++) {
-            for (int c = 0; c < layout.getColumns(); c++) {
+        for (int r = 1; r <= layout.getRows(); r++) {
+            for (int c = 1; c <= layout.getColumns(); c++) {
                 String seatId = r + "-" + c;
                 SeatGridData.SeatInfo seatInfo = new SeatGridData.SeatInfo();
                 seatInfo.setId(seatId);
