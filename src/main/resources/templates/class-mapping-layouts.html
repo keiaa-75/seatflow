@@ -17,8 +17,10 @@
             <div class="columns is-multiline is-centered">
                 <th:block th:each="layout : ${layouts}">
                     <div class="column is-4-desktop is-12-mobile">
-                        <a th:href="@{/sections/{sectionId}/class-mappings/new/grid(sectionId=${sectionId}, layoutType=${layout.presetId})}" 
-                           class="box is-clickable has-text-centered"
+                        <a href="#" 
+                           class="box is-clickable has-text-centered layout-select-btn"
+                           th:data-layout-id="${layout.presetId}"
+                           th:data-layout-name="${layout.name}"
                            style="text-decoration: none; color: inherit;">
                             <h3 class="title is-5" th:text="${layout.name}">Layout Name</h3>
                             <p class="help" th:text="${layout.rows + ' × ' + layout.columns + ' seats'}">10 × 10</p>
@@ -28,5 +30,46 @@
             </div>
         </div>
     </section>
+    
+    <div id="name-modal" class="modal">
+        <div class="modal-background"></div>
+        <div class="modal-content">
+            <div class="box">
+                <h3 class="title is-4">Name Your Seating Chart</h3>
+                <div class="field">
+                    <label class="label">Name</label>
+                    <div class="control">
+                        <input type="text" id="mapping-name-input" class="input" placeholder="e.g., Monday Seating, Week 3, Exam Layout">
+                    </div>
+                    <p class="help">Give this seating chart a name so you can find it later</p>
+                </div>
+                <div class="field is-grouped mt-4">
+                    <div class="control">
+                        <button id="confirm-create-btn" class="button is-primary">Create</button>
+                    </div>
+                    <div class="control">
+                        <button id="cancel-create-btn" class="button">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button class="modal-close is-large" aria-label="close"></button>
+    </div>
+    
+    <div id="loading-modal" class="modal">
+        <div class="modal-background"></div>
+        <div class="modal-content">
+            <div class="box has-text-centered">
+                <p class="is-size-5">Creating seating chart...</p>
+            </div>
+        </div>
+    </div>
+    
+    <script th:inline="javascript">
+        const sectionId = /*[[${sectionId}]]*/ null;
+        let selectedLayoutId = null;
+        let selectedLayoutName = null;
+    </script>
+    <script src="/js/class-mapping-layouts.js"></script>
 </body>
 </html>

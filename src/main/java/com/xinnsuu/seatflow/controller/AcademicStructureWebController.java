@@ -455,4 +455,93 @@ public class AcademicStructureWebController {
         
         return "class-mapping-view";
     }
+
+    @GetMapping("/{id}/class-mappings/{mappingId}/edit")
+    public String editClassMapping(@PathVariable("id") Long id,
+                                   @PathVariable("mappingId") Long mappingId,
+                                   Model model) {
+        AcademicStructure section = academicStructureService.getSectionById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid section Id:" + id));
+        
+        var mappingOpt = classMappingService.getMappingByIdAndSectionId(mappingId, id);
+        if (mappingOpt.isEmpty()) {
+            throw new IllegalArgumentException("ClassMapping not found: " + mappingId);
+        }
+        
+        ClassMapping mapping = mappingOpt.get();
+        
+        ClassroomLayout layout = classroomLayoutService.getAllLayouts().stream()
+                .filter(l -> l.getPresetId() != null && l.getPresetId().equals(mapping.getLayoutId()))
+                .findFirst()
+                .orElse(null);
+
+        List<Student> students = studentService.getStudentsBySectionId(id);
+        Map<String, String> assignments = mapping.getAssignments();
+
+        Map<String, SeatGridData.SeatData> seatAssignments = new HashMap<>();
+        List<SeatGridData.SeatInfo> allSeats = new ArrayList<>();
+        List<String> disabledSeats = layout != null && layout.getDisabledSeats() != null ? layout.getDisabledSeats() : new ArrayList<>();
+
+        int rows = layout != null ? layout.getRows() : 10;
+        int cols = layout != null ? layout.getColumns() : 10;
+
+        for (int r = 1; r <= rows; r++) {
+            for (int c = 1; c <= cols; c++) {
+                String seatId = r + "-" + c;
+                SeatGridData.SeatInfo seatInfo = new SeatGridData.SeatInfo();
+                seatInfo.setId(seatId);
+                seatInfo.setRow(r);
+                seatInfo.setCol(c);
+
+                if (disabledSeats.contains(seatId)) {
+                    seatInfo.setStatus("disabled");
+                } else if (assignments != null && assignments.containsKey(seatId)) {
+                    String studentId = assignments.get(seatId);
+                    Student student = students.stream()
+                            .filter(s -> s.getStudentId().equals(studentId))
+                            .findFirst()
+                            .orElse(null);
+                    seatInfo.setStatus("occupied");
+                    seatInfo.setStudentId(studentId);
+                    if (student != null) {
+                        seatInfo.setStudentName(student.getFirstName() + " " + student.getLastName());
+                        seatInfo.setInitials(getInitials(seatInfo.getStudentName()));
+                    }
+                    
+                    seatAssignments.put(seatId, new SeatGridData.SeatData(
+                            studentId,
+                            student != null ? student.getFirstName() + " " + student.getLastName() : "",
+                            getInitials(student != null ? student.getFirstName() + " " + student.getLastName() : "")
+                    ));
+                } else {
+                    seatInfo.setStatus("available");
+                }
+
+                allSeats.add(seatInfo);
+            }
+        }
+
+        SeatGridData gridData = new SeatGridData(
+                id,
+                layout != null ? layout.getId() : null,
+                mapping.getLayoutId(),
+                rows,
+                cols,
+                disabledSeats,
+                students,
+                seatAssignments,
+                allSeats
+        );
+
+        model.addAttribute("section", section);
+        model.addAttribute("sectionId", id);
+        model.addAttribute("mapping", mapping);
+        model.addAttribute("layoutType", mapping.getLayoutId());
+        model.addAttribute("layoutId", layout != null ? layout.getId() : null);
+        model.addAttribute("layout", layout);
+        model.addAttribute("students", students);
+        model.addAttribute("gridData", gridData);
+        
+        return "class-mapping-grid";
+    }
 }

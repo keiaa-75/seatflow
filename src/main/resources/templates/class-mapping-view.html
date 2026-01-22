@@ -33,7 +33,7 @@
                 <div class="column is-10">
                     <div class="box">
                         <div th:if="${gridData != null}">
-                            <div th:replace="~{fragments/seat-grid :: seat-grid(${gridData})}"></div>
+                            <div th:replace="~{fragments/seat-grid :: seat-grid(${gridData}, ${mapping})}"></div>
                         </div>
                         <div th:unless="${gridData != null}" class="has-text-centered">
                             <p class="is-size-5">Loading seat grid...</p>

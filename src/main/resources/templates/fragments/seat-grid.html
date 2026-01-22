@@ -1,4 +1,4 @@
-<div xmlns:th="http://www.thymeleaf.org" th:fragment="seat-grid(gridData)">
+<div xmlns:th="http://www.thymeleaf.org" th:fragment="seat-grid(gridData, mapping)">
     <style th:inline="css">
         .seat-grid {
             display: grid;
@@ -191,7 +191,8 @@
          th:style="'grid-template-columns: repeat(' + ${gridData.columns} + ', 1fr)'"
          th:attr="data-section-id=${gridData.sectionId},
                   data-layout-id=${gridData.layoutId},
-                  data-layout-type=${gridData.layoutType}">
+                  data-layout-type=${gridData.layoutType},
+                  data-mapping-id=${mapping != null ? mapping.id : ''}">
 
         <th:block th:each="seat : ${gridData.allSeats}">
             <div class="seat"
@@ -248,6 +249,7 @@
             const sectionId = seatGrid.dataset.sectionId;
             const layoutId = seatGrid.dataset.layoutId;
             const layoutType = seatGrid.dataset.layoutType;
+            const mappingId = seatGrid.dataset.mappingId;
 
             const modal = document.getElementById('studentSelectModal');
             const modalBg = modal.querySelector('.modal-background');
@@ -321,20 +323,16 @@
             }
 
             async function saveAssignment(seatId, studentId) {
-                const [row, col] = seatId.split('-').map(Number);
-
                 try {
-                    const response = await fetch('/api/sections/' + sectionId + '/assignments/bulk', {
+                    const response = await fetch('/api/sections/' + sectionId + '/class-mappings/auto-save', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
-                            assignmentName: 'Manual Assignment',
-                            layoutType: layoutType,
-                            assignments: {
-                                [seatId]: studentId
-                            }
+                            seatId: seatId,
+                            studentId: studentId,
+                            mappingId: mappingId
                         })
                     });
 
