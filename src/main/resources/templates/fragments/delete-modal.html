@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="deleteModal(id, name)">
+    <div th:id="'delete-modal-' + ${id}" class="modal">
+        <div class="modal-background"></div>
+        <div class="modal-content">
+            <div class="box">
+                <h3 class="title is-4">Delete Seating Chart?</h3>
+                <p>This will permanently delete <strong th:text="${name}">Seating Chart</strong>.</p>
+                <p class="help mt-2">This action cannot be undone.</p>
+                <div class="field is-grouped mt-4">
+                    <div class="control">
+                        <button class="button is-danger confirm-delete-btn"
+                                th:data-mapping-id="${id}">Delete</button>
+                    </div>
+                    <div class="control">
+                        <button class="button cancel-delete-btn">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button class="modal-close is-large" aria-label="close"></button>
+    </div>
+</th:block>
+</html>

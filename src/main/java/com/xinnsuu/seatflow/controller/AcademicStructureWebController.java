@@ -294,8 +294,11 @@ public class AcademicStructureWebController {
         AcademicStructure section = academicStructureService.getSectionById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid section Id:" + id));
         
+        List<ClassMapping> mappings = classMappingService.getMappingsBySectionId(id);
+        
         model.addAttribute("section", section);
         model.addAttribute("sectionId", id);
+        model.addAttribute("mappings", mappings);
         
         return "class-mappings";
     }

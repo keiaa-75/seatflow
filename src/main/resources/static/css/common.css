@@ -643,3 +643,53 @@ details[open] summary i.fa-chevron-down {
         transform: translateY(0);
     }
 }
+
+/* Clickable Card Styles */
+.is-clickable {
+    transition: all 0.2s ease;
+}
+
+.is-clickable:hover {
+    border-color: #00BCD4;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.mapping-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
+.mapping-card .title {
+    margin-bottom: 0.25rem;
+}
+
+.mapping-card .content {
+    margin-bottom: 0;
+}
+
+/* Clickable Card Styles */
+.is-clickable {
+    transition: all 0.2s ease;
+}
+
+.is-clickable:hover {
+    border-color: #00BCD4;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.mapping-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
+.mapping-card .title {
+    margin-bottom: 0.25rem;
+}
+
+.mapping-card .content {
+    margin-bottom: 0;
+}
