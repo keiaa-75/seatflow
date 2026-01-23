@@ -71,4 +71,31 @@ public class Student {
         }
         return fullName.toString().trim();
     }
+    
+    public String getDisplayName() {
+        StringBuilder displayName = new StringBuilder();
+        
+        // Last Name Suffix
+        if (lastName != null && !lastName.trim().isEmpty()) {
+            displayName.append(lastName.trim());
+            if (suffix != null && !suffix.trim().isEmpty()) {
+                displayName.append(" ").append(suffix.trim());
+            }
+        }
+        
+        // First Name
+        if (firstName != null && !firstName.trim().isEmpty()) {
+            if (displayName.length() > 0) {
+                displayName.append(", ");
+            }
+            displayName.append(firstName.trim());
+        }
+        
+        // Middle Initial
+        if (middleName != null && !middleName.trim().isEmpty()) {
+            displayName.append(" ").append(middleName.trim().charAt(0)).append(".");
+        }
+        
+        return displayName.toString().trim();
+    }
 }

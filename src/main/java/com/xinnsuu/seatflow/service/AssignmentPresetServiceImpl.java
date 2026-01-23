@@ -46,7 +46,7 @@ public class AssignmentPresetServiceImpl implements AssignmentPresetService {
             throw new RuntimeException("Layout with ID " + layoutId + " not found");
         }
 
-        List<Student> students = studentRepository.findByAcademicStructureId(sectionId);
+        List<Student> students = studentRepository.findByAcademicStructureIdOrderByLastNameAscFirstNameAsc(sectionId);
         if (students.isEmpty()) {
             throw new RuntimeException("No students found in section " + sectionId);
         }

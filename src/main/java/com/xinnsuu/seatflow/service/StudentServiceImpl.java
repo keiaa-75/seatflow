@@ -29,7 +29,7 @@ public class StudentServiceImpl implements StudentService {
         if (!academicStructureRepository.existsById(sectionId)) {
             throw new RuntimeException("Academic Structure with ID " + sectionId + " not found");
         }
-        return studentRepository.findByAcademicStructureId(sectionId);
+        return studentRepository.findByAcademicStructureIdOrderByLastNameAscFirstNameAsc(sectionId);
     }
 
     @Override

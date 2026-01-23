@@ -12,7 +12,7 @@ import com.xinnsuu.seatflow.model.Student;
 
 @Repository
 public interface StudentRepository extends JpaRepository<Student, String> {
-    List<Student> findByAcademicStructureId(Long academicStructureId);
+    List<Student> findByAcademicStructureIdOrderByLastNameAscFirstNameAsc(Long academicStructureId);
     Optional<Student> findByStudentIdAndAcademicStructureId(String studentId, Long academicStructureId);
 
     @Query("SELECT s FROM Student s WHERE s.academicStructure.id = :sectionId " +

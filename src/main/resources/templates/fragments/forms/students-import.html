@@ -1,5 +1,5 @@
 <th:block xmlns:th="http://www.thymeleaf.org" th:fragment="content">
-    <th:block th:insert="~{fragments/title-card :: titleCard('Import Student Entries', true, '/sections/' + ${sectionId} + '/students')}"></th:block>
+    <th:block th:insert="~{fragments/title-card :: titleCard('Import Student Entries', true, '/sections')}"></th:block>
 
     <div th:insert="~{fragments/notifications :: notifications}"></div>
 
@@ -40,7 +40,7 @@
                         </button>
                     </div>
                     <div class="control">
-                        <a th:href="@{/sections/{sectionId}/students(sectionId=${sectionId})}" class="button is-light">
+                        <a href="/sections" class="button is-light">
                             <span class="icon"><i class="fas fa-times"></i></span>
                             <span>Cancel</span>
                         </a>

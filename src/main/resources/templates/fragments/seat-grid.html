@@ -233,9 +233,9 @@
                             <div class="student-option"
                                  th:if="${!isAssigned}"
                                  th:attr="data-student-id=${student.studentId},
-                                          data-student-name=${student.firstName + ' ' + student.lastName}">
-                                <div class="student-name"
-                                     th:text="${student.firstName + ' ' + student.lastName}"></div>
+                                          data-student-name=${student.displayName},
+                                          data-search-text=${student.displayName + ' ' + student.studentId}">
+                                <div class="student-name" th:text="${student.displayName}"></div>
                                 <div class="student-id" th:text="${student.studentId}"></div>
                             </div>
                         </th:block>
@@ -251,6 +251,7 @@
 
     <th:block th:insert="~{fragments/confirm-modal :: confirmModal('unassign-modal', 'Unassign Student?', 'Remove student from this seat?', 'Remove', 'Cancel')}"/>
 
+    <script src="/js/search-utils.js"></script>
     <script th:inline="javascript">
         document.addEventListener('DOMContentLoaded', function() {
             const seatGrid = document.querySelector('.seat-grid');
@@ -267,6 +268,15 @@
             const studentList = document.getElementById('studentListContainer');
 
             let currentSeatId = null;
+
+            // Initialize search for student modal
+            const studentSearch = new SearchFilter({
+                searchInput: '#studentSearchInput',
+                itemsContainer: '#studentListContainer',
+                itemSelector: '.student-option',
+                searchAttribute: 'data-search-text',
+                noResultsMessage: 'No students found'
+            });
 
             function showToast(message, type) {
                 const container = document.getElementById('toastContainer');
@@ -288,7 +298,6 @@
                 modal.classList.add('is-active');
                 document.documentElement.classList.add('is-modal-active');
                 searchInput.value = '';
-                filterStudents('');
                 searchInput.focus();
             }
 
@@ -296,56 +305,6 @@
                 modal.classList.remove('is-active');
                 document.documentElement.classList.remove('is-modal-active');
                 currentSeatId = null;
-            }
-
-            function filterStudents(searchTerm) {
-                const term = searchTerm.toLowerCase();
-                const options = studentList.querySelectorAll('.student-option');
-                const noStudentsMsg = document.getElementById('no-unassigned-students');
-                let hasVisible = false;
-
-                if (options.length === 0) {
-                    if (noStudentsMsg) {
-                        noStudentsMsg.classList.remove('is-hidden');
-                    }
-                    return;
-                }
-
-                options.forEach(function(option) {
-                    const name = option.dataset.studentName.toLowerCase();
-                    const id = option.dataset.studentId.toLowerCase();
-
-                    if (name.includes(term) || id.includes(term)) {
-                        option.style.display = 'block';
-                        hasVisible = true;
-                    } else {
-                        option.style.display = 'none';
-                    }
-                });
-
-                if (!hasVisible) {
-                    let noResult = studentList.querySelector('.no-result-message');
-                    if (!noResult) {
-                        noResult = document.createElement('div');
-                        noResult.className = 'student-option no-result-message';
-                        noResult.style.display = 'block';
-                        noResult.style.textAlign = 'center';
-                        noResult.style.color = '#666';
-                        noResult.textContent = 'No students found';
-                        studentList.appendChild(noResult);
-                    }
-                    if (noStudentsMsg) {
-                        noStudentsMsg.classList.add('is-hidden');
-                    }
-                } else {
-                    const noResult = studentList.querySelector('.no-result-message');
-                    if (noResult) {
-                        noResult.remove();
-                    }
-                    if (noStudentsMsg) {
-                        noStudentsMsg.classList.add('is-hidden');
-                    }
-                }
             }
 
             async function saveAssignment(seatId, studentId) {
@@ -504,10 +463,6 @@
                     saveAssignment(currentSeatId, studentId);
                     closeModal();
                 }
-            });
-
-            searchInput.addEventListener('input', function() {
-                filterStudents(this.value);
             });
 
             modalBg.addEventListener('click', closeModal);
