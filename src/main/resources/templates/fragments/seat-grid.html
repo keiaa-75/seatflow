@@ -249,6 +249,8 @@
         <button class="modal-close is-large" aria-label="close"></button>
     </div>
 
+    <th:block th:insert="~{fragments/confirm-modal :: confirmModal('unassign-modal', 'Unassign Student?', 'Remove student from this seat?', 'Remove', 'Cancel')}"/>
+
     <script th:inline="javascript">
         document.addEventListener('DOMContentLoaded', function() {
             const seatGrid = document.querySelector('.seat-grid');
@@ -258,6 +260,7 @@
             const mappingId = seatGrid.dataset.mappingId;
 
             const modal = document.getElementById('studentSelectModal');
+            const unassignModal = document.getElementById('unassign-modal');
             const modalBg = modal.querySelector('.modal-background');
             const modalClose = modal.querySelector('.modal-close');
             const searchInput = document.getElementById('studentSearchInput');
@@ -403,6 +406,45 @@
                 }
             }
 
+            async function unassignSeat(seatId) {
+                try {
+                    const response = await fetch('/api/sections/' + sectionId + '/class-mappings/unassign', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            seatId: seatId,
+                            mappingId: mappingId
+                        })
+                    });
+
+                    if (!response.ok) {
+                        const error = await response.text();
+                        throw new Error(error);
+                    }
+
+                    showToast('Student unassigned successfully', 'success');
+                    
+                    // Update seat display
+                    const seat = document.querySelector('[data-seat-id="' + seatId + '"]');
+                    if (seat) {
+                        seat.classList.remove('occupied');
+                        seat.classList.add('available');
+                        delete seat.dataset.studentId;
+                        
+                        const initialsSpan = seat.querySelector('.seat-initials');
+                        if (initialsSpan) {
+                            initialsSpan.remove();
+                        }
+                    }
+
+                } catch (error) {
+                    console.error('Failed to unassign seat:', error);
+                    showToast('Failed to unassign seat', 'danger');
+                }
+            }
+
             function getInitials(name) {
                 if (!name) return '';
                 return name.split(' ').map(function(n) {
@@ -419,19 +461,8 @@
                 if (status === 'disabled') return;
 
                 if (status === 'occupied') {
-                    if (confirm('Remove student from this seat?')) {
-                        const seatId = seat.dataset.seatId;
-                        const studentId = seat.dataset.studentId;
-
-                        seat.classList.remove('occupied');
-                        seat.classList.add('available');
-                        delete seat.dataset.studentId;
-
-                        const initialsSpan = seat.querySelector('.seat-initials');
-                        if (initialsSpan) {
-                            initialsSpan.remove();
-                        }
-                    }
+                    currentSeatId = seat.dataset.seatId;
+                    unassignModal.classList.add('is-active');
                     return;
                 }
 
@@ -439,6 +470,29 @@
                     openModal(seat.dataset.seatId);
                 }
             });
+
+            // Handle unassign modal confirmation
+            if (unassignModal) {
+                const confirmBtn = unassignModal.querySelector('.confirm-btn');
+                const cancelBtns = unassignModal.querySelectorAll('.cancel-btn');
+                
+                if (confirmBtn) {
+                    confirmBtn.addEventListener('click', function() {
+                        if (currentSeatId) {
+                            unassignSeat(currentSeatId);
+                            unassignModal.classList.remove('is-active');
+                            currentSeatId = null;
+                        }
+                    });
+                }
+                
+                cancelBtns.forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        unassignModal.classList.remove('is-active');
+                        currentSeatId = null;
+                    });
+                });
+            }
 
             studentList.addEventListener('click', function(e) {
                 const option = e.target.closest('.student-option');

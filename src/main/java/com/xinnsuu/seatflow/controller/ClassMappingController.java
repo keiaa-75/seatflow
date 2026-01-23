@@ -138,6 +138,41 @@ public class ClassMappingController {
         }
     }
 
+    @PostMapping("/unassign")
+    public ResponseEntity<Map<String, Object>> unassignSeat(
+            @PathVariable Long sectionId,
+            @RequestBody Map<String, Object> request) {
+        try {
+            String seatId = (String) request.get("seatId");
+            Long mappingId = request.get("mappingId") != null ? Long.valueOf(request.get("mappingId").toString()) : null;
+            
+            if (seatId == null || mappingId == null) {
+                return new ResponseEntity<>(Map.of("error", "Missing required fields"), HttpStatus.BAD_REQUEST);
+            }
+            
+            Optional<ClassMapping> mappingOpt = classMappingService.getMappingByIdAndSectionId(mappingId, sectionId);
+            if (mappingOpt.isEmpty()) {
+                return new ResponseEntity<>(Map.of("error", "ClassMapping not found"), HttpStatus.NOT_FOUND);
+            }
+            
+            ClassMapping mapping = mappingOpt.get();
+            Map<String, String> assignments = mapping.getAssignments();
+            if (assignments != null && assignments.containsKey(seatId)) {
+                assignments.remove(seatId);
+                classMappingService.updateMapping(sectionId, mappingId, mapping.getName(), mapping.getLayoutId(), assignments);
+            }
+            
+            return new ResponseEntity<>(Map.of(
+                "mappingId", mappingId,
+                "action", "unassigned",
+                "seatId", seatId
+            ), HttpStatus.OK);
+            
+        } catch (Exception e) {
+            return new ResponseEntity<>(Map.of("error", e.getClass().getSimpleName() + ": " + e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @PostMapping("/init")
     public ResponseEntity<Map<String, Object>> initMapping(
             @PathVariable Long sectionId,
