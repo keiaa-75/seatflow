@@ -229,14 +229,20 @@
 
                 <div class="student-list-container" id="studentListContainer">
                     <th:block th:each="student : ${gridData.students}">
-                        <div class="student-option"
-                             th:attr="data-student-id=${student.studentId},
-                                      data-student-name=${student.firstName + ' ' + student.lastName}">
-                            <div class="student-name"
-                                 th:text="${student.firstName + ' ' + student.lastName}"></div>
-                            <div class="student-id" th:text="${student.studentId}"></div>
-                        </div>
+                        <th:block th:with="isAssigned=${mapping != null && mapping.assignments != null && #maps.containsValue(mapping.assignments, student.studentId)}">
+                            <div class="student-option"
+                                 th:if="${!isAssigned}"
+                                 th:attr="data-student-id=${student.studentId},
+                                          data-student-name=${student.firstName + ' ' + student.lastName}">
+                                <div class="student-name"
+                                     th:text="${student.firstName + ' ' + student.lastName}"></div>
+                                <div class="student-id" th:text="${student.studentId}"></div>
+                            </div>
+                        </th:block>
                     </th:block>
+                    <div id="no-unassigned-students" class="has-text-centered py-4 is-hidden">
+                        <p class="has-text-grey">All students are assigned to seats</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -292,7 +298,15 @@
             function filterStudents(searchTerm) {
                 const term = searchTerm.toLowerCase();
                 const options = studentList.querySelectorAll('.student-option');
+                const noStudentsMsg = document.getElementById('no-unassigned-students');
                 let hasVisible = false;
+
+                if (options.length === 0) {
+                    if (noStudentsMsg) {
+                        noStudentsMsg.classList.remove('is-hidden');
+                    }
+                    return;
+                }
 
                 options.forEach(function(option) {
                     const name = option.dataset.studentName.toLowerCase();
@@ -307,17 +321,26 @@
                 });
 
                 if (!hasVisible) {
-                    const noResult = document.createElement('div');
-                    noResult.className = 'student-option';
-                    noResult.style.display = 'block';
-                    noResult.style.textAlign = 'center';
-                    noResult.style.color = '#666';
-                    noResult.textContent = 'No students found';
-                    studentList.appendChild(noResult);
+                    let noResult = studentList.querySelector('.no-result-message');
+                    if (!noResult) {
+                        noResult = document.createElement('div');
+                        noResult.className = 'student-option no-result-message';
+                        noResult.style.display = 'block';
+                        noResult.style.textAlign = 'center';
+                        noResult.style.color = '#666';
+                        noResult.textContent = 'No students found';
+                        studentList.appendChild(noResult);
+                    }
+                    if (noStudentsMsg) {
+                        noStudentsMsg.classList.add('is-hidden');
+                    }
                 } else {
-                    const noResult = studentList.querySelector('.student-option[style*="No students found"]');
+                    const noResult = studentList.querySelector('.no-result-message');
                     if (noResult) {
                         noResult.remove();
+                    }
+                    if (noStudentsMsg) {
+                        noStudentsMsg.classList.add('is-hidden');
                     }
                 }
             }
@@ -336,6 +359,11 @@
                         })
                     });
 
+                    if (response.status === 409) {
+                        const result = await response.json();
+                        throw new Error(result.error || 'Student is already assigned to another seat');
+                    }
+
                     if (!response.ok) {
                         const error = await response.text();
                         throw new Error(error);
@@ -348,7 +376,7 @@
 
                 } catch (error) {
                     console.error('Failed to save assignment:', error);
-                    showToast('Failed to assign student: ' + error.message, 'danger');
+                    showToast(error.message, 'danger');
                 }
             }
 

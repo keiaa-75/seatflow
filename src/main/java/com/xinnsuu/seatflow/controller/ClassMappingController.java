@@ -111,6 +111,17 @@ public class ClassMappingController {
             if (assignments == null) {
                 assignments = new java.util.HashMap<>();
             }
+            
+            // Check if student is already assigned in this mapping
+            for (Map.Entry<String, String> entry : assignments.entrySet()) {
+                if (entry.getValue().equals(studentId)) {
+                    return new ResponseEntity<>(Map.of(
+                        "error", "Student is already assigned to seat " + entry.getKey(),
+                        "existingSeatId", entry.getKey()
+                    ), HttpStatus.CONFLICT);
+                }
+            }
+            
             assignments.put(seatId, studentId);
             
             classMappingService.updateMapping(sectionId, mappingId, mapping.getName(), mapping.getLayoutId(), assignments);
