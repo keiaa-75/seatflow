@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="inputModal(id, title, label, placeholder, helpText, confirmText, cancelText)">
+    <div th:id="${id}" class="modal">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title" th:text="${title}">Enter details</p>
+                <button class="delete cancel-btn" aria-label="close" onclick="this.closest('.modal').classList.remove('is-active')"></button>
+            </header>
+            <section class="modal-card-body">
+                <div class="field">
+                    <label class="label" th:text="${label}">Name</label>
+                    <div class="control">
+                        <input type="text" id="mapping-name-input" class="input" th:placeholder="${placeholder}">
+                    </div>
+                    <p class="help" th:text="${helpText}">Provide a description</p>
+                </div>
+            </section>
+            <footer class="modal-card-foot">
+                <button id="confirm-create-btn" th:text="${confirmText}" class="button is-primary confirm-btn">Confirm</button>
+                <button id="cancel-create-btn" th:text="${cancelText}" class="button cancel-btn">Cancel</button>
+            </footer>
+        </div>
+    </div>
+</th:block>
+</html></content>
+<parameter name="filePath">src/main/resources/templates/fragments/input-modal.html

@@ -27,26 +27,7 @@
         </div>
     </section>
     
-    <div id="name-modal" class="modal">
-        <div class="modal-background"></div>
-        <div class="modal-content">
-            <div class="box">
-                <h3 class="title is-4">Name Your Seating Chart</h3>
-                <div class="field">
-                    <label class="label">Name</label>
-                    <div class="control">
-                        <input type="text" id="mapping-name-input" class="input" placeholder="e.g., Monday Seating, Week 3, Exam Layout">
-                    </div>
-                    <p class="help">Give this seating chart a name so you can find it later</p>
-                </div>
-                <div class="field is-grouped mt-4">
-                    <div class="control">
-                        <button id="confirm-create-btn" class="button is-primary">Create</button>
-                    </div>
-                    <div class="control">
-                        <button id="cancel-create-btn" class="button">Cancel</button>
-                    </div>
-                </div>
+    <th:block th:insert="~{fragments/input-modal :: inputModal('name-modal', 'Name your seating chart', 'Name', 'e.g., Monday Seating, Week 3, Exam Layout', 'Give this seating chart a name so you can find it later', 'Create', 'Cancel')}"/>
             </div>
         </div>
         <button class="modal-close is-large" aria-label="close"></button>

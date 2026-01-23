@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="confirmModal(id, title, message, confirmText, cancelText)">
+    <div th:id="${id}" class="modal">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title" th:text="${title}">Confirm action</p>
+                <button class="delete cancel-btn" aria-label="close" onclick="this.closest('.modal').classList.remove('is-active')"></button>
+            </header>
+            <section class="modal-card-body">
+                <p th:text="${message}">Are you sure?</p>
+                <p class="help mt-2">This action cannot be undone.</p>
+            </section>
+            <footer class="modal-card-foot">
+                <button id="confirm-cancel-btn" th:text="${confirmText}" class="button is-danger confirm-btn">Confirm</button>
+                <button id="keep-mapping-btn" th:text="${cancelText}" class="button cancel-btn">Cancel</button>
+            </footer>
+        </div>
+    </div>
+</th:block>
+</html></content>
+<parameter name="filePath">src/main/resources/templates/fragments/confirm-modal.html

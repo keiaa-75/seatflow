@@ -63,25 +63,7 @@
         </div>
     </section>
     
-    <div id="cancel-modal" class="modal">
-        <div class="modal-background"></div>
-        <div class="modal-content">
-            <div class="box">
-                <h3 class="title is-4">Cancel Seating Chart?</h3>
-                <p>This will permanently delete <strong th:text="${mapping.name}">Seating Chart</strong> and discard all changes.</p>
-                <p class="help mt-2">This action cannot be undone.</p>
-                <div class="field is-grouped mt-4">
-                    <div class="control">
-                        <button id="confirm-cancel-btn" class="button is-danger">Discard</button>
-                    </div>
-                    <div class="control">
-                        <button id="keep-mapping-btn" class="button">Keep Changes</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <button class="modal-close is-large" aria-label="close"></button>
-    </div>
+    <th:block th:insert="~{fragments/confirm-modal :: confirmModal('cancel-modal', 'Cancel Seating Chart?', 'This will permanently delete ' + ${mapping.name} + ' and discard all changes.', 'Discard', 'Keep Changes')}"/>
     
     <script th:inline="javascript">
         const sectionId = /*[[${sectionId}]]*/ null;

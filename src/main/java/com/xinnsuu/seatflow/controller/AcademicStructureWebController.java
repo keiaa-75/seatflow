@@ -249,6 +249,10 @@ public class AcademicStructureWebController {
                 allSeats
         );
 
+        // Create empty mapping object for consistent template behavior
+        ClassMapping emptyMapping = new ClassMapping();
+        emptyMapping.setAssignments(new HashMap<>());
+        
         model.addAttribute("section", section);
         model.addAttribute("sectionId", id);
         model.addAttribute("layoutType", layoutType);
@@ -256,6 +260,7 @@ public class AcademicStructureWebController {
         model.addAttribute("layout", layout);
         model.addAttribute("students", students);
         model.addAttribute("gridData", gridData);
+        model.addAttribute("mapping", emptyMapping);
         
         return "class-mapping-grid";
     }
