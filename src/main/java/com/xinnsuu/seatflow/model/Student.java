@@ -3,6 +3,7 @@ package com.xinnsuu.seatflow.model;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -47,7 +48,7 @@ public class Student {
 	private String suffix;
 
 	@JsonIgnore
-	@OneToMany(mappedBy = "student")
+	@OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<SeatAssignment> seatAssignments;
 
     @ManyToOne

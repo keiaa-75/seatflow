@@ -9,6 +9,7 @@
         <div class="box">
             <form th:action="@{/sections/{sectionId}/students/new(sectionId=${sectionId})}" 
                   th:object="${student}" method="post" id="student-form">
+                <input type="hidden" id="sectionIdInput" th:value="${sectionId}">
                 
                 <!-- Student ID -->
                 <div class="field">
@@ -103,8 +104,8 @@
         }
 
         function confirmDelete() {
-            const studentId = $('#studentId').val();
-            const sectionId = /*[[${sectionId}]]*/ null;
+            const studentId = document.getElementById('studentId').value;
+            const sectionId = document.getElementById('sectionIdInput').value;
 
             fetch(`/sections/${sectionId}/students/${studentId}`, {
                 method: 'DELETE',
