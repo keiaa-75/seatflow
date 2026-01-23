@@ -113,7 +113,7 @@ public class AcademicStructureWebController {
         return "section-detail";
     }
 
-    @GetMapping("/edit/{id}")
+    @GetMapping("/{id}/edit")
     public String showUpdateForm(@PathVariable("id") Long id, Model model) {
         AcademicStructure structure = academicStructureService.getSectionById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid structure Id:" + id));
@@ -121,7 +121,7 @@ public class AcademicStructureWebController {
         return "sections-edit";
     }
 
-    @PostMapping("/edit/{id}")
+    @PostMapping("/{id}/edit")
     public String updateStructure(@PathVariable("id") Long id, @Valid @ModelAttribute("structure") AcademicStructure structure,
             BindingResult result, Model model) {
         if (result.hasErrors()) {

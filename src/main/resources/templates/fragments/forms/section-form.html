@@ -1,5 +1,5 @@
 <th:block xmlns:th="http://www.thymeleaf.org" th:fragment="form">
-    <th:block th:insert="~{fragments/title-card :: titleCard(${structure.id == null ? 'Create Section' : 'Edit details'}, true, '/sections')}"></th:block>
+    <th:block th:insert="~{fragments/title-card :: titleCard(${structure.id == null ? 'Create Section' : 'Edit details'}, true, ${structure.id == null ? '/sections' : '/sections/' + structure.id})}"></th:block>
 
     <div th:insert="~{fragments/notifications :: notifications}"></div>
 
@@ -8,7 +8,7 @@
             <div class="columns is-centered">
                 <div class="column is-8">
                     <div class="box">
-                        <form id="section-form" th:action="${structure.id == null ? '/sections/new' : '/sections/edit/' + structure.id}" method="post" th:object="${structure}">
+                        <form id="section-form" th:action="${structure.id == null ? '/sections/new' : '/sections/' + structure.id + '/edit'}" method="post" th:object="${structure}">
                         <div class="field">
                             <label class="label">Grade Level*</label>
                             <div class="control">
