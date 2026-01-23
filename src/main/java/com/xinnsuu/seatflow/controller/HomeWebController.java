@@ -17,8 +17,5 @@ public class HomeWebController {
         return "about";
     }
 
-    @GetMapping("/manage")
-    public String manage() {
-        return "redirect:/sections";
-    }
+
 }

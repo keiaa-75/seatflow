@@ -1,18 +1,14 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/head :: head('Manage Seating Charts')}"></head>
+<head th:replace="~{fragments/head :: head('Manage seating chart')}"></head>
 <body>
     <th:block th:insert="~{fragments/navbar :: navbar}"></th:block>
-    <th:block th:insert="~{fragments/title-card :: titleCard('Manage Seating Charts', true, '/sections/' + ${sectionId})}"/>
+    <th:block th:insert="~{fragments/title-card :: titleCard('Manage seating chart', true, '/sections/' + ${sectionId})}"/>
     <section class="section">
         <div class="container">
             <div th:insert="~{fragments/notifications :: notifications}"></div>
             
-            <div class="columns is-centered">
-                <div class="column is-10">
-                    <p class="subtitle has-text-centered" th:text="${section.gradeLevel.displayValue + ' - ' + section.sectionName}">11 - Pahimis</p>
-                </div>
-            </div>
+
             
             <div class="columns is-centered is-multiline">
                 <div class="column is-10">
@@ -23,9 +19,9 @@
                             </div>
                             <p class="title is-5 has-text-grey">No seating charts yet</p>
                             <p class="mb-4">Create your first seating chart to get started</p>
-                            <a th:href="@{/sections/{sectionId}/class-mappings/new(sectionId=${sectionId})}" class="button is-primary">
-                                <i class="fas fa-plus mr-2"></i>Create Seating Chart
-                            </a>
+                                <a th:href="@{/sections/{sectionId}/class-mappings/new(sectionId=${sectionId})}" class="button is-primary">
+                                    <i class="fas fa-plus mr-2"></i>Create seating chart
+                                </a>
                         </div>
                     </th:block>
                     

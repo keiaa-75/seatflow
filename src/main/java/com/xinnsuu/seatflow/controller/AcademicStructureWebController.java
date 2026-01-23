@@ -150,83 +150,7 @@ public class AcademicStructureWebController {
         return "classroom-layouts";
     }
 
-    @GetMapping("/{id}/assignments/assign")
-    public String showAssignmentForm(@PathVariable("id") Long id, 
-                                   @RequestParam("layoutType") String layoutType, Model model) {
-        AcademicStructure section = academicStructureService.getSectionById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid section Id:" + id));
-        
-        // Find layout by presetId
-        ClassroomLayout layout = classroomLayoutService.getAllLayouts().stream()
-                .filter(l -> l.getPresetId() != null && l.getPresetId().equals(layoutType))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Layout not found for type: " + layoutType));
 
-        List<Student> students = studentService.getStudentsBySectionId(id);
-        List<SeatAssignmentDetailDTO> existingAssignments = 
-                seatAssignmentService.getAssignmentDetailsBySectionId(id);
-
-        Map<String, SeatGridData.SeatData> seatAssignments = new HashMap<>();
-        for (SeatAssignmentDetailDTO assignment : existingAssignments) {
-            if (assignment.getLayoutId().equals(layout.getId())) {
-                String seatKey = assignment.getRowNumber() + "-" + assignment.getColumnNumber();
-                seatAssignments.put(seatKey, new SeatGridData.SeatData(
-                        assignment.getStudentId(),
-                        assignment.getStudentName(),
-                        getInitials(assignment.getStudentName())
-                ));
-            }
-        }
-
-        List<SeatGridData.SeatInfo> allSeats = new ArrayList<>();
-        List<String> disabledSeats = layout.getDisabledSeats() != null ? layout.getDisabledSeats() : new ArrayList<>();
-
-        for (int r = 1; r <= layout.getRows(); r++) {
-            for (int c = 1; c <= layout.getColumns(); c++) {
-                String seatId = r + "-" + c;
-                SeatGridData.SeatInfo seatInfo = new SeatGridData.SeatInfo();
-                seatInfo.setId(seatId);
-                seatInfo.setRow(r);
-                seatInfo.setCol(c);
-
-                if (disabledSeats.contains(seatId)) {
-                    seatInfo.setStatus("disabled");
-                } else if (seatAssignments.containsKey(seatId)) {
-                    seatInfo.setStatus("occupied");
-                    SeatGridData.SeatData assigned = seatAssignments.get(seatId);
-                    seatInfo.setStudentId(assigned.getStudentId());
-                    seatInfo.setStudentName(assigned.getStudentName());
-                    seatInfo.setInitials(assigned.getInitials());
-                } else {
-                    seatInfo.setStatus("available");
-                }
-
-                allSeats.add(seatInfo);
-            }
-        }
-
-        SeatGridData gridData = new SeatGridData(
-                id,
-                layout.getId(),
-                layout.getPresetId() != null ? layout.getPresetId() : layout.getLayoutType().name(),
-                layout.getRows(),
-                layout.getColumns(),
-                disabledSeats,
-                students,
-                seatAssignments,
-                allSeats
-        );
-
-        model.addAttribute("section", section);
-        model.addAttribute("sectionId", id);
-        model.addAttribute("layoutType", layoutType);
-        model.addAttribute("layoutId", layout.getId());
-        model.addAttribute("layout", layout);
-        model.addAttribute("students", students);
-        model.addAttribute("gridData", gridData);
-        
-        return "seat-assignment-form";
-    }
 
     private String getInitials(String name) {
         if (name == null || name.isEmpty()) {
@@ -242,46 +166,7 @@ public class AcademicStructureWebController {
         return initials.toString().toUpperCase();
     }
 
-    @PostMapping("/{id}/assignments/save")
-    public String saveAssignment(@PathVariable("id") Long id, 
-                               @RequestParam String assignmentName,
-                               @RequestParam String assignmentData,
-                               @RequestParam String layoutType,
-                               @RequestParam(required = false) String assignmentPreset,
-                               Model model) {
-        try {
-            AcademicStructure section = academicStructureService.getSectionById(id)
-                    .orElseThrow(() -> new IllegalArgumentException("Invalid section Id:" + id));
-            
-            // Parse assignment data from JSON string
-            @SuppressWarnings("unchecked")
-            Map<String, Object> parsedAssignmentData = objectMapper.readValue(assignmentData, Map.class);
-            
-            // Create new seat assignment
-            SeatAssignment assignment = new SeatAssignment();
-            assignment.setAssignmentName(assignmentName);
-            assignment.setAcademicStructure(section);
-            
-            // Handle assignment preset if provided
-            // TODO: Implement preset handling logic when AssignmentPresetType is available
-            if (assignmentPreset != null && !assignmentPreset.isEmpty()) {
-                // For now, just log it or add to description
-                assignment.setDescription("Preset: " + assignmentPreset);
-            }
-            
-            // Save the assignment
-            seatAssignmentService.createAssignmentForSection(id, assignment);
-            
-            return "redirect:/sections/" + id;
-            
-        } catch (Exception e) {
-            // Add error to model and return to form
-            model.addAttribute("error", "Failed to save assignment: " + e.getMessage());
-            model.addAttribute("sectionId", id);
-            model.addAttribute("layoutType", layoutType);
-            return "seat-assignment-form";
-        }
-    }
+
 
     // ClassMapping routes for Seating Charts
     @GetMapping("/{id}/class-mappings")

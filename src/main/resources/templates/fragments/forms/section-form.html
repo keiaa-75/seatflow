@@ -10,7 +10,7 @@
                     <div class="box">
                         <form id="section-form" th:action="${structure.id == null ? '/sections/new' : '/sections/' + structure.id + '/edit'}" method="post" th:object="${structure}">
                         <div class="field">
-                            <label class="label">Grade Level*</label>
+                            <label class="label">Grade level*</label>
                             <div class="control">
                                 <div class="select is-fullwidth">
                                     <select th:field="*{gradeLevel}" required>
@@ -38,7 +38,7 @@
                 </div>
 
                 <div class="field">
-                    <label class="label">Section Name</label>
+                    <label class="label">Section name</label>
                     <div class="control">
                         <input type="text" class="input" th:field="*{sectionName}" placeholder="Enter section name...">
                     </div>

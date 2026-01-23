@@ -1,18 +1,14 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/head :: head('Select Layout')}"></head>
+<head th:replace="~{fragments/head :: head('Create seating chart')}"></head>
 <body>
     <th:block th:insert="~{fragments/navbar :: navbar}"></th:block>
-    <th:block th:insert="~{fragments/title-card :: titleCard('Create Seating Chart', true, '/sections/' + ${sectionId})}"/>
+    <th:block th:insert="~{fragments/title-card :: titleCard('Create seating chart', true, '/sections/' + ${sectionId})}"/>
     <section class="section">
         <div class="container">
             <div th:insert="~{fragments/notifications :: notifications}"></div>
             
-            <div class="columns is-centered">
-                <div class="column is-10">
-                    <p class="subtitle has-text-centered">Select a layout for your seating chart</p>
-                </div>
-            </div>
+
             
             <div class="columns is-multiline is-centered">
                 <th:block th:each="layout : ${layouts}">
