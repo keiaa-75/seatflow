@@ -37,4 +37,4 @@ build/
 *.db
 *LYFJSHS*
 .data/
-src/main/resources/application-dev.properties
+*app-secrets.properties
