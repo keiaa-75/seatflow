@@ -1,4 +1,4 @@
-studentId,firstName,lastName,middleName,suffix
+studentId,firstName,lastName,middleInitial,suffix
 136883130441,John,Doe,M,Jr
 136883130442,Jane,Smith,,
 136883130443,Peter,Jones,,III 
