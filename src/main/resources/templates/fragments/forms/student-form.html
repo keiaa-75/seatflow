@@ -32,14 +32,14 @@
                        th:errors="*{firstName}" class="help is-danger"></p>
                 </div>
 
-                <!-- Middle Name -->
+                <!-- Middle Initial -->
                 <div class="field">
-                    <label class="label">Middle Name</label>
+                    <label class="label">Middle Initial</label>
                     <div class="control">
-                        <input type="text" class="input" th:field="*{middleName}">
+                         <input type="text" class="input" th:field="*{middleInitial}" maxlength="1">
                     </div>
-                    <p th:if="${#fields.hasErrors('middleName')}" 
-                       th:errors="*{middleName}" class="help is-danger"></p>
+                    <p th:if="${#fields.hasErrors('middleInitial')}" 
+                       th:errors="*{middleInitial}" class="help is-danger"></p>
                 </div>
 
                 <!-- Last Name -->

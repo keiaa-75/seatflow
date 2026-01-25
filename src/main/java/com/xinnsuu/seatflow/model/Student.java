@@ -37,8 +37,8 @@ public class Student {
 	@Size(max = 150)
 	private String firstName;
 
-	@Size(max = 150)
-	private String middleName;
+    @Size(max = 1)
+    private String middleInitial;
 
 	@NotBlank(message = "Last name is required")
 	@Size(max = 150)
@@ -60,8 +60,8 @@ public class Student {
         if (firstName != null && !firstName.trim().isEmpty()) {
             fullName.append(firstName.trim());
         }
-        if (middleName != null && !middleName.trim().isEmpty()) {
-            fullName.append(" ").append(middleName.trim());
+        if (middleInitial != null && !middleInitial.trim().isEmpty()) {
+            fullName.append(" ").append(middleInitial.trim());
         }
         if (lastName != null && !lastName.trim().isEmpty()) {
             fullName.append(" ").append(lastName.trim());
@@ -92,8 +92,8 @@ public class Student {
         }
         
         // Middle Initial
-        if (middleName != null && !middleName.trim().isEmpty()) {
-            displayName.append(" ").append(middleName.trim().charAt(0)).append(".");
+        if (middleInitial != null && !middleInitial.trim().isEmpty()) {
+            displayName.append(" ").append(middleInitial.trim().charAt(0)).append(".");
         }
         
         return displayName.toString().trim();

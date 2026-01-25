@@ -17,7 +17,7 @@ import com.xinnsuu.seatflow.model.Student;
 
 @Service
 public class StudentCsvParserServiceImpl implements StudentCsvParserService {
-    private static final String[] HEADERS = {"studentId", "firstName", "lastName", "middleName", "suffix"};
+    private static final String[] HEADERS = {"studentId", "firstName", "lastName", "middleInitial", "suffix"};
 
     @Override
     public List<Student> parseStudents(MultipartFile file, AcademicStructure section) {
@@ -46,8 +46,8 @@ public class StudentCsvParserServiceImpl implements StudentCsvParserService {
                 student.setLastName(csvRecord.get("lastName"));
                 
                 // Handle optional fields
-                if (csvRecord.isMapped("middleName")) {
-                    student.setMiddleName(csvRecord.get("middleName"));
+                if (csvRecord.isMapped("middleInitial")) {
+                    student.setMiddleInitial(csvRecord.get("middleInitial"));
                 }
                 if (csvRecord.isMapped("suffix")) {
                     student.setSuffix(csvRecord.get("suffix"));
