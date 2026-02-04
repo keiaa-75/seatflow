@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
+
 import com.xinnsuu.seatflow.model.Student;
 import com.xinnsuu.seatflow.service.AcademicStructureService;
 import com.xinnsuu.seatflow.service.StudentService;
@@ -93,6 +95,12 @@ public class StudentWebController {
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/api/search")
+    public ResponseEntity<List<Student>> searchStudentsApi(@PathVariable Long sectionId, @RequestParam("q") String query) {
+        List<Student> results = studentService.searchStudents(sectionId, query);
+        return ResponseEntity.ok(results);
     }
 
     @GetMapping("/import")

@@ -161,6 +161,81 @@ body {
     background-color: white !important;
 }
 
+/* Input loading indicator */
+.input.is-loading {
+    position: relative;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8" fill="none" stroke="%2300BCD4" stroke-width="2" stroke-dasharray="50" stroke-dashoffset="38"><animateTransform attributeName="transform" type="rotate" from="0 10 10" to="360 10 10" dur="0.8s" repeatCount="indefinite"/></circle></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 20px;
+    padding-right: 40px !important;
+}
+
+/* Student Search Results Styles */
+#students-results {
+    margin-top: 1rem;
+    transition: opacity 0.3s ease;
+}
+
+.search-results-box {
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.search-results-title {
+    color: #00BCD4;
+    font-size: 1.2rem;
+    border-bottom: 2px solid #00BCD4;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem !important;
+}
+
+.student-result-item {
+    transition: all 0.2s ease;
+    border-left: 3px solid #00BCD4;
+    padding-left: 1rem;
+}
+
+.student-result-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 2px 8px rgba(0, 188, 212, 0.2);
+    border-left-color: #008ba3;
+}
+
+.student-result-name {
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.student-result-id {
+    font-size: 0.9rem;
+}
+
+.student-result-id .tag {
+    font-size: 0.85rem;
+    padding: 0.25em 0.5em;
+}
+
+/* Search Results Container Animation */
+#students-results.is-hidden {
+    display: none !important;
+}
+
+#students-results:not(.is-hidden) {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 @media (max-width: 768px) {
     .features-container {
         padding: 1rem;

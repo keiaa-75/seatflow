@@ -15,4 +15,5 @@ public interface StudentService {
     Student updateStudent(Long sectionId, String id, Student updatedStudent);
     void deleteStudent(Long sectionId, String id);
     List<Student> getUnassignedStudentsBySectionAndLayout(Long sectionId, Long layoutId);
+    List<Student> searchStudents(Long sectionId, String query);
 }

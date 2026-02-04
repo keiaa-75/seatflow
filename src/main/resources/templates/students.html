@@ -33,7 +33,7 @@
                             No students found. Add your first student to get started.
                         </div>
                     </th:block>
-                    
+                     
                     <th:block th:if="${!#lists.isEmpty(students)}">
                         <th:block th:each="student : ${students}">
                             <a th:href="@{/sections/{sectionId}/students/edit/{id}(sectionId=${sectionId}, id=${student.studentId})}" 
@@ -50,6 +50,11 @@
                     </th:block>
                 </div>
             </div>
+            
+            <!-- Search Results Container - Added directly to HTML -->
+            <div id="students-results" class="is-hidden">
+                <div id="results-container"></div>
+            </div>
         </div>
 
         <!-- Floating Action Button -->
@@ -57,19 +62,7 @@
 
 
         <!-- Student List JavaScript -->
-        <script src="/js/search-utils.js"></script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                new SearchFilter({
-                    searchInput: '#student-search',
-                    itemsContainer: '#students-list',
-                    itemSelector: '.student-item',
-                    searchAttribute: 'data-search-text',
-                    noResultsMessage: 'No students found matching your search.',
-                    debounceDelay: 0
-                });
-            });
-        </script>
+        <script src="/js/student-search.js"></script>
     </div>
 </body>
 </html>

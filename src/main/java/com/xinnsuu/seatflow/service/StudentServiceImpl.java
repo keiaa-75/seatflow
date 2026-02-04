@@ -2,6 +2,7 @@ package com.xinnsuu.seatflow.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -105,5 +106,14 @@ public class StudentServiceImpl implements StudentService {
             throw new RuntimeException("Academic Structure with ID " + sectionId + " not found");
         }
         return studentRepository.findUnassignedStudentsBySectionAndLayout(sectionId, layoutId);
+    }
+
+    @Override
+    public List<Student> searchStudents(Long sectionId, String query) {
+        String lowerQuery = query.toLowerCase();
+        return studentRepository.findByAcademicStructureIdOrderByLastNameAscFirstNameAsc(sectionId).stream()
+                .filter(s -> s.getDisplayName().toLowerCase().contains(lowerQuery) ||
+                        s.getStudentId().contains(lowerQuery))
+                .collect(Collectors.toList());
     }
 }
