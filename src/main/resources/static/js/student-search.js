@@ -22,26 +22,23 @@ $(document).ready(function() {
     if ($searchInput.length && $studentsView.length && $studentsResults.length && $resultsContainer.length) {
         console.log('All required elements found, setting up search functionality');
         
-        // Set up search input event listener
+        // Add visual feedback for search on the control wrapper
+        const $controlWrapper = $searchInput.closest('.control');
+        
+        // Set up search input event listener (merged with visual feedback)
         $searchInput.on('input', debounce(function() {
             const query = $(this).val().trim();
             console.log('Search input changed:', query);
             
+            // Update loading state based on query presence
             if (query.length > 0) {
+                $controlWrapper.addClass('is-loading');
                 performStudentSearch(sectionId, query);
             } else {
+                $controlWrapper.removeClass('is-loading');
                 showDefaultStudentView();
             }
         }, 300));
-        
-        // Add visual feedback for search
-        $searchInput.on('input', function() {
-            if ($(this).val().trim().length > 0) {
-                $(this).addClass('is-loading');
-            } else {
-                $(this).removeClass('is-loading');
-            }
-        });
     } else {
         console.error('Missing required elements for student search functionality');
         console.error('Search input:', $searchInput.length, 'Students view:', $studentsView.length, 
@@ -74,11 +71,17 @@ async function performStudentSearch(sectionId, query) {
             renderStudentSearchResults(students);
         } else {
             console.error('Search API error:', response.status, response.statusText);
-            $('#results-container').html('<div class="box has-text-centered has-text-danger"><p>Search error: ' + response.status + ' ' + response.statusText + '</p></div>');
+            const $searchInput = $('#student-search');
+            const $controlWrapper = $searchInput.closest('.control');
+            $controlWrapper.removeClass('is-loading');
+            $('#results-container').html('<div class="has-text-centered has-text-danger py-5">Search error: ' + escapeHtml(response.status + ' ' + response.statusText) + '</div>');
         }
     } catch (error) {
         console.error('Student search error:', error);
-        $('#results-container').html('<div class="box has-text-centered has-text-danger"><p>Network error: ' + error.message + '</p></div>');
+        const $searchInput = $('#student-search');
+        const $controlWrapper = $searchInput.closest('.control');
+        $controlWrapper.removeClass('is-loading');
+        $('#results-container').html('<div class="has-text-centered has-text-danger py-5">Network error: ' + escapeHtml(error.message) + '</div>');
     }
 }
 
@@ -91,7 +94,8 @@ function renderStudentSearchResults(students) {
     console.log('Rendering search results:', students);
 
     // Remove loading indicator
-    $searchInput.removeClass('is-loading');
+    const $controlWrapper = $searchInput.closest('.control');
+    $controlWrapper.removeClass('is-loading');
 
     // Show results container and hide main view
     $studentsView.addClass('is-hidden');
@@ -99,36 +103,35 @@ function renderStudentSearchResults(students) {
 
     if (students.length === 0) {
         console.log('No students found for search');
-        $container.html('<div class="box has-text-centered"><p class="has-text-grey">No students found matching your search.</p></div>');
+        $container.html('<div class="has-text-centered has-text-grey py-5">No students found matching your search.</div>');
         return;
     }
 
     console.log('Displaying ' + students.length + ' search results');
-    
-    let html = '<div class="box search-results-box">';
-    html += '<p class="has-text-centered has-text-weight-semibold mb-4 search-results-title">Search results (' + students.length + ')</p>';
-    
+
+    let html = '';
+
     students.forEach(student => {
-        html += '<a class="box mb-3 is-block student-result-item" href="/sections/' + student.academicStructure.id + '/students/edit/' + student.studentId + '">';
-        html += '<div class="student-result-name">';
+        html += '<a class="box mb-3 is-block student-item" href="/sections/' + encodeURIComponent(student.academicStructure.id) + '/students/edit/' + encodeURIComponent(student.studentId) + '" data-search-text="' + escapeHtml(student.displayName + ' ' + student.studentId) + '">';
+        html += '<div>';
         html += '<span class="has-text-weight-medium">' + escapeHtml(student.displayName) + '</span>';
         html += '</div>';
-        html += '<div class="student-result-id mt-2">';
+        html += '<div>';
         html += '<span class="tag is-info is-light">' + escapeHtml(student.studentId) + '</span>';
         html += '</div>';
         html += '</a>';
     });
-    
-    html += '</div>';
+
     $container.html(html);
-    
+
     console.log('Search results rendered successfully');
 }
 
 function showDefaultStudentView() {
     const $searchInput = $('#student-search');
-    $searchInput.removeClass('is-loading');
-    
+    const $controlWrapper = $searchInput.closest('.control');
+    $controlWrapper.removeClass('is-loading');
+
     $('#students-results').addClass('is-hidden');
     $('#students-view').removeClass('is-hidden');
 }
