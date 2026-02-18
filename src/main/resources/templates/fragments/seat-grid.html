@@ -434,6 +434,12 @@
 
                 if (status === 'occupied') {
                     currentSeatId = seat.dataset.seatId;
+                    const initialsSpan = seat.querySelector('.seat-initials');
+                    const studentName = initialsSpan ? initialsSpan.title : 'this student';
+                    const messageElement = unassignModal.querySelector('.modal-card-body p:first-child');
+                    if (messageElement) {
+                        messageElement.textContent = 'Remove "' + studentName + '" from this seat?';
+                    }
                     unassignModal.classList.add('is-active');
                     return;
                 }
@@ -454,6 +460,11 @@
                             unassignSeat(currentSeatId);
                             unassignModal.classList.remove('is-active');
                             currentSeatId = null;
+                            // Reset message
+                            const messageElement = unassignModal.querySelector('.modal-card-body p:first-child');
+                            if (messageElement) {
+                                messageElement.textContent = 'Remove student from this seat?';
+                            }
                         }
                     });
                 }
@@ -462,6 +473,11 @@
                     btn.addEventListener('click', function() {
                         unassignModal.classList.remove('is-active');
                         currentSeatId = null;
+                        // Reset message
+                        const messageElement = unassignModal.querySelector('.modal-card-body p:first-child');
+                        if (messageElement) {
+                            messageElement.textContent = 'Remove student from this seat?';
+                        }
                     });
                 });
             }
