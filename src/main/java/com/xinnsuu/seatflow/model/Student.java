@@ -1,14 +1,9 @@
 package com.xinnsuu.seatflow.model;
 
-import java.util.Set;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -25,7 +20,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(exclude = "seatAssignments")
+@EqualsAndHashCode
 public class Student {
 
 	@Id
@@ -46,10 +41,6 @@ public class Student {
 
 	@Size(max = 10)
 	private String suffix;
-
-	@JsonIgnore
-	@OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
-	private Set<SeatAssignment> seatAssignments;
 
     @ManyToOne
     @JoinColumn(name = "section_id")

@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.xinnsuu.seatflow.model.AssignmentGenerateRequest;
 import com.xinnsuu.seatflow.model.ClassMapping;
+import com.xinnsuu.seatflow.service.AssignmentPresetService;
 import com.xinnsuu.seatflow.service.ClassMappingService;
 
 @RestController
@@ -25,6 +27,9 @@ public class ClassMappingController {
 
     @Autowired
     private ClassMappingService classMappingService;
+
+    @Autowired
+    private AssignmentPresetService assignmentPresetService;
 
     @GetMapping
     public ResponseEntity<List<ClassMapping>> getAllMappings(@PathVariable Long sectionId) {
@@ -198,6 +203,36 @@ public class ClassMappingController {
             
         } catch (Exception e) {
             return new ResponseEntity<>(Map.of("error", e.getClass().getSimpleName() + ": " + e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/generate")
+    public ResponseEntity<Map<String, Object>> generateAssignments(
+            @PathVariable Long sectionId,
+            @RequestBody AssignmentGenerateRequest request) {
+        try {
+            Map<String, String> assignments = assignmentPresetService.generateAssignments(
+                    sectionId,
+                    request.getLayoutId(),
+                    request.getPresetType()
+            );
+
+            ClassMapping mapping = classMappingService.createMapping(
+                    sectionId,
+                    request.getAssignmentName(),
+                    request.getLayoutId().toString(),
+                    assignments
+            );
+
+            return new ResponseEntity<>(Map.of(
+                    "mappingId", mapping.getId(),
+                    "name", mapping.getName(),
+                    "layoutId", mapping.getLayoutId(),
+                    "assignments", assignments,
+                    "assignedCount", assignments.size()
+            ), HttpStatus.CREATED);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 }

@@ -14,12 +14,16 @@ import com.xinnsuu.seatflow.model.AcademicStructure;
 import com.xinnsuu.seatflow.model.enums.GradeLevel;
 import com.xinnsuu.seatflow.model.enums.Strand;
 import com.xinnsuu.seatflow.repository.AcademicStructureRepository;
+import com.xinnsuu.seatflow.repository.ClassMappingRepository;
 
 @Service
 public class AcademicStructureServiceImpl implements AcademicStructureService {
 
     @Autowired
     private AcademicStructureRepository academicStructureRepository;
+
+    @Autowired
+    private ClassMappingRepository classMappingRepository;
 
     @Override
     public List<AcademicStructure> getAllSections() {
@@ -133,8 +137,6 @@ public class AcademicStructureServiceImpl implements AcademicStructureService {
 
     @Override
     public int getAssignmentCountBySection(Long sectionId) {
-        return academicStructureRepository.findById(sectionId)
-                .map(section -> section.getSeatAssignments() != null ? section.getSeatAssignments().size() : 0)
-                .orElse(0);
+        return classMappingRepository.findBySectionId(sectionId).size();
     }
 }

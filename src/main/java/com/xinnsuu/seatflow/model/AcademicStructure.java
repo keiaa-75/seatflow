@@ -29,7 +29,7 @@ import com.xinnsuu.seatflow.model.enums.Strand;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(exclude = {"students", "seatAssignments"})
+@EqualsAndHashCode(exclude = "students")
 public class AcademicStructure {
 	
 	@Id
@@ -51,8 +51,4 @@ public class AcademicStructure {
 	@JsonIgnore
 	@OneToMany(mappedBy = "academicStructure")
 	private Set<Student> students;
-
-	@JsonIgnore
-	@OneToMany(mappedBy = "academicStructure")
-	private Set<SeatAssignment> seatAssignments;
 }

@@ -1,6 +1,8 @@
 package com.xinnsuu.seatflow.service;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -9,8 +11,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.xinnsuu.seatflow.model.AcademicStructure;
+import com.xinnsuu.seatflow.model.ClassMapping;
 import com.xinnsuu.seatflow.model.Student;
 import com.xinnsuu.seatflow.repository.AcademicStructureRepository;
+import com.xinnsuu.seatflow.repository.ClassMappingRepository;
 import com.xinnsuu.seatflow.repository.StudentRepository;
 
 @Service
@@ -21,6 +25,9 @@ public class StudentServiceImpl implements StudentService {
 
     @Autowired
     private AcademicStructureRepository academicStructureRepository;
+
+    @Autowired
+    private ClassMappingRepository classMappingRepository;
 
     @Autowired
     private StudentCsvParserService studentCsvParserService;
@@ -105,7 +112,26 @@ public class StudentServiceImpl implements StudentService {
         if (!academicStructureRepository.existsById(sectionId)) {
             throw new RuntimeException("Academic Structure with ID " + sectionId + " not found");
         }
-        return studentRepository.findUnassignedStudentsBySectionAndLayout(sectionId, layoutId);
+
+        // Get all students in the section
+        List<Student> allStudents = studentRepository.findByAcademicStructureIdOrderByLastNameAscFirstNameAsc(sectionId);
+
+        // Get all ClassMappings for this section and layout
+        List<ClassMapping> mappings = classMappingRepository.findBySectionIdAndLayoutId(sectionId, layoutId.toString());
+
+        // Collect all assigned student IDs from all mappings
+        List<String> assignedStudentIds = mappings.stream()
+                .map(ClassMapping::getAssignments)
+                .filter(assignments -> assignments != null)
+                .map(Map::values)
+                .flatMap(Collection::stream)
+                .distinct()
+                .collect(Collectors.toList());
+
+        // Filter out students who are already assigned
+        return allStudents.stream()
+                .filter(student -> !assignedStudentIds.contains(student.getStudentId()))
+                .collect(Collectors.toList());
     }
 
     @Override

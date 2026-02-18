@@ -10,13 +10,10 @@ import com.xinnsuu.seatflow.dto.SectionGroupByStrand;
 import com.xinnsuu.seatflow.model.AcademicStructure;
 import com.xinnsuu.seatflow.model.ClassMapping;
 import com.xinnsuu.seatflow.model.ClassroomLayout;
-import com.xinnsuu.seatflow.model.SeatAssignment;
-import com.xinnsuu.seatflow.model.SeatAssignmentDetailDTO;
 import com.xinnsuu.seatflow.model.Student;
 import com.xinnsuu.seatflow.service.AcademicStructureService;
 import com.xinnsuu.seatflow.service.ClassMappingService;
 import com.xinnsuu.seatflow.service.ClassroomLayoutService;
-import com.xinnsuu.seatflow.service.SeatAssignmentService;
 import com.xinnsuu.seatflow.service.StudentService;
 
 import jakarta.validation.Valid;
@@ -48,9 +45,6 @@ public class AcademicStructureWebController {
     
     @Autowired
     private ClassMappingService classMappingService;
-
-    @Autowired
-    private SeatAssignmentService seatAssignmentService;
 
     @Autowired
     private StudentService studentService;
