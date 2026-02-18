@@ -293,6 +293,17 @@
                 }, 3000);
             }
 
+            function updateAssignedCount() {
+                const countElement = document.getElementById('assigned-count');
+                if (countElement) {
+                    const occupiedSeats = document.querySelectorAll('.seat.occupied').length;
+                    countElement.textContent = occupiedSeats;
+                }
+            }
+
+            // Initialize count on page load
+            updateAssignedCount();
+
             function openModal(seatId) {
                 currentSeatId = seatId;
                 modal.classList.add('is-active');
@@ -335,6 +346,7 @@
                     showToast('Student assigned successfully', 'success');
 
                     updateSeatDisplay(seatId, studentId);
+                    updateAssignedCount();
 
                 } catch (error) {
                     console.error('Failed to save assignment:', error);
@@ -391,12 +403,13 @@
                         seat.classList.remove('occupied');
                         seat.classList.add('available');
                         delete seat.dataset.studentId;
-                        
+
                         const initialsSpan = seat.querySelector('.seat-initials');
                         if (initialsSpan) {
                             initialsSpan.remove();
                         }
                     }
+                    updateAssignedCount();
 
                 } catch (error) {
                     console.error('Failed to unassign seat:', error);

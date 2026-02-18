@@ -18,8 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.xinnsuu.seatflow.model.AssignmentGenerateRequest;
 import com.xinnsuu.seatflow.model.ClassMapping;
+import com.xinnsuu.seatflow.model.ClassroomLayout;
 import com.xinnsuu.seatflow.service.AssignmentPresetService;
 import com.xinnsuu.seatflow.service.ClassMappingService;
+import com.xinnsuu.seatflow.service.ClassroomLayoutService;
 
 @RestController
 @RequestMapping("/api/sections/{sectionId}/class-mappings")
@@ -30,6 +32,9 @@ public class ClassMappingController {
 
     @Autowired
     private AssignmentPresetService assignmentPresetService;
+
+    @Autowired
+    private ClassroomLayoutService classroomLayoutService;
 
     @GetMapping
     public ResponseEntity<List<ClassMapping>> getAllMappings(@PathVariable Long sectionId) {
@@ -211,6 +216,10 @@ public class ClassMappingController {
             @PathVariable Long sectionId,
             @RequestBody AssignmentGenerateRequest request) {
         try {
+            // Get the layout to retrieve its presetId
+            ClassroomLayout layout = classroomLayoutService.getLayoutById(request.getLayoutId())
+                    .orElseThrow(() -> new RuntimeException("Layout not found: " + request.getLayoutId()));
+            
             Map<String, String> assignments = assignmentPresetService.generateAssignments(
                     sectionId,
                     request.getLayoutId(),
@@ -220,7 +229,7 @@ public class ClassMappingController {
             ClassMapping mapping = classMappingService.createMapping(
                     sectionId,
                     request.getAssignmentName(),
-                    request.getLayoutId().toString(),
+                    layout.getPresetId(),
                     assignments
             );
 

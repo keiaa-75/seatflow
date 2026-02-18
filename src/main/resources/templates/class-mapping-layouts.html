@@ -12,15 +12,63 @@
             
             <div class="columns is-multiline is-centered">
                 <th:block th:each="layout : ${layouts}">
-                    <div class="column is-4-desktop is-12-mobile">
-                        <a href="#" 
-                           class="box is-clickable has-text-centered layout-select-btn"
-                           th:data-layout-id="${layout.presetId}"
-                           th:data-layout-name="${layout.name}"
-                           style="text-decoration: none; color: inherit;">
+                    <div class="column is-4-desktop is-6-tablet is-12-mobile">
+                        <div class="box has-text-centered">
                             <h3 class="title is-5" th:text="${layout.name}">Layout Name</h3>
-                            <p class="help" th:text="${layout.rows + ' × ' + layout.columns + ' seats'}">10 × 10</p>
-                        </a>
+                            <p class="help mb-3" th:text="${layout.rows + ' × ' + layout.columns + ' seats'}">10 × 10</p>
+                            
+                            <!-- Layout Preview -->
+                            <div class="layout-preview mb-4" th:data-layout-id="${layout.presetId}" 
+                                 th:data-rows="${layout.rows}" th:data-columns="${layout.columns}"
+                                 th:data-disabled-seats="${layout.disabledSeats != null} ? ${#strings.arrayJoin(layout.disabledSeats, ',')} : ''">
+                            </div>
+                            
+                            <!-- Manual Create Button -->
+                            <button class="button is-primary is-fullwidth mb-2 layout-select-btn"
+                                    th:data-layout-id="${layout.presetId}"
+                                    th:data-layout-name="${layout.name}">
+                                <span class="icon"><i class="fas fa-plus"></i></span>
+                                <span>Create Empty</span>
+                            </button>
+                            
+                            <!-- Auto-Generate Dropdown -->
+                            <div class="dropdown is-fullwidth is-up">
+                                <div class="dropdown-trigger is-fullwidth">
+                                    <button class="button is-info is-fullwidth" aria-haspopup="true" aria-controls="dropdown-menu-gen-${layout.presetId}">
+                                        <span class="icon"><i class="fas fa-magic"></i></span>
+                                        <span>Auto-Generate</span>
+                                        <span class="icon is-small">
+                                            <i class="fas fa-angle-up" aria-hidden="true"></i>
+                                        </span>
+                                    </button>
+                                </div>
+                                <div class="dropdown-menu" th:id="'dropdown-menu-gen-' + ${layout.presetId}" role="menu">
+                                    <div class="dropdown-content">
+                                        <a href="#" class="dropdown-item generate-btn" 
+                                           th:data-layout-id="${layout.id}"
+                                           th:data-layout-name="${layout.name}"
+                                           data-preset="ALPHABETICAL">
+                                            <span class="icon"><i class="fas fa-sort-alpha-down"></i></span>
+                                            <span>Alphabetical (A-Z)</span>
+                                        </a>
+                                        <a href="#" class="dropdown-item generate-btn"
+                                           th:data-layout-id="${layout.id}"
+                                           th:data-layout-name="${layout.name}"
+                                           data-preset="REVERSE">
+                                            <span class="icon"><i class="fas fa-sort-alpha-down-alt"></i></span>
+                                            <span>Reverse (Z-A)</span>
+                                        </a>
+                                        <a href="#" class="dropdown-item generate-btn"
+                                           th:data-layout-id="${layout.id}"
+                                           th:data-layout-name="${layout.name}"
+                                           data-preset="RANDOM">
+                                            <span class="icon"><i class="fas fa-random"></i></span>
+                                            <span>Random</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </th:block>
             </div>

@@ -41,19 +41,35 @@ public class AssignmentPresetServiceImpl implements AssignmentPresetService {
         List<Student> sortedStudents = sortStudents(students, presetType);
         ClassroomLayout layout = layoutOpt.get();
 
-        int totalSeats = layout.getRows() * layout.getColumns();
+        // Generate available seats (excluding disabled ones)
+        List<String> availableSeats = generateAvailableSeats(layout);
         Map<String, String> assignments = new HashMap<>();
 
-        for (int i = 0; i < sortedStudents.size() && i < totalSeats; i++) {
+        // Assign students to available seats only
+        for (int i = 0; i < sortedStudents.size() && i < availableSeats.size(); i++) {
             Student student = sortedStudents.get(i);
-            int row = (i / layout.getColumns()) + 1;
-            int col = (i % layout.getColumns()) + 1;
-            String seatId = row + "-" + col;
-            
+            String seatId = availableSeats.get(i);
             assignments.put(seatId, student.getStudentId());
         }
 
         return assignments;
+    }
+
+    private List<String> generateAvailableSeats(ClassroomLayout layout) {
+        List<String> availableSeats = new ArrayList<>();
+        List<String> disabledSeats = layout.getDisabledSeats();
+
+        for (int row = 1; row <= layout.getRows(); row++) {
+            for (int col = 1; col <= layout.getColumns(); col++) {
+                String seatId = row + "-" + col;
+                // Only add seat if it's not disabled
+                if (disabledSeats == null || !disabledSeats.contains(seatId)) {
+                    availableSeats.add(seatId);
+                }
+            }
+        }
+
+        return availableSeats;
     }
 
     private List<Student> sortStudents(List<Student> students, AssignmentPresetType presetType) {

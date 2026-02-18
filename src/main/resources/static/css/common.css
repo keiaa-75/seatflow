@@ -768,3 +768,47 @@ details[open] summary i.fa-chevron-down {
 .mapping-card .content {
     margin-bottom: 0;
 }
+
+/* Layout Preview Styles */
+.layout-preview {
+    background-color: #f5f5f5;
+    border-radius: 4px;
+    padding: 4px;
+}
+
+/* Dropdown fullwidth styles */
+.dropdown.is-fullwidth {
+    width: 100%;
+}
+
+.dropdown.is-fullwidth .dropdown-trigger {
+    width: 100%;
+}
+
+.dropdown.is-fullwidth .dropdown-trigger .button {
+    width: 100%;
+    justify-content: space-between;
+}
+
+.dropdown.is-fullwidth .dropdown-menu {
+    width: 100%;
+    min-width: 100%;
+}
+
+/* Fix dropdown positioning for is-up */
+.dropdown.is-up .dropdown-menu {
+    bottom: 100%;
+    top: auto;
+    padding-bottom: 4px;
+    padding-top: 0;
+}
+
+/* Layout card enhancements */
+.layout-select-btn {
+    transition: all 0.2s ease;
+}
+
+.layout-select-btn:hover {
+    background-color: #00BCD4 !important;
+    color: white !important;
+}
